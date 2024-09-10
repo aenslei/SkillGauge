@@ -1,24 +1,21 @@
 .logo {
-    height: 40px; /* Set the height of the logo */
-    width: auto; /* Maintain aspect ratio */
-    margin-right: 15px; /* Space between logo and text */
+    height: 40px;
+    width: auto;
+    margin-right: 15px;
 }
 
 .navbar-nav .nav-link {
     display: flex;
-    align-items: center; /* Vertically center the items */
-    color: #000; /* Change text color for visibility */
+    align-items: center;
+    color: #000;
 
 }
 
 .navbar-nav .nav-item {
 
-    margin-left: 15px; /* Space between nav items */
+    margin-left: 15px;
 }
 
-
-
-/* Footer Styles */
 footer {
     background-color: #35424a;
     color: #ffffff;
@@ -104,8 +101,8 @@ footer {
     }
 
     .newsletter input[type="email"] {
-        width: 100%; /* Full width on small screens */
-        margin-bottom: 10px; /* Space below input */
+        width: 100%;
+        margin-bottom: 10px;
     }
 }
 
@@ -113,15 +110,32 @@ footer {
 .feature-card::before {
     content: '';
     position: absolute;
-    left: 0; /* Position the line to the left */
+    left: 0;
     top: 0;
-    bottom: 0; /* Extend the line to the bottom */
-    width: 0; /* Initial width is 0 */
-    background-color: blue; /* Color of the vertical line */
-    transition: width 0.1s ease; /* Add a transition for smooth animation */
+    bottom: 0;
+    width: 0;
+    background-color: blue;
+    transition: width 0.1s ease;
 }
 
 .feature-card:hover::before {
-    width: 5px; /* Width of the vertical line on hover */
+    width: 5px;
 }
 
+.industryCard {
+    color: white;
+    height: 200px;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.industryCardBody {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}

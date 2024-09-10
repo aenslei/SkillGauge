@@ -1,0 +1,200 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Industries page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+    </style>
+</head>
+
+<body class="bg-white">
+    <!--header-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('Home') }}">
+                        <img src="https://media.graphassets.com/resize=fit:crop,width:1280,height:660/0gvnZkvQkyyuz6pUCcJR"
+                            alt="Logo" class="logo">
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-1">
+                    <a class="nav-link" href="{{ url_for('Industries') }}">Trending Jobs</a>
+                </li>
+                <li class="nav-item mt-1">
+                    <a class="nav-link" href="#">Trending Skills</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    <br>
+    <div class="container mt-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcaOM2XaTeH5vOikuxKHRQsG2PhgekdUrOQ&s');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Technology</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8MYlim_ijBm8roz-lAl9oynaGbry7UzApPQ&s');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Healthcare</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://www.omazaki.co.id/system/uploads/2019/06/Engineering-1024x480.jpg');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Engineering</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc01U4PoycmtCsXTk3zjHm07PZ_GXGt6o74A&s');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Manufacturing</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://www.wealthandfinance-news.com/wp-content/uploads/2021/07/Finance-technology.jpg');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Finance</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://cdn.vysokeskoly.cz/czech-universities/uploads/2021/05/group-hotel-staffs-standing-kitchen.jpg');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Hospitality</h5>
+                        </div>
+                    </div>
+                </a>    
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRClHpaxADrzVexKwgxpGOfmZ3sXC2iJPtGoQ&s');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Aerospace</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://agrierp.com/blog/wp-content/uploads/2024/01/why-is-agriculture-important.webp');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Agriculture</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://www.avanse.com/blogs/images/10feb-blog-2023.jpg');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Education</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjL0ipkRwt3cpLfHB0Hn7f6FafaGfSxbNphQ&s');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">Energy</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                <div class="card industryCard"
+                    style="background-image: url('https://cdn.tophatch.com/media/filer_public_thumbnails/filer_public/9c/25/9c25bddc-005e-4c11-8926-9f28b1d10337/emilykeller_concepts1-colorsketches.jpg__2400.0x1760.0_q85_subsampling-2.jpg');">
+                    <div class="card-body text-center industryCardBody">
+                        <h5 class="card-title">Fashion</h5>
+                    </div>
+                </div>
+                </a>
+            </div>
+            <div class="col mb-3">
+                <a href="#">
+                    <div class="card industryCard"
+                        style="background-image: url('https://www.labourbeat.org/wp-content/uploads/2018/10/iStock-698025802.jpg');">
+                        <div class="card-body text-center industryCardBody">
+                            <h5 class="card-title">F&B</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <footer>
+        <div class="footer-content">
+            <div class="newsletter">
+                <h3>Subscribe to our Newsletter</h3>
+                <form>
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+            <div class="footer-info">
+                <p>&copy; SkillGauge</p>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- javascript -->
+    <script src="js/javascript.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>
