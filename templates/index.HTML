@@ -14,12 +14,23 @@
 <body class="bg-white">
   <!--header-->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Navbar brand or logo -->
+    <a class="navbar-brand" href="{{ url_for('Home') }}">
+      <img src="https://media.graphassets.com/resize=fit:crop,width:1280,height:660/0gvnZkvQkyyuz6pUCcJR" alt="Logo"
+        class="logo">
+    </a>
+
+    <!-- Toggler/collapsible button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible content -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
           <a class="nav-link" href="{{ url_for('Home') }}">
-            <img src="https://media.graphassets.com/resize=fit:crop,width:1280,height:660/0gvnZkvQkyyuz6pUCcJR"
-              alt="Logo" class="logo">
             <span class="sr-only">(current)</span>
           </a>
         </li>
@@ -241,21 +252,27 @@
 
     <br>
 
-    <footer>
-      <div class="footer-content">
-        <div class="newsletter">
-          <h3>Subscribe to our Newsletter</h3>
-          <form>
-            <input type="email" placeholder="Enter your email" required>
-            <button type="submit">Subscribe</button>
-          </form>
-        </div>
-        <div class="footer-info">
-          <p>&copy; SkillGauge</p>
-          <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-          </ul>
+    <footer class="bg-dark text-white py-4">
+      <div class="container">
+        <div class="row justify-content-between align-items-center">
+          <!-- Newsletter Section -->
+          <div class="col-md-6 text-center mb-3 mb-md-0">
+            <h3>Subscribe to our Newsletter</h3>
+            <form class="d-flex justify-content-center mt-3">
+              <input type="email" class="form-control newsletterInput" placeholder="Enter your email" required
+                style="max-width: 200px;   border-radius: 30px 0 0 30px;">
+              <button type="submit" class="btn btn-success ms-2 newsletterSubmit"
+                style="  border-radius: 0 30px 30px 0;">Subscribe</button>
+            </form>
+          </div>
+          <!-- Footer Info Section -->
+          <div class="col-md-6 text-center text-md-end">
+            <p class="mb-1">&copy; SkillGauge</p>
+            <ul class="list-inline mb-0">
+              <li class="list-inline-item"><a href="#" class="text-white">Privacy Policy</a></li>
+              <li class="list-inline-item"><a href="#" class="text-white">Terms of Service</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </footer>
