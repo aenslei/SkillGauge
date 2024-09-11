@@ -9,52 +9,53 @@
 
     <div class ="container">
         <h2>Matching Job roles </h2>
+
+
+
         <div class ="container-fluid ">
+            {% set counter = namespace(value=0) %}
             <div class = "row justify-content-center">
+
+            {% for x in job_role %}
+
+            {% if counter.value < 3 %}
+                {% set counter.value = counter.value + 1 %}
+
+
             <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-                <h4>Job Role</h4>
-                <p class = "font weight-bold">Skills:</p>
-                <p> python, javascript</p>
+
+                <h4> {{x.title}} </h4>
+                <b>Skills:</b>
+                <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
+
+
+
+
+
             </div>
 
-
+            {% else %}
+            {% set counter.value = 1 %}
+            </div>
+            <div class = "row justify-content-center">
                 <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-                    <h4> Job Role</h4>
-                    <p class = "font weight-bold">Skills:</p>
-                    <p> python, javascript</p>
+
+                <h4> {{x.title}} </h4>
+                <b>Skills:</b>
+                <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
+
                 </div>
 
-            <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-                <h4> Job Role</h4>
-                <p class = "font weight-bold">Skills:</p>
-                <p> python, javascript</p>
+
+
+            {% endif %}
+
+
+            {% endfor %}
             </div>
+
 
         </div>
-            <div class = "row justify-content-center">
-            <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-                <h4> Job Role</h4>
-                <p class ="font weight-bold">Skills:</p>
-                <p> python, javascript</p>
-            </div>
-
-
-            <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-                <h4> Job Role</h4>
-                <p class = "font weight-bold">Skills:</p>
-                <p> python, javascript</p>
-            </div>
-
-            <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-                <h4> Job Role</h4>
-                <p class = "font weight-bold">Skills:</p>
-                <p> python, javascript</p>
-            </div>
-
-        </div>
-
-        </div>
-    </div>
 
 
 
@@ -63,5 +64,9 @@
 
 
 </div>
+
+
+
+
 
 {% endblock %}
