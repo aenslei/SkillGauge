@@ -38,5 +38,9 @@ def Job_roles():
 
     return render_template('job_roles.html' , job_role = job_role_list)
 
+@app.route('/resume')
+def Resume():
+    return render_template('resume.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

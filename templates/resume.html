@@ -1,0 +1,59 @@
+{% extends "index.html" %}
+
+{% block title %} Job Roles {% endblock %}
+
+{% block content %}
+
+<div class="container mt-5"></div>
+
+    <button type="file" class="btn btn-outline-primary w-100" onclick="openFileExplorer()">Submit Resume</button>
+
+    <div class="skills-container">
+        <h2>Select Your Skills</h2>
+        <div class="skill-list">
+            <button type="button" class="btn btn-primary add-skill">+</button>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+</div>
+
+<script>
+    const addSkillButton = document.querySelector('.add-skill');
+    const skillList = document.querySelector('.skill-list');
+
+    addSkillButton.addEventListener('click', () => {
+        const skillInput = document.createElement('input');
+        skillInput.type = 'text';
+        skillInput.className = 'form-control';
+        skillInput.placeholder = 'Enter skill';
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'btn btn-danger';
+        removeButton.textContent = 'X';
+
+        removeButton.addEventListener('click', () => {
+            skillInput.remove();
+            removeButton.remove();
+        });
+
+        skillList.appendChild(skillInput);
+        skillList.appendChild(removeButton);
+    });
+
+    function openFileExplorer() {
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.click();
+
+        fileInput.addEventListener('change', function (event) {
+            var selectedFile = event.target.files[0];
+            // Do something with the selected file here, e.g., upload it
+            console.log(selectedFile);
+        });
+    }
+</script>
+
+
+{% endblock %}
