@@ -21,6 +21,10 @@ def Home():
 def Industries():
     return render_template('industries.html')
 
+@app.route('/industry_trends')
+def Industry_trends():
+    return render_template('industry_trends.html')
+
 
 @app.route('/job_roles')
 def Job_roles():
