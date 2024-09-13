@@ -1,0 +1,132 @@
+{% extends "index.html" %}
+
+{% block title %} Expanded Job Roles {% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1><u>{{ job_title.title() }}</u> </h1>
+
+
+
+<!-- skill section -->
+
+<h3>Skills:</h3>
+
+<div>
+{% for x in job_role.skill %}
+    <div class="border rounded-pill d-inline p-1 m-1">
+    {{ x.title() }}
+    </div>
+
+    {% endfor %}
+
+</div>
+<br>
+<!-- skill match section  -->
+
+<div class = "row">
+
+    <div class = "col">
+
+    {{ job_role.match_percent }}
+
+
+    </div>
+
+    <div class = "col">
+
+    {{ 100 - job_role.match_percent }}
+
+
+    </div>
+
+
+
+</div>
+
+<br>
+<!-- related course section -->
+<div>
+    <h3>Related Courses</h3>
+    <div>
+    enter link here
+
+
+
+
+    </div>
+
+
+</div>
+
+<br>
+
+<!-- salary trend chart -->
+<div>
+    <h3 class="text-center">Salary Trends</h3>
+    <div>
+
+    enter chart here
+    </div>
+
+</div>
+
+<br>
+<!-- Skills in demand chart -->
+<div>
+
+<h3 class="text-center">Skills In Demand </h3>
+<div>
+
+    enter chart here
+
+
+
+</div>
+
+</div>
+
+<br>
+
+<!-- Geographical Data chart -->
+<div>
+
+<h3 class="text-center"> Geographical Data </h3>
+<div>
+
+    enter chart here
+
+
+
+</div>
+
+</div>
+
+<br>
+
+
+
+<!-- Related Jobs -->
+<div>
+
+<h3>Related Jobs</h3>
+<div>
+
+    enter link here
+
+
+
+</div>
+
+</div>
+
+<br>
+
+</div>
+
+
+
+{% endblock %}
+
+

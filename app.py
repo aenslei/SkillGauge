@@ -42,6 +42,15 @@ def Job_roles():
 
     return render_template('job_roles.html' , job_role = job_role_list)
 
+@app.route("/job_roles/<job_title>")
+def expanded_job_roles(job_title):
+    j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1)
+
+
+
+
 @app.route('/resume')
 def Resume():
     return render_template('resume.html')
