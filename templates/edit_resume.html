@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block title %} Job Roles {% endblock %}
+
+{% block content %}
+
+<h1>Edit Resume</h1>
+
+{% if skills %}
+<ul>
+    {% for skill in skills %}
+    <li>{{ skill }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No skills found.</p>
+{% endif %}
+
+
+{% endblock %}
