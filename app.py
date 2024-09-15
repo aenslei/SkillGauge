@@ -1,16 +1,21 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
+import os
+import resume_skills_extractor
 
 app = Flask(__name__)
+
+UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+# Ensure the upload folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 class JobRole:
     def __init__(self, title , skill , match_percent):
         self.title = title
         self.skill = skill
         self.match_percent = match_percent
-
-
-
-
 
 @app.route('/')
 def Home():
@@ -41,6 +46,35 @@ def Job_roles():
 @app.route('/resume')
 def Resume():
     return render_template('resume.html')
+
+@app.route('/upload', methods=['POST'])
+def upload_resume():
+    if 'resume' not in request.files:
+        return redirect(request.url)
+    
+    file = request.files['resume']
+    
+    if file.filename == '':
+        return redirect(request.url)
+    
+    # Save the file
+    pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(pdf_path)
+    
+    # Now you can call your test4.py function with pdf_path
+    # For example:
+    skills_found = resume_skills_extractor.RunTest(pdf_path)
+    # Convert the skills list into a string for the URL
+    skills_str = ','.join(skills_found)
+
+    return redirect(url_for('Edit_resume'), skills = skills_str)  # Redirect to a success page or back to home
+
+@app.route('/EditResume')
+def Edit_resume():
+    # Get skills from the query parameter and split the string back into a list
+    skills_str = request.args.get('skills', '')  # Default to an empty string if no skills are passed
+    skills = skills_str.split(',') if skills_str else []  # Convert back to a list
+    return render_template('edit_resume.html', skills=skills)
 
 if __name__ == '__main__':
     app.run(debug=True)
