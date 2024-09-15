@@ -67,7 +67,7 @@ def upload_resume():
     # Convert the skills list into a string for the URL
     skills_str = ','.join(skills_found)
 
-    return redirect(url_for('Edit_resume'), skills = skills_str)  # Redirect to a success page or back to home
+    return render_template('edit_resume.html', skills=skills_found)
 
 @app.route('/EditResume')
 def Edit_resume():
