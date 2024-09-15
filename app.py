@@ -105,6 +105,11 @@ def add_skills():
 @app.route('/update_skills', methods=['POST'])
 def update_skills():
     updated_skills = request.form.getlist('skills')
+    #remove all resumes once skills is submitted
+    for filename in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
     return redirect(url_for('Job_roles', skills=updated_skills))
 
 if __name__ == '__main__':
