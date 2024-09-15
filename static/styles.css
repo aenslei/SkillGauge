@@ -36,3 +36,29 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 2;
 }
+
+
+    .industry-buttons {
+        display: flex;
+        justify-content: space-between;  /* Evenly distribute buttons across the width */
+        flex-wrap: wrap;  /* Allow buttons to wrap on smaller screens */
+    }
+    .industry-buttons form {
+        flex: 1;  /* Make each form/button take equal space */
+        margin: 0 10px;  /* Spacing between buttons */
+        min-width: 120px;  /* Minimum width for small screens */
+    }
+    .industry-buttons button {
+        width: 100%;  /* Ensure the button takes up the full width of its form container */
+        border-radius: 10px;  /* Rounded edges */
+        border: 2px solid black;  /* Black outline */
+        padding: 10px 20px;  /* Add some padding for better visual appeal */
+        font-size: 16px;  /* Increase the font size for readability */
+        background-color: white;  /* Set background to white */
+        color: black;  /* Black text color */
+        transition: all 0.3s ease;  /* Smooth transition for hover effect */
+    }
+    .industry-buttons button:hover {
+        background-color: black;  /* Background turns black on hover */
+        color: white;  /* Text turns white on hover */
+    }

@@ -17,15 +17,50 @@ class JobRole:
         self.skill = skill
         self.match_percent = match_percent
 
+
+class Industry:
+    def __init__(self, id, title , img_url):
+        self.id = id
+        self.title = title
+        self.img_url = img_url
 @app.route('/')
 def Home():
     return render_template('home.html')
 
 
-@app.route('/industries')
-def Industries():
-    return render_template('industries.html')
+# makes industry_list global to be accessed by industries.html and industry_details. html
+id1 = Industry(1, "Technology", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcaOM2XaTeH5vOikuxKHRQsG2PhgekdUrOQ&s')
+id2 = Industry(2, "Healthcare", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8MYlim_ijBm8roz-lAl9oynaGbry7UzApPQ&s')
+id3 = Industry(3, "Engineering", 'https://www.omazaki.co.id/system/uploads/2019/06/Engineering-1024x480.jpg')
+id4 = Industry(4, "Manufacturing", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc01U4PoycmtCsXTk3zjHm07PZ_GXGt6o74A&s')
+id5 = Industry(5, "Finance", 'https://www.wealthandfinance-news.com/wp-content/uploads/2021/07/Finance-technology.jpg')
+id6 = Industry(6, "Hospitality", 'https://cdn.vysokeskoly.cz/czech-universities/uploads/2021/05/group-hotel-staffs-standing-kitchen.jpg')
+industry_list = [id1, id2, id3, id4, id5, id6]
 
+@app.route('/industries')
+def Industries():                   
+    return render_template('industries.html', industry=industry_list)
+
+
+# POST request
+@app.route('/industry_details', methods=['POST'])
+def industry_details():
+    industry_id = request.form.get('industry_id')
+    industry = next((ind for ind in industry_list if ind.id == int(industry_id)), None)
+
+    if industry is None:
+        return "Industry not found", 404
+
+    print(f"Received industry_id: {industry_id}")
+    print(f"Received industry.title: {industry.title}")
+
+    other_industries = [ind for ind in industry_list if ind.id != industry.id][:5]  # Limit to 5 buttons
+    
+    
+    return render_template('industry_details.html', industry_id=industry_id, industry=industry, other_industries=other_industries)
+   
+
+    
 
 @app.route('/job_roles')
 def Job_roles():
