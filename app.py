@@ -58,9 +58,6 @@ def industry_details():
     
     
     return render_template('industry_details.html', industry_id=industry_id, industry=industry, other_industries=other_industries)
-   
-
-    
 
 @app.route('/job_roles')
 def Job_roles():
@@ -73,8 +70,6 @@ def Job_roles():
     j6 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
     j7 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
     job_role_list = [j1,j2, j3,j4,j5,j6,j7]
-
-
 
     return render_template('job_roles.html' , job_role = job_role_list)
 
@@ -105,8 +100,12 @@ def upload_resume():
 def add_skills():
     # Get the list of skills from the form
     skills = request.form.getlist('skills')
-
     return render_template('edit_resume.html', skills=skills)
+
+@app.route('/update_skills', methods=['POST'])
+def update_skills():
+    updated_skills = request.form.getlist('skills')
+    return redirect(url_for('Job_roles', skills=updated_skills))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 
-{% block title %} Job Roles {% endblock %}
+{% block title %} Add Skills {% endblock %}
 
 {% block content %}
 
@@ -35,11 +35,10 @@
 
 <script>
     function UploadResume() {
-        // Trigger the hidden file input
         const fileInput = document.getElementById('resumeInput');
         fileInput.click();
 
-        // When a file is selected, automatically submit the form
+        // When a file is selected, automatically upload the file
         fileInput.onchange = function () {
             // Check if a file is selected
             if (fileInput.files.length > 0) { 
