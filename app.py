@@ -61,19 +61,16 @@ def upload_resume():
     pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(pdf_path)
     
-    # Now you can call your test4.py function with pdf_path
-    # For example:
+    #get skills 
     skills_found = resume_skills_extractor.RunTest(pdf_path)
-    # Convert the skills list into a string for the URL
-    skills_str = ','.join(skills_found)
 
     return render_template('edit_resume.html', skills=skills_found)
 
 @app.route('/EditResume')
 def Edit_resume():
     # Get skills from the query parameter and split the string back into a list
-    skills_str = request.args.get('skills', '')  # Default to an empty string if no skills are passed
-    skills = skills_str.split(',') if skills_str else []  # Convert back to a list
+    skills_str = request.args.get('skills', '')  
+    skills = skills_str.split(',') if skills_str else []
     return render_template('edit_resume.html', skills=skills)
 
 if __name__ == '__main__':

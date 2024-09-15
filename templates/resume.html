@@ -40,7 +40,8 @@
 
         // When a file is selected, automatically submit the form
         fileInput.onchange = function () {
-            if (fileInput.files.length > 0) { // Check if a file is selected
+            // Check if a file is selected
+            if (fileInput.files.length > 0) { 
                 document.getElementById('uploadForm').submit();
             }
         };
