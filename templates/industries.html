@@ -1,134 +1,28 @@
+{% set total_items = industry | length %}
+{% set columns_count = 3 if total_items >= 3 else total_items %}  <!-- Set to 3 or fewer columns based on list size -->
 
 {% extends "index.html" %}
 
 {% block content %}
-
+<div class="container">
+    <h2>Choose your Industry</h2>
     <br>
-    <div class="container mt-4">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcaOM2XaTeH5vOikuxKHRQsG2PhgekdUrOQ&s');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Technology</h5>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            {% for industry in industry %}
+                {% set col_class = 12 // columns_count %}
+                <div class="col-md-{{ col_class }} col-sm-6 mb-4">
+                    <form action="/industry_details" method="POST">
+                        <input type="hidden" name="industry_id" value="{{ industry.id }}">
+                        <div class="card border-b p-3 shadow-sm bg-white rounded" style="cursor: pointer;" onclick="this.parentNode.submit();">
+                            <h4>{{ industry.title }}</h4>
+                            <img src="{{ industry.img_url }}" alt="{{ industry.title }}" class="img-fluid" style="width: 100%; height: 200px; object-fit: cover;">
                         </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8MYlim_ijBm8roz-lAl9oynaGbry7UzApPQ&s');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Healthcare</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://www.omazaki.co.id/system/uploads/2019/06/Engineering-1024x480.jpg');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Engineering</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc01U4PoycmtCsXTk3zjHm07PZ_GXGt6o74A&s');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Manufacturing</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://www.wealthandfinance-news.com/wp-content/uploads/2021/07/Finance-technology.jpg');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Finance</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://cdn.vysokeskoly.cz/czech-universities/uploads/2021/05/group-hotel-staffs-standing-kitchen.jpg');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Hospitality</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRClHpaxADrzVexKwgxpGOfmZ3sXC2iJPtGoQ&s');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Aerospace</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://agrierp.com/blog/wp-content/uploads/2024/01/why-is-agriculture-important.webp');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Agriculture</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://www.avanse.com/blogs/images/10feb-blog-2023.jpg');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Education</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjL0ipkRwt3cpLfHB0Hn7f6FafaGfSxbNphQ&s');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Energy</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://cdn.tophatch.com/media/filer_public_thumbnails/filer_public/9c/25/9c25bddc-005e-4c11-8926-9f28b1d10337/emilykeller_concepts1-colorsketches.jpg__2400.0x1760.0_q85_subsampling-2.jpg');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">Fashion</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col mb-3">
-                <a href="#">
-                    <div class="card industryCard"
-                        style="background-image: url('https://www.labourbeat.org/wp-content/uploads/2018/10/iStock-698025802.jpg');">
-                        <div class="card-body text-center industryCardBody">
-                            <h5 class="card-title">F&B</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
+                    </form>
+                </div>
+            {% endfor %}
         </div>
     </div>
-
-    <br>
-
+</div>
 {% endblock %}
