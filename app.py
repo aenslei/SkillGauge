@@ -101,11 +101,11 @@ def upload_resume():
 
     return render_template('edit_resume.html', skills=skills_found)
 
-@app.route('/EditResume')
-def Edit_resume():
-    # Get skills from the query parameter and split the string back into a list
-    skills_str = request.args.get('skills', '')  
-    skills = skills_str.split(',') if skills_str else []
+@app.route('/add_skills', methods=['POST'])
+def add_skills():
+    # Get the list of skills from the form
+    skills = request.form.getlist('skills')
+
     return render_template('edit_resume.html', skills=skills)
 
 if __name__ == '__main__':

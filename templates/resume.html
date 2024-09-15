@@ -20,15 +20,16 @@
 
     <br>
 
-    <div class="skills-container">
-        <h2>Add Skills Manually</h2>
-        <div class="skill-list">
-            <button type="button" class="btn btn-primary add-skill">+</button>
+    <form id="skillsForm" method="POST" action="/add_skills">
+        <div class="skills-container">
+            <h2>Add Skills Manually</h2>
+            <div class="skill-list">
+                <button type="button" class="btn btn-primary add-skill">+</button>
+            </div>
         </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
 </div>
 
@@ -53,6 +54,7 @@
     addSkillButton.addEventListener('click', () => {
         const skillInput = document.createElement('input');
         skillInput.type = 'text';
+        skillInput.name = 'skills';
         skillInput.className = 'form-control';
         skillInput.placeholder = 'Enter skill';
 
