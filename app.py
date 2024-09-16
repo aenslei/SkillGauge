@@ -62,16 +62,26 @@ def industry_details():
 @app.route('/job_roles')
 def Job_roles():
     # placeholder data
-    j1 = JobRole("data engineer" , ["Python programming","Data analysis","Machine learning","Web development"],90 )
+    j1 = JobRole("data engineer" , ["Python programming","Data analysis","Machine learning","Web development"],70 )
     j2 = JobRole("programmer", ["Python programming", "Debugging","Object-oriented programming","Algorithms and data structures", "Web development"], 90)
-    j3 = JobRole("cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 75)
-    j4 = JobRole("Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 45)
-    j5 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 80)
+    j3 = JobRole("cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
+    j4 = JobRole("Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
+    j5 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
     j6 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    j7 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    job_role_list = [j1,j2, j3,j4,j5,j6,j7]
+    #j7 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
+    job_role_list = [j1,j2, j3,j4,j5,j6]
+    # sort by best matching percent
+    job_role_list.sort(key=lambda x:x.match_percent, reverse=True)
 
     return render_template('job_roles.html' , job_role = job_role_list)
+
+@app.route("/job_roles/<job_title>")
+def expanded_job_roles(job_title):
+    j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1)
+
+
 
 @app.route('/resume')
 def Resume():
