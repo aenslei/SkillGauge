@@ -1,184 +1,118 @@
-import PyPDF2
+import spacy
+import json
 import re
+import pdfplumber
 
-# Step 1: Function to extract text from a PDF
-def extract_text_from_pdf(pdf_path):
-    text = ""
-    with open(pdf_path, 'rb') as file:
-        reader = PyPDF2.PdfReader(file)
-        for page in range(len(reader.pages)):
-            text += reader.pages[page].extract_text()
-    return text
+# Load SpaCy English model
+nlp = spacy.load('en_core_web_sm')
 
-# Step 2: Preprocess the resume text (lowercase, remove punctuation, etc.)
-def preprocess_text(text):
-    text = text.lower()  # Convert to lowercase
-    text = re.sub(r'\s+', ' ', text)  # Remove extra spaces
-    text = text.strip()  # Remove leading and trailing spaces
-    return text
+# Load skill synonyms from external JSON file
+def load_skill_synonyms(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
-# Step 3: Extract relevant sections based on common headings
-def extract_skills_section(text):
-    # Detect where "Skills" section starts
-    skills_pattern = re.search(r'\bskills\b', text, re.IGNORECASE)
-    if not skills_pattern:
-        return ""
+# Flatten synonym dictionary for reverse lookup
+def create_reverse_skill_map(skill_synonyms):
+    reverse_skill_map = {}
+    for skill, synonyms in skill_synonyms.items():
+        for synonym in synonyms:
+            reverse_skill_map[synonym.lower()] = skill
+        reverse_skill_map[skill.lower()] = skill  # Add canonical name itself
+    return reverse_skill_map
+
+# Extract skills using SpaCy and synonym mapping
+def extract_skills_with_synonyms(text, reverse_skill_map):
+    doc = nlp(text)
     
-    # Extract text starting from the "Skills" section
-    start_idx = skills_pattern.end()
-    remaining_text = text[start_idx:]
-    
-    # Define where the "Skills" section might end based on common headings
-    end_patterns = [r'\bkey experiences\b', r'\bexperience\b', r'\beducation\b', r'\bsummary\b', r'\bprojects\b', r'\bachievements\b']
-    end_idx = len(remaining_text)  # Default to end of text if no other sections are found
-    
-    for pattern in end_patterns:
-        match = re.search(pattern, remaining_text, re.IGNORECASE)
-        if match:
-            end_idx = match.start()
-            break
-    
-    # Extract the content of the "Skills" section only
-    skills_section = remaining_text[:end_idx]
-    
-    return skills_section.strip()
+    identified_skills = set()
 
-# Step 4: Clean up unnecessary characters from skill entries
-def clean_skill(skill):
-    # Remove brackets and dashes
-    skill = re.sub(r'[\[\](){}-]', '', skill)  # Remove brackets and dashes
-    skill = re.sub(r'\s+', ' ', skill)  # Normalize spaces
-    skill = skill.strip()  # Remove leading and trailing spaces
-    return skill
+    # Tokenize text and map skills back to their canonical form using the synonym dictionary
+    for token in doc:
+        skill_key = token.text.lower()
+        if skill_key in reverse_skill_map:
+            identified_skills.add(reverse_skill_map[skill_key])
 
-# Step 5: Extract skills as individual entries
-def extract_skills(text):
-    skills_section = extract_skills_section(text)
-    if not skills_section:
-        return []
+    return list(identified_skills)
 
-    # Splitting the skills based on common delimiters
-    skills_list = re.split(r'[•\n,;\r]+', skills_section)  # Handles bullets, newlines, commas, and semicolons
-    skills_list = [clean_skill(skill) for skill in skills_list if skill.strip()]
+# Pattern matching for additional skills (scalable to industries not in predefined list)
+def extract_skills_with_patterns(text, skill_patterns):
+    identified_skills = set()
+    for pattern in skill_patterns:
+        matches = re.findall(pattern, text, re.IGNORECASE)
+        for match in matches:
+            identified_skills.add(match.lower())
+    return list(identified_skills)
 
-    # Further split based on spaces if needed to handle compound skills
-    individual_skills = []
-    for skill in skills_list:
-        # Split by common skill delimiters
-        parts = re.split(r'\s{2,}', skill)  # Split by two or more spaces
-        individual_skills.extend([clean_skill(part) for part in parts if part.strip()])
-    
-    return individual_skills
-
-# Step 6: Display skills as a numbered list
-def display_skills(skills_list):
-    print("\nCurrent Skills List:")
-    for index, skill in enumerate(skills_list, 1):
-        print(f"{index}. {skill}")
-
-# Step 7: Manage skills interactively
+# Allow users to manage (add, modify, remove) the extracted skills
 def manage_skills(skills_list):
     while True:
-        display_skills(skills_list)
-        print("\nOptions:")
-        print("1. Add a new skill")
-        print("2. Remove a skill")
-        print("3. Modify a skill")
-        print("4. Exit")
-        
-        choice = input("Choose an option: ").strip()
-        
-        if choice == '1':
-            new_skill = input("Enter the new skill: ").strip()
-            if new_skill:
-                skills_list.append(clean_skill(new_skill))
-        
-        elif choice == '2':
-            try:
-                index = int(input("Enter the number of the skill to remove: ").strip())
-                if 1 <= index <= len(skills_list):
-                    removed_skill = skills_list.pop(index - 1)
-                    print(f"Removed skill: {removed_skill}")
-                else:
-                    print("Invalid number.")
-            except ValueError:
-                print("Please enter a valid number.")
-        
-        elif choice == '3':
-            try:
-                index = int(input("Enter the number of the skill to modify: ").strip())
-                if 1 <= index <= len(skills_list):
-                    new_skill = input("Enter the new skill: ").strip()
-                    if new_skill:
-                        old_skill = skills_list[index - 1]
-                        skills_list[index - 1] = clean_skill(new_skill)
-                        print(f"Modified skill from '{old_skill}' to '{new_skill}'")
-                else:
-                    print("Invalid number.")
-            except ValueError:
-                print("Please enter a valid number.")
-        
-        elif choice == '4':
-            break
-        
-        else:
-            print("Invalid choice. Please choose again.")
+        # Display skills with index numbers
+        print("\nCurrent Skills:")
+        for idx, skill in enumerate(skills_list):
+            print(f"{idx + 1}. {skill}")
 
+# Extract text from a PDF file
+def extract_text_from_pdf(file_path):
+    text = ''
+    with pdfplumber.open(file_path) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text()
+    return text
 
-
-def main():
-    print("Welcome to the SkillGauge!")
-    print("1. Extract skills from a resume PDF")
-    print("2. Enter skills manually")
-
-    choice = input("Choose an option: ").strip()
-
-    skills_list = []
-
-    if choice == '1':
-        # Path to the resume PDF
-        pdf_path = r'C:\Users\Devin\Desktop\Y1T1\FOP\resume.pdf'
-        
-        # Extract text from the resume PDF
-        resume_text = extract_text_from_pdf(pdf_path)
-
-        # Preprocess the text (optional, depends on how clean the extraction is)
-        processed_text = preprocess_text(resume_text)
-
-        # Extract skills from the resume
-        skills_list = extract_skills(processed_text)
-    
-    elif choice == '2':
-        print("Enter your skills separated by commas or new lines:")
-        manual_input = input().strip()
-        skills_list = [clean_skill(skill) for skill in re.split(r'[,\n]+', manual_input) if skill.strip()]
-
+# Detect industry based on keywords (optional)
+def detect_industry(text):
+    if re.search(r"\b(hospital|patient care|nursing)\b", text, re.IGNORECASE):
+        return "healthcare"
+    elif re.search(r"\b(programming|coding|development)\b", text, re.IGNORECASE):
+        return "tech"
+    elif re.search(r"\b(accounting|finance|bookkeeping)\b", text, re.IGNORECASE):
+        return "finance"
     else:
-        print("Invalid choice. Exiting program.")
-        return
+        return "general"
 
-    # Manage skills interactively
-    manage_skills(skills_list)
-
-    # Print the final skills list
-    print("\nFinal Skills List:")
-    for skill in skills_list:
-        print(skill)
-
-def RunTest(pathName):
-    # Path to the resume PDF
-    pdf_path = pathName
+def GatherSkills(pdfPath):
+    # Ask user to upload the resume file (PDF)
+    file_path = pdfPath
     
-    # Extract text from the resume PDF
-    resume_text = extract_text_from_pdf(pdf_path)
+    # Extract text from the uploaded resume
+    resume_text = extract_text_from_pdf(file_path)
 
-    # Preprocess the text (optional, depends on how clean the extraction is)
-    processed_text = preprocess_text(resume_text)
+    # Detect industry and load appropriate skill set
+    industry = detect_industry(resume_text)
 
-    # Extract skills from the resume
-    skills_list = extract_skills(processed_text)
+    print(f"\nResume text extracted successfully! industry: {industry}")
+
+    if industry == "tech":
+        skill_synonyms = load_skill_synonyms("tech_skills.json")
+    elif industry == "healthcare":
+        skill_synonyms = load_skill_synonyms("healthcare_skills.json")
+    elif industry == "finance":
+        skill_synonyms = load_skill_synonyms("finance_skills.json")
+    else:
+        skill_synonyms = load_skill_synonyms("general_skills.json")
+
+    # Create reverse skill map for synonym matching
+    reverse_skill_map = create_reverse_skill_map(skill_synonyms)
+
+    # Extract skills using synonyms
+    skills_from_synonyms = extract_skills_with_synonyms(resume_text, reverse_skill_map)
+
+    # Additional pattern matching for other skill sets
+    skill_patterns = [
+        r"\b(accounting|financial reporting|bookkeeping)\b",  # Finance skills
+        r"\b(nursing|patient care|medical assistance)\b",     # Healthcare skills
+        r"\b(project management|PM|managing projects)\b"      # General skills
+    ]
     
-    return skills_list
+    skills_from_patterns = extract_skills_with_patterns(resume_text, skill_patterns)
 
-if __name__ == "__main__":
-    main()
+    # Combine both sets of skills
+    combined_skills = set(skills_from_synonyms + skills_from_patterns)
+    print("Skills recognized from resume extractor:", list(combined_skills))
+
+    # Convert the set to a list for managing skills
+    all_skills = list(combined_skills)
+    
+    print("Final Skills:", all_skills)
+
+    return all_skills

@@ -1,0 +1,12 @@
+{
+    "Nursing": ["patient care", "nursing", "medical assistance"],
+    "Surgery Assistance": ["surgical support", "operation assistance"],
+    "Pharmacy": ["pharmaceuticals", "medication dispensing"],
+    "Medical Coding": ["ICD-10", "CPT coding", "medical coding"],
+    "Physical Therapy": ["physiotherapy", "rehabilitation"],
+    "CPR": ["cardiopulmonary resuscitation", "cpr"],
+    "Medical Imaging": ["radiology", "x-ray", "ultrasound"],
+    "Clinical Research": ["clinical trials", "research protocols"],
+    "Medical Documentation": ["electronic health records", "ehr", "documentation"],
+    "Health Informatics": ["medical informatics", "health data management"]
+}

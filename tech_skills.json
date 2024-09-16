@@ -1,0 +1,16 @@
+{
+    "HTML": ["Hypertext Markup Language", "html"],
+    "CSS": ["Cascading Style Sheets", "css"],
+    "JavaScript": ["js", "javascript"],
+    "Python": ["python", "py"],
+    "Java": ["java", "jvm"],
+    "SQL": ["Structured Query Language", "sql"],
+    "Machine Learning": ["ML", "machine learning"],
+    "C++": ["cpp", "C plus plus"],
+    "Ruby": ["ruby on rails", "ruby"],
+    "Linux": ["linux", "unix"],
+    "Git": ["git", "version control"],
+    "AWS": ["Amazon Web Services", "aws", "cloud services"],
+    "Docker": ["docker", "containerization"],
+    "Kubernetes": ["k8s", "kubernetes"]
+}
