@@ -1,0 +1,57 @@
+{% extends "index.html" %}
+
+{% block title %} Edit Skills {% endblock %}
+
+{% block content %}
+
+<h2>Edit Your Skills</h2>
+
+<form method="POST" action="/update_skills">
+    <div class="skill-list">
+        {% for skill in skills %}
+        <div class="skill-item">
+            <input type="text" name="skills" value="{{ skill }}" class="form-control" />
+            <button type="button" class="btn btn-danger remove-skill">X</button>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-skill" class="btn btn-primary">Add Skill</button>
+    <button type="submit" class="btn btn-primary">Find Job Now</button>
+</form>
+
+<script>
+    //remove skills
+    document.querySelectorAll('.remove-skill').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const skillItem = event.target.closest('.skill-item');
+            skillItem.remove();
+        });
+    });
+
+    //add new skills
+    document.getElementById('add-skill').addEventListener('click', () => {
+        const skillList = document.querySelector('.skill-list');
+
+        const skillItem = document.createElement('div');
+        skillItem.classList.add('skill-item');
+
+        const skillInput = document.createElement('input');
+        skillInput.type = 'text';
+        skillInput.name = 'skills';
+        skillInput.className = 'form-control';
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'btn btn-danger remove-skill';
+        removeButton.textContent = 'X';
+
+        removeButton.addEventListener('click', () => {
+            skillItem.remove();
+        });
+
+        skillItem.appendChild(skillInput);
+        skillItem.appendChild(removeButton);
+        skillList.appendChild(skillItem);
+    });
+</script>
+{% endblock %}
