@@ -1,23 +1,24 @@
 {% set total_items = industry | length %}
-{% set columns_count = 3 if total_items >= 3 else total_items %}  <!-- Set to 3 or fewer columns based on list size -->
+{% set columns_count = (3 if total_items >= 3 else (total_items if total_items > 0 else 1)) %}<!-- Set to 3 or fewer columns based on list size -->
 
 {% extends "index.html" %}
 
 {% block content %}
 <div class="container">
-    <h2>Choose your Industry</h2>
+
+    <h2>Industries</h2>
     <br>
 
     <div class="container-fluid">
         <div class="row justify-content-center">
-            {% for industry in industry %}
+            {% for industry, count in industry_distribution.items() %}
                 {% set col_class = 12 // columns_count %}
-                <div class="col-md-{{ col_class }} col-sm-6 mb-4">
+                <div class="col-md-4 col-sm-12 mb-4">
                     <form action="/industry_details" method="POST">
-                        <input type="hidden" name="industry_id" value="{{ industry.id }}">
+                        <input type="hidden" name="industry_name" value="{{ industry }}">
                         <div class="card border-b p-3 shadow-sm bg-white rounded" style="cursor: pointer;" onclick="this.parentNode.submit();">
-                            <h4>{{ industry.title }}</h4>
-                            <img src="{{ industry.img_url }}" alt="{{ industry.title }}" class="img-fluid" style="width: 100%; height: 200px; object-fit: cover;">
+                            <h4>{{ industry }}</h4>
+                            <!-- <img src="{{ industry.img_url }}" alt="{{ industry.title }}" class="img-fluid" style="width: 100%; height: 200px; object-fit: cover;"> -->
                         </div>
                     </form>
                 </div>
@@ -25,4 +26,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
