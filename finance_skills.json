@@ -1,0 +1,12 @@
+{
+    "Accounting": ["financial reporting", "bookkeeping", "accounting"],
+    "Auditing": ["financial audits", "internal auditing", "external auditing"],
+    "Taxation": ["tax planning", "tax compliance", "tax preparation"],
+    "Financial Analysis": ["investment analysis", "portfolio management", "risk analysis"],
+    "Excel": ["microsoft excel", "spreadsheet management", "financial modeling"],
+    "Budgeting": ["budget planning", "cost control", "financial forecasting"],
+    "Payroll Management": ["salary management", "payroll processing"],
+    "Compliance": ["regulatory compliance", "financial regulations", "SOX compliance"],
+    "QuickBooks": ["quickbooks", "accounting software"],
+    "Financial Statements": ["balance sheets", "income statements", "cash flow"]
+}

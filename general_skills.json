@@ -1,0 +1,12 @@
+{
+    "Communication": ["verbal communication", "written communication"],
+    "Leadership": ["team leadership", "management", "supervising"],
+    "Problem Solving": ["critical thinking", "troubleshooting", "analytical skills"],
+    "Project Management": ["project planning", "timeline management", "task coordination"],
+    "Collaboration": ["teamwork", "cross-functional collaboration", "partnerships"],
+    "Adaptability": ["flexibility", "adaptability", "quick learner"],
+    "Time Management": ["deadline management", "time prioritization", "multitasking"],
+    "Customer Service": ["client relations", "customer support", "service management"],
+    "Attention to Detail": ["meticulous", "accuracy", "thoroughness"],
+    "Creativity": ["creative thinking", "innovation", "problem solving"]
+}

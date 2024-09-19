@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 
-{% block title %} Job Roles {% endblock %}
+{% block title %} Add Skills {% endblock %}
 
 {% block content %}
 
@@ -20,25 +20,25 @@
 
     <br>
 
-    <div class="skills-container">
-        <h2>Add Skills Manually</h2>
-        <div class="skill-list">
-            <button type="button" class="btn btn-primary add-skill">+</button>
+    <form id="skillsForm" method="POST" action="/add_skills">
+        <div class="skills-container">
+            <h2>Add Skills Manually</h2>
+            <div class="skill-list">
+                <button type="button" class="btn btn-primary add-skill">+</button>
+            </div>
         </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
 </div>
 
 <script>
     function UploadResume() {
-        // Trigger the hidden file input
         const fileInput = document.getElementById('resumeInput');
         fileInput.click();
 
-        // When a file is selected, automatically submit the form
+        // When a file is selected, automatically upload the file
         fileInput.onchange = function () {
             // Check if a file is selected
             if (fileInput.files.length > 0) { 
@@ -53,6 +53,7 @@
     addSkillButton.addEventListener('click', () => {
         const skillInput = document.createElement('input');
         skillInput.type = 'text';
+        skillInput.name = 'skills';
         skillInput.className = 'form-control';
         skillInput.placeholder = 'Enter skill';
 

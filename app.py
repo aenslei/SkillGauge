@@ -96,28 +96,37 @@ def industry_details():
 
     # print(f"Received industry: {industry_name}")
 
+
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
 
     return render_template('industry_details.html',  industry=industry, other_industries=other_industries)
    
 
-    
+
 
 @app.route('/job_roles')
 def Job_roles():
     # placeholder data
-    j1 = JobRole("data engineer" , ["Python programming","Data analysis","Machine learning","Web development"],90 )
+    j1 = JobRole("data engineer" , ["Python programming","Data analysis","Machine learning","Web development"],70 )
     j2 = JobRole("programmer", ["Python programming", "Debugging","Object-oriented programming","Algorithms and data structures", "Web development"], 90)
-    j3 = JobRole("cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 75)
-    j4 = JobRole("Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 45)
-    j5 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 80)
+    j3 = JobRole("cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
+    j4 = JobRole("Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
+    j5 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
     j6 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    j7 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    job_role_list = [j1,j2, j3,j4,j5,j6,j7]
-
-
+    #j7 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
+    job_role_list = [j1,j2, j3,j4,j5,j6]
+    # sort by best matching percent
+    job_role_list.sort(key=lambda x:x.match_percent, reverse=True)
 
     return render_template('job_roles.html' , job_role = job_role_list)
+
+@app.route("/job_roles/<job_title>")
+def expanded_job_roles(job_title):
+    j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1)
+
+
 
 @app.route('/resume')
 def Resume():
@@ -138,16 +147,25 @@ def upload_resume():
     file.save(pdf_path)
     
     #get skills 
-    skills_found = resume_skills_extractor.RunTest(pdf_path)
+    skills_found = resume_skills_extractor.GatherSkills(pdf_path)
 
     return render_template('edit_resume.html', skills=skills_found)
 
-@app.route('/EditResume')
-def Edit_resume():
-    # Get skills from the query parameter and split the string back into a list
-    skills_str = request.args.get('skills', '')  
-    skills = skills_str.split(',') if skills_str else []
+@app.route('/add_skills', methods=['POST'])
+def add_skills():
+    # Get the list of skills from the form
+    skills = request.form.getlist('skills')
     return render_template('edit_resume.html', skills=skills)
+
+@app.route('/update_skills', methods=['POST'])
+def update_skills():
+    updated_skills = request.form.getlist('skills')
+    #remove all resumes once skills is submitted
+    for filename in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+    return redirect(url_for('Job_roles', skills=updated_skills))
 
 if __name__ == '__main__':
     app.run(debug=True)
