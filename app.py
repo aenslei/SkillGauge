@@ -12,7 +12,7 @@ UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Path to dataset
-file_path = r'C:\Users\sabih\Desktop\SIT Year 1\Programming Fundamentals\Python Project\sample website\Data\Cleaned_Jobs_Dataset(FInal).csv'
+file_path = r'Datasets\\Cleaned_Jobs_Dataset(FInal).csv'
 
 
 
