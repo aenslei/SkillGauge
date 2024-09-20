@@ -28,6 +28,14 @@ data['Predicted Industry'] = kmeans.labels_
 # Group jobs by predicted clusters (Predicted Industry)
 grouped_jobs = data.groupby('Predicted Industry')['Job Title'].apply(list)
 
+# Save the clusters and jobs within each cluster to a text file
+with open('Datasets/clustered_jobs.txt', 'w') as f:
+    for cluster, jobs in grouped_jobs.items():
+        f.write(f"Cluster {cluster}:\n")
+        for job in jobs:
+            f.write(f"- {job}\n")
+        f.write("\n")
+
 # Print the jobs grouped by clusters to inspect
 for cluster, jobs in grouped_jobs.items():
     print(f"Cluster {cluster}:")
