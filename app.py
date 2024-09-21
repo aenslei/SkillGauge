@@ -3,8 +3,11 @@ from Analysis_Visualisation import load_data, analyse_industry_distribution
 
 import os
 import resume_skills_extractor
+
 import pandas as pd
 import course_url_crawler
+from data_analysis import industry_job_trend
+
 
 app = Flask(__name__)
 
@@ -28,7 +31,8 @@ class Industry:
         return self.title
 
 class JobRole:
-    def __init__(self, title , skill , match_percent):
+    def __init__(self, id, title , skill , match_percent):
+        self.id = id
         self.title = title
         self.skill = skill
         self.match_percent = match_percent
@@ -86,19 +90,32 @@ def industry_details():
 
     # print(f"Received industry: {industry_name}")
 
-    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
 
-    return render_template('industry_details.html',  industry=industry, other_industries=other_industries)
+    #industry_data_path = "data/V1 group"+ industry_id +".csv"
+    """ once data is in can uncomment
+    with open("data/V1 group0.csv") as datafile:
+        df = pd.read_csv(datafile, index_col=False)
+
+    job_trend_code = industry_job_trend(df)
+
+    """
+    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
+    
+    
+    return render_template('industry_details.html', industry_id=industry_id, industry=industry, other_industries=other_industries, job_trend_fig = None)
+
+
+
 
 @app.route('/job_roles')
 def Job_roles():
     # placeholder data
-    j1 = JobRole("data engineer" , ["Python programming","Data analysis","Machine learning","Web development"],70 )
-    j2 = JobRole("programmer", ["Python programming", "Debugging","Object-oriented programming","Algorithms and data structures", "Web development"], 90)
-    j3 = JobRole("cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
-    j4 = JobRole("Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
-    j5 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
-    j6 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
+    j1 = JobRole(1,"data engineer" , ["Python programming","Data analysis","Machine learning","Web development"],70 )
+    j2 = JobRole(2,"programmer", ["Python programming", "Debugging","Object-oriented programming","Algorithms and data structures", "Web development"], 90)
+    j3 = JobRole(3,"cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
+    j4 = JobRole(4,"Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
+    j5 = JobRole(5,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
+    j6 = JobRole(6,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
     #j7 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
     job_role_list = [j1,j2, j3,j4,j5,j6]
     # sort by best matching percent
