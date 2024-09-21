@@ -80,12 +80,12 @@ data = pd.read_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv')
 data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 
 # Apply the broader category mapping
-data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
+data['Industry Name'] = data['Cluster Name'].map(broader_categories_mapping)
 
 # Save the new dataset with the cluster names and broader categories
 data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False)
 
-print("Cluster names and broader categories added and saved successfully!")
+print("Cluster names and Industry Name added and saved successfully!")
 
 # Load the CSV file
 csv_file_path = 'Datasets/sg_job_data-Cleaned-With Industry1.csv'
@@ -309,7 +309,7 @@ broader_categories_mapping = {
 data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 
 # Apply the broader category mapping
-data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
+data['Industry Name'] = data['Cluster Name'].map(broader_categories_mapping)
 
 
 
@@ -399,17 +399,20 @@ data['Tokenized Skills'] = data['skills'].apply(tokenize_and_find_combined_skill
 all_skills = [skill for skills_list in data['Tokenized Skills'] for skill in skills_list]
 
 # Save the skills to a text file
-skills_text_file_path = 'all_skills.txt'  # Update this to your desired output path
-with open(skills_text_file_path, 'w') as f:
-    for skill in all_skills:
-        f.write(f"{skill}\n")
+# skills_text_file_path = 'all_skills.txt'  # Update this to your desired output path
+# with open(skills_text_file_path, 'w') as f:
+#     for skill in all_skills:
+#         f.write(f"{skill}\n")
 
 # Check the output of tokenized skills
 print(data['Tokenized Skills'].head())
 
-# Step 4: Drop the 'Abbreviations' column
+# Drop the 'Abbreviations' column
 if 'Abbreviations' in data.columns:
     data.drop(columns=['Abbreviations'], inplace=True)
+
+if 'Broader Category' in data.columns:
+    data.drop(columns=['Broader Category'], inplace=True)
     
 if 'Tokenized Skills' in data.columns:
     data['skills'] = data['Tokenized Skills']
