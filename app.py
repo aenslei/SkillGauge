@@ -1,17 +1,34 @@
 from flask import Flask, render_template, request, redirect, url_for
+from Analysis_Visualisation import load_data, analyse_industry_distribution
+
 import os
 import resume_skills_extractor
-from data_analysis import industry_job_trend
+
 import pandas as pd
+import course_url_crawler
+from data_analysis import industry_job_trend
+
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Path to dataset
+file_path = r'Datasets\\Cleaned_Jobs_Dataset(FInal).csv'
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+class Industry:
+    def __init__(self,title):
+        self.title = title
+
+    def __repr__(self):
+        return f"Industry(title='{self.title}')"
+
+    def __str__(self):
+        return self.title
 
 class JobRole:
     def __init__(self, id, title , skill , match_percent):
@@ -21,41 +38,58 @@ class JobRole:
         self.match_percent = match_percent
 
 
-class Industry:
-    def __init__(self, id, title , img_url):
-        self.id = id
-        self.title = title
-        self.img_url = img_url
 @app.route('/')
 def Home():
+    data = load_data(file_path)  # Load the data
+
     return render_template('home.html')
 
-
-# makes industry_list global to be accessed by industries.html and industry_details. html
-id1 = Industry(1, "Technology", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIcaOM2XaTeH5vOikuxKHRQsG2PhgekdUrOQ&s')
-id2 = Industry(2, "Healthcare", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8MYlim_ijBm8roz-lAl9oynaGbry7UzApPQ&s')
-id3 = Industry(3, "Engineering", 'https://www.omazaki.co.id/system/uploads/2019/06/Engineering-1024x480.jpg')
-id4 = Industry(4, "Manufacturing", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc01U4PoycmtCsXTk3zjHm07PZ_GXGt6o74A&s')
-id5 = Industry(5, "Finance", 'https://www.wealthandfinance-news.com/wp-content/uploads/2021/07/Finance-technology.jpg')
-id6 = Industry(6, "Hospitality", 'https://cdn.vysokeskoly.cz/czech-universities/uploads/2021/05/group-hotel-staffs-standing-kitchen.jpg')
-industry_list = [id1, id2, id3, id4, id5, id6]
-
+industry_list = []
 @app.route('/industries')
-def Industries():                   
-    return render_template('industries.html', industry=industry_list)
+def Industries():    
+    #load csv file:
+    data = load_data(file_path)
+    industry_list.clear()
 
+    # Count occurrences of each industry
+    industry_counts = data['Industry Name'].value_counts().reset_index()
+    industry_counts.columns = ['Industry Name', 'count']  # Rename columns to 'Industry' and 'count'
+
+    # Get all industries (sorted alphabetically)
+    all_industries = industry_counts.sort_values(by='Industry Name').reset_index(drop=True)
+
+    # Analyze the industry distribution
+    industry_distribution, total_jobs = analyse_industry_distribution(data)
+
+    # Create industry list to pass to the template
+    industry_list.clear()
+    for idx, row in all_industries.iterrows():
+        industry = Industry(title=row['Industry Name'])
+        industry_list.append(industry)
+
+    return render_template('industries.html', all_industries=industry_list, total_jobs=total_jobs, 
+                           industry_distribution=industry_distribution)
+
+def load_data(file_path):
+    data = pd.read_csv(file_path)
+    return data
+
+def analyse_industry_distribution(data):
+    industry_distribution = data['Industry Name'].value_counts()
+    total_jobs = len(data)
+
+    return industry_distribution, total_jobs
 
 # POST request
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
-    industry_id = request.form.get('industry_id')
-    industry = next((ind for ind in industry_list if ind.id == int(industry_id)), None)
+    industry_name = request.form.get('industry_name')
+    print(f"Received industry_name: {industry_name}")
 
-    if industry is None:
-        return "Industry not found", 404
+    industry = next((ind for ind in industry_list if ind.title == industry_name), None)
 
-    print(f"Received industry_id: {industry_id}")
-    print(f"Received industry.title: {industry.title}")
+    # print(f"Received industry: {industry_name}")
+
 
     #industry_data_path = "data/V1 group"+ industry_id +".csv"
     """ once data is in can uncomment
@@ -65,10 +99,13 @@ def industry_details():
     job_trend_code = industry_job_trend(df)
 
     """
-    other_industries = [ind for ind in industry_list if ind.id != industry.id][:5]  # Limit to 5 buttons
+    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
     
     
     return render_template('industry_details.html', industry_id=industry_id, industry=industry, other_industries=other_industries, job_trend_fig = None)
+
+
+
 
 @app.route('/job_roles')
 def Job_roles():
@@ -90,9 +127,10 @@ def Job_roles():
 def expanded_job_roles(job_title):
     j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
 
-    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1)
+    skillsLacking = ['java', 'UI', 'python programming']
+    urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses)
 
 @app.route('/resume')
 def Resume():
@@ -113,7 +151,7 @@ def upload_resume():
     file.save(pdf_path)
     
     #get skills 
-    skills_found = resume_skills_extractor.GatherSkills(pdf_path)
+    skills_found = resume_skills_extractor.GatherSkills(pdf_path,"tech")
 
     return render_template('edit_resume.html', skills=skills_found)
 
