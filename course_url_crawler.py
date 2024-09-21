@@ -20,16 +20,12 @@ def search_courses(search_terms):
             courses = data['elements']
             if courses:
                 # Limit to the top 3 courses
-                for idx, course in enumerate(courses[:3], 1):
-                    course_info = f"{course['name']} - https://www.coursera.org/learn/{course['slug']}"
-                    all_courses.append(course_info)
+                for course in courses[:3]:
+                    # Append a dictionary with course name and url
+                    all_courses.append({
+                        "name": course['name'],
+                        "url": f"https://www.coursera.org/learn/{course['slug']}"
+                    })
             else:
                 continue
-
-    # Print all collected courses
-    for course in all_courses:
-        print(course)
-    
-if __name__ == '__main__':
-    search_terms = ['java', 'UI', 'python programming']
-    search_courses(search_terms)
+    return all_courses
