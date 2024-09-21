@@ -1,4 +1,4 @@
-
+import re
 import pandas as pd
 
 
@@ -312,7 +312,115 @@ data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
 
 
-# Save the changes back to the same file
+
+# Step 1: Load abbreviations from the text file
+with open('unique_abbreviations.txt', 'r') as f:
+    abbreviations = [line.strip() for line in f.readlines()]
+
+# Add the list of abbreviations that should be kept together
+preserve_abbreviations = ['XML', 'LEED', 'HTML', 'CSS', 'AJAX', 'UI UX', 'CI,', 'ETL', 'GIS', 'ROI', 'ISO9001' 'CD', 'CAD Software', 'SQL', 'API', 'SEO', 'SEM', 'QC', 'OS', 'CAD', 'CAM']
+
+# Step 2: List of skills you want to token together (including multi-word abbreviations)
+skills_to_token_together = [
+    ['Java', 'Script'],
+    ['Mongo', 'D B'],
+    ['S Q', 'L', 'Server'],
+    ['My', 'S Q', 'L Oracle'],
+    ['S E', 'O'],
+    ['S E', 'M'],
+    ['U X design', '3', 'D modeling'],
+    ['I S', 'O 9001'],
+    ['L E', 'E D certification'],
+    ['Auto', 'C A', 'D Aerodynamics'],
+    ['Power', 'B I'],
+    ['Metrics and', 'K P', 'Is'],
+    ['A P', 'I knowledge'],
+    ['X M', 'L sitemaps'],
+    ['I E', 'Ps'],
+    ['C A', 'D software'],
+    ['Auto', 'C A', 'D Aerodynamics']
+]
+
+# Convert the list to a dictionary to map the tokens to their merged version
+skills_dict = {" ".join(key): " ".join(key) for key in skills_to_token_together}
+
+
+# Step 3: Define the tokenization function with abbreviations and merging logic
+def tokenize_and_find_combined_skills(skills_str):
+    if pd.isna(skills_str):  # Handle missing skills
+        return []
+    
+    # Replace different delimiters (commas, semicolons) with a uniform delimiter (comma)
+    skills_str = skills_str.replace(';', ',').replace('/', ',')
+    
+    # Split the string by commas
+    tokens = skills_str.split(',')
+
+    # Preserve abbreviations and multi-word combinations
+    refined_tokens = []
+    for token in tokens:
+        token = token.strip()
+        
+        # Check if the token is in the list of abbreviations to preserve
+        if token in preserve_abbreviations or token in abbreviations:
+            refined_tokens.append(token)
+        else:
+            # Split by capital letters and rejoin with spaces for phrases like 'ArchitecturalDesign'
+            refined_tokens.extend(re.findall(r'[A-Z][^A-Z]*', token))
+    
+    # Handle cases where single letters need to be merged with the next token
+    merged_tokens = []
+    i = 0
+    while i < len(refined_tokens):
+        # Check for combinations of two or three tokens in the dictionary
+        token_combination_two = " ".join(refined_tokens[i:i + 2])
+        token_combination_three = " ".join(refined_tokens[i:i + 3])
+        
+        if token_combination_three in skills_dict:
+            merged_tokens.append(skills_dict[token_combination_three])
+            i += 3  # Skip the next two tokens as they are already merged
+        elif token_combination_two in skills_dict:
+            merged_tokens.append(skills_dict[token_combination_two])
+            i += 2  # Skip the next token as it is already merged
+        else:
+            merged_tokens.append(refined_tokens[i])
+            i += 1  # Move to the next token
+
+    # Strip extra spaces and return the final list of skills
+    return [skill.strip() for skill in merged_tokens if skill.strip()]
+
+
+
+
+# Apply the tokenization to each row of the "skills" column
+data['Tokenized Skills'] = data['skills'].apply(tokenize_and_find_combined_skills)
+
+# Collect all the tokenized skills into a single list
+all_skills = [skill for skills_list in data['Tokenized Skills'] for skill in skills_list]
+
+# Save the skills to a text file
+skills_text_file_path = 'all_skills.txt'  # Update this to your desired output path
+with open(skills_text_file_path, 'w') as f:
+    for skill in all_skills:
+        f.write(f"{skill}\n")
+
+# Check the output of tokenized skills
+print(data['Tokenized Skills'].head())
+
+# Step 4: Drop the 'Abbreviations' column
+if 'Abbreviations' in data.columns:
+    data.drop(columns=['Abbreviations'], inplace=True)
+    
+if 'Tokenized Skills' in data.columns:
+    data['skills'] = data['Tokenized Skills']
+    data.drop(columns=['Tokenized Skills'], inplace=True)
+
+
+# Step 5: Save the changes back to the same file
 data.to_csv(csv_file_path, index=False)
+# Save the changes back to the same file
+
+
+
 
 
