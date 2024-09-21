@@ -1,12 +1,212 @@
 {
-    "Nursing": ["patient care", "nursing", "medical assistance"],
-    "Surgery Assistance": ["surgical support", "operation assistance"],
-    "Pharmacy": ["pharmaceuticals", "medication dispensing"],
-    "Medical Coding": ["ICD-10", "CPT coding", "medical coding"],
-    "Physical Therapy": ["physiotherapy", "rehabilitation"],
-    "CPR": ["cardiopulmonary resuscitation", "cpr"],
-    "Medical Imaging": ["radiology", "x-ray", "ultrasound"],
-    "Clinical Research": ["clinical trials", "research protocols"],
-    "Medical Documentation": ["electronic health records", "ehr", "documentation"],
-    "Health Informatics": ["medical informatics", "health data management"]
+    "Nursing": [
+        "patient care",
+        "nursing",
+        "medical assistance",
+        "patient assessment",
+        "wound care",
+        "health education",
+        "emergency care",
+        "infection control",
+        "patient advocacy",
+        "clinical judgment",
+        "pain management",
+        "pediatric nursing",
+        "geriatric nursing",
+        "critical care nursing",
+        "community health nursing",
+        "mental health nursing"
+    ],
+    "Surgery Assistance": [
+        "surgical support",
+        "operation assistance",
+        "instrument handling",
+        "aseptic technique",
+        "surgical scrub",
+        "anesthesia support",
+        "post-operative care",
+        "patient monitoring",
+        "sterilization procedures",
+        "surgical equipment management"
+    ],
+    "Pharmacy": [
+        "pharmaceuticals",
+        "medication dispensing",
+        "patient counseling",
+        "drug interactions",
+        "pharmacology",
+        "compounding medications",
+        "medication therapy management",
+        "inventory management",
+        "regulatory compliance",
+        "clinical pharmacy"
+    ],
+    "Medical Coding": [
+        "ICD-10",
+        "CPT coding",
+        "medical coding",
+        "billing processes",
+        "coding guidelines",
+        "healthcare compliance",
+        "documentation standards",
+        "claims processing",
+        "revenue cycle management"
+    ],
+    "Physical Therapy": [
+        "physiotherapy",
+        "rehabilitation",
+        "manual therapy",
+        "exercise prescription",
+        "mobility training",
+        "patient assessment",
+        "pain management techniques",
+        "assistive devices",
+        "sports rehabilitation",
+        "pediatric physical therapy"
+    ],
+    "CPR": [
+        "cardiopulmonary resuscitation",
+        "first aid",
+        "basic life support (BLS)",
+        "advanced cardiac life support (ACLS)",
+        "emergency response",
+        "patient resuscitation",
+        "automated external defibrillator (AED) use"
+    ],
+    "Medical Imaging": [
+        "radiology",
+        "x-ray",
+        "ultrasound",
+        "CT scanning",
+        "MRI scanning",
+        "image interpretation",
+        "patient preparation",
+        "radiation safety",
+        "nuclear medicine",
+        "interventional radiology"
+    ],
+    "Clinical Research": [
+        "clinical trials",
+        "research protocols",
+        "data collection",
+        "informed consent",
+        "biostatistics",
+        "patient recruitment",
+        "regulatory compliance",
+        "ethical considerations",
+        "data management",
+        "scientific writing"
+    ],
+    "Medical Documentation": [
+        "electronic health records",
+        "EHR",
+        "documentation",
+        "patient history",
+        "progress notes",
+        "treatment plans",
+        "coding compliance",
+        "clinical documentation improvement"
+    ],
+    "Health Informatics": [
+        "medical informatics",
+        "health data management",
+        "data analysis",
+        "health information systems",
+        "telehealth",
+        "patient engagement",
+        "health IT implementation",
+        "data privacy",
+        "interoperability",
+        "healthcare analytics"
+    ],
+    "Public Health": [
+        "epidemiology",
+        "health promotion",
+        "community health assessments",
+        "disease prevention",
+        "public health policies",
+        "environmental health",
+        "health education",
+        "behavioral health",
+        "outbreak response",
+        "population health management"
+    ],
+    "Emergency Medical Services (EMS)": [
+        "emergency response",
+        "patient triage",
+        "pre-hospital care",
+        "paramedic skills",
+        "medical transportation",
+        "disaster response",
+        "trauma care",
+        "scene management"
+    ],
+    "Nutrition": [
+        "dietary assessment",
+        "nutrition counseling",
+        "meal planning",
+        "health education",
+        "nutrition management",
+        "clinical nutrition",
+        "food safety"
+    ],
+    "Occupational Therapy": [
+        "therapeutic activities",
+        "patient assessments",
+        "adaptive equipment",
+        "functional independence",
+        "client-centered approach",
+        "activity of daily living (ADL) training"
+    ],
+    "Laboratory Skills": [
+        "specimen collection",
+        "laboratory analysis",
+        "quality control",
+        "clinical testing",
+        "laboratory safety",
+        "pathology",
+        "blood banking"
+    ],
+    "Geriatrics": [
+        "elder care",
+        "geriatric assessment",
+        "chronic disease management",
+        "palliative care",
+        "dementia care",
+        "end-of-life care",
+        "geriatric syndromes management"
+    ],
+    "Mental Health": [
+        "psychological assessment",
+        "counseling techniques",
+        "crisis intervention",
+        "mental health awareness",
+        "supportive therapy",
+        "group therapy",
+        "cognitive-behavioral therapy (CBT)"
+    ],
+    "Radiation Therapy": [
+        "radiation oncology",
+        "patient positioning",
+        "treatment planning",
+        "dosimetry",
+        "patient education",
+        "radiation safety protocols"
+    ],
+    "Dental Care": [
+        "oral hygiene",
+        "patient education",
+        "dentistry procedures",
+        "dental radiography",
+        "patient management",
+        "dental anesthesia"
+    ],
+    "Health Policy": [
+        "healthcare regulations",
+        "policy analysis",
+        "healthcare financing",
+        "advocacy",
+        "healthcare reform",
+        "quality improvement"
+    ]
 }

@@ -24,6 +24,7 @@
     <p class="lead">Job Titles in {{ industry }} Industry</p>
     <hr class="my-4">
 
+
     <!-- Display the interactive word cloud -->
     <div>
         {{ wordcloud_html|safe }}  <!-- This embeds the Plotly word cloud -->
@@ -38,6 +39,14 @@
     <p id="job-title"></p>
     <p id="avg-salary"></p>
     <p id="qualifications"></p>
+
+    <div>
+        {{ job_trend_fig | safe }}
+
+    </div>
+
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+
 </div>
 
 
