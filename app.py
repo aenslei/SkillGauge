@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-from Analysis_Visualisation import load_data, analyse_industry_distribution, get_job_titles_by_industry, create_interactive_wordcloud
+from flask import Flask, render_template, request, redirect, url_for
+from Analysis_Visualisation import load_data, analyse_industry_distribution
 
 import os
 import resume_skills_extractor
@@ -9,14 +9,13 @@ import course_url_crawler
 from data_analysis import industry_job_trend
 
 
-
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Path to dataset
-file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
+file_path = r'Datasets\\Cleaned_Jobs_Dataset(FInal).csv'
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -87,15 +86,9 @@ def industry_details():
     industry_name = request.form.get('industry_name')
     print(f"Received industry_name: {industry_name}")
 
-    data = load_data(file_path)
-
-    # Get unique job titles for the selected industry using the function
-    job_titles = get_job_titles_by_industry(industry_name, data)
-
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
 
-    # Create interactive WordCloud using Plotly
-    wordcloud_html = create_interactive_wordcloud(job_titles)
+    # print(f"Received industry: {industry_name}")
 
 
     #industry_data_path = "data/V1 group"+ industry_id +".csv"
@@ -109,27 +102,9 @@ def industry_details():
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
     
     
-    return render_template('industry_details.html', industry_id=industry_id, industry=industry, other_industries=other_industries, job_trend_fig = None,wordcloud_html=wordcloud_html)
+    return render_template('industry_details.html', industry_id=industry_id, industry=industry, other_industries=other_industries, job_trend_fig = None)
 
 
-
-@app.route('/job_analysis', methods=['POST'])
-def job_analysis():
-    job_title = request.json.get('job_title')
-    
-    # Perform analysis based on job_title (e.g., average salary, qualifications, etc.)
-    data = load_data(file_path)
-    job_data = data[data['Job Title'] == job_title]
-    
-    avg_salary = job_data['Average Salary (K)'].mean()
-    qualifications = list(job_data['Qualifications'].unique())
-    
-    # Return the job analysis data as JSON
-    return jsonify({
-        'job_title': job_title,
-        'avg_salary': avg_salary,
-        'qualifications': qualifications
-    })
 
 
 @app.route('/job_roles')

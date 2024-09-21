@@ -18,89 +18,30 @@
     {% endfor %}
 </div>
 
-<!-- Word Cloud for the Selected Industry -->
-<div style="height: fit-content;">
-    <h1 class="display-1">{{ industry }}</h1>
-    <p class="lead">Job Titles in {{ industry }} Industry</p>
-    <hr class="my-4">
-
-
-    <!-- Display the interactive word cloud -->
-    <div>
-        {{ wordcloud_html|safe }}  <!-- This embeds the Plotly word cloud -->
-    </div>
-
-    <p>Click on a job title for further analysis.</p>
+<div class="container mt-4">   
+    <p>More information about the {{ industry }} industry.</p>
 </div>
 
-<!-- Job Analysis Container (to be dynamically updated) -->
-<div id="job-analysis-container" style="margin-top: 20px;">
-    <h2>Job Analysis</h2>
-    <p id="job-title"></p>
-    <p id="avg-salary"></p>
-    <p id="qualifications"></p>
 
+<!-- Data Visualisation -->
+<div class="jumbotron" style="height: fit-content;">
+    <h1 class="display-1">{{ industry }}</h1>
+    <p class="lead">This is the dashboard.</p>
+    <hr class="my-4">
     <div>
         {{ job_trend_fig | safe }}
 
     </div>
 
     <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-
 </div>
 
-
-<!-- JavaScript to handle click events on words in the word cloud -->
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script type="text/javascript">
-    var wordcloudContainer = document.getElementById('wordcloud-container');
-    
-    // Event listener for clicking on words in the word cloud
-    wordcloudContainer.on('plotly_click', function(data){
-        var job_title = data.points[0].text;  // Get the clicked job title
-        console.log(job_title);  // Debugging
-
-        // Make an AJAX request to get job analysis for the clicked job title
-        fetch('/job_analysis', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                job_title: job_title
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Update the job analysis section with the new data
-            document.getElementById('job-title').innerText = "Job Title: " + data.job_title;
-            document.getElementById('avg-salary').innerText = "Average Salary: " + data.avg_salary + " K";
-            document.getElementById('qualifications').innerText = "Qualifications: " + data.qualifications.join(", ");
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-</script>
+<!-- ---------------- -->
 
 <style>
-    /* This style ensures the word cloud takes full width and height of the available space */
-    .word-cloud-container {
-        width: 100vw;  /* 100% of the viewport width */
-        height: 100vh; /* 100% of the viewport height */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
 
-    img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
+    
 </style>
-
 
 {% endblock %}
 
