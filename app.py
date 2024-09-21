@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from Analysis_Visualisation import load_data, analyse_industry_distribution
 
 import os
-import resume_skills_extractor
+# import resume_skills_extractor
 
 import pandas as pd
 import course_url_crawler
@@ -102,7 +102,7 @@ def industry_details():
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
     
     
-    return render_template('industry_details.html', industry_id=industry_id, industry=industry, other_industries=other_industries, job_trend_fig = None)
+    return render_template('industry_details.html',  industry=industry, other_industries=other_industries, job_trend_fig = None)
 
 
 
