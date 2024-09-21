@@ -4,7 +4,7 @@ from Analysis_Visualisation import load_data, analyse_industry_distribution
 import os
 import resume_skills_extractor
 import pandas as pd
-
+import course_url_crawler
 
 app = Flask(__name__)
 
@@ -13,8 +13,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Path to dataset
 file_path = r'Datasets\\Cleaned_Jobs_Dataset(FInal).csv'
-
-
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -29,7 +27,6 @@ class Industry:
     def __str__(self):
         return self.title
 
-
 class JobRole:
     def __init__(self, title , skill , match_percent):
         self.title = title
@@ -43,7 +40,6 @@ def Home():
 
     return render_template('home.html')
 
-
 industry_list = []
 @app.route('/industries')
 def Industries():    
@@ -55,10 +51,9 @@ def Industries():
     industry_counts = data['Industry Name'].value_counts().reset_index()
     industry_counts.columns = ['Industry Name', 'count']  # Rename columns to 'Industry' and 'count'
 
-
     # Get all industries (sorted alphabetically)
     all_industries = industry_counts.sort_values(by='Industry Name').reset_index(drop=True)
-   
+
     # Analyze the industry distribution
     industry_distribution, total_jobs = analyse_industry_distribution(data)
 
@@ -67,17 +62,13 @@ def Industries():
     for idx, row in all_industries.iterrows():
         industry = Industry(title=row['Industry Name'])
         industry_list.append(industry)
-        
-
 
     return render_template('industries.html', all_industries=industry_list, total_jobs=total_jobs, 
                            industry_distribution=industry_distribution)
 
-
 def load_data(file_path):
     data = pd.read_csv(file_path)
     return data
-
 
 def analyse_industry_distribution(data):
     industry_distribution = data['Industry Name'].value_counts()
@@ -85,7 +76,6 @@ def analyse_industry_distribution(data):
 
     return industry_distribution, total_jobs
 
-   
 # POST request
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
@@ -96,13 +86,9 @@ def industry_details():
 
     # print(f"Received industry: {industry_name}")
 
-
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
 
     return render_template('industry_details.html',  industry=industry, other_industries=other_industries)
-   
-
-
 
 @app.route('/job_roles')
 def Job_roles():
@@ -124,9 +110,10 @@ def Job_roles():
 def expanded_job_roles(job_title):
     j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
 
-    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1)
+    skillsLacking = ['java', 'UI', 'python programming']
+    urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses)
 
 @app.route('/resume')
 def Resume():
