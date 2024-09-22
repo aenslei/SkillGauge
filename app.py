@@ -2,12 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for
 from Analysis_Visualisation import load_data, analyse_industry_distribution
 
 import os
-# import resume_skills_extractor
+import resume_skills_extractor
 
 import pandas as pd
 import course_url_crawler
 from data_analysis import industry_job_trend
-
+import Analysis_Visualisation
 
 app = Flask(__name__)
 
@@ -125,12 +125,15 @@ def Job_roles():
 
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
-    j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+    j1 = JobRole(1,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
 
     skillsLacking = ['java', 'UI', 'python programming']
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses)
+    userSkills = ["Graph QL", "AWS", "Jira"]
+    skillComparisonChart = Analysis_Visualisation.skills_comparison(userSkills)
+
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)
 
 @app.route('/resume')
 def Resume():
