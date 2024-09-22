@@ -154,7 +154,8 @@ def upload_resume():
     file.save(pdf_path)
     
     #get skills 
-    skills_found = resume_skills_extractor.GatherSkills(pdf_path,"tech")
+    resume_skills_extractor.extract_text_from_pdf(pdf_path)
+    skills_found = resume_skills_extractor.outputSkillsExtracted(5)
 
     return render_template('edit_resume.html', skills=skills_found)
 
