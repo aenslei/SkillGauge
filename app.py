@@ -141,21 +141,13 @@ def industry_details():
     job_trend_code = industry_job_trend(df)
 
     # end of job trends
-
-    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
-    
-    
-    return render_template('industry_details.html',  industry=industry, other_industries=other_industries,
-                           job_trend_fig = job_trend_code, skill_list = skill_list)
-
-
-
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
 
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
-                           job_trend_fig=None,
+                           job_trend_fig=job_trend_code,
+                           skill_list = skill_list,
                            job_title_chart=f'charts/{industry_name}_job_titles_bubble_chart.html',
                            salary_chart=f'charts/{industry_name}_salary_variation.html',
                            salary_trend_chart=f'charts/{industry_name}_salary_trend.html')
