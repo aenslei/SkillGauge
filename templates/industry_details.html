@@ -2,14 +2,13 @@
 
 {% block content %}
 
-
 <a href="{{ url_for('Industries') }}" class="btn mt-3" style="background-color: transparent; color: black; text-decoration: none; border: none; box-shadow: none;" onmouseover="this.style.color='gray'" onmouseout="this.style.color='black'">
     Back to Industries 
 </a>
 
- <!-- Buttons for other industries -->
-  <br>
- <div class="industry-buttons mb-4">
+<!-- Buttons for other industries -->
+<br>
+<div class="industry-buttons mb-4">
     {% for other_industry in other_industries %}
         <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline;">
             <input type="hidden" name="industry_name" value="{{ other_industry }}">
@@ -22,8 +21,10 @@
     <p>More information about the {{ industry }} industry.</p>
 </div>
 
-
 <!-- Data Visualisation -->
+
+    <h3>{{ industry }}</h3>
+
 <div class="jumbotron" style="height: fit-content;">
     <h1 class="display-1">{{ industry }}</h1>
 
@@ -41,22 +42,69 @@
     <br>
 
     <p class="lead">This is the dashboard.</p>
+
     <hr class="my-4">
     <div>
+        <!-- Flexbox container to display the charts side by side -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <!-- First chart: Job Title Breakdown -->
+            <iframe id="bubble-chart" src="{{ url_for('static', filename=job_title_chart) }}" 
+            style="width: 49%; height: 600px; border: none;">
+            </iframe>
+    
+        <iframe id="salary-chart" src="{{ url_for('static', filename=salary_chart) }}" 
+            style="width: 49%; height: 600px; border: none;"></iframe>
+            
+        </div>
+
+        <div>
+            
+            <iframe id="salary-trend-chart" src="{{ url_for('static', filename=salary_trend_chart) }}" 
+            style="width: 100%; height: 600px; border: none;"></iframe></div>
+
         {{ job_trend_fig | safe }}
-
     </div>
-
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
 </div>
 
-<!-- ---------------- -->
+<script>
+    const bubbleChartFrame = document.getElementById('bubble-chart');
+    const salaryChartFrame = document.getElementById('salary-chart');
 
-<style>
+    bubbleChartFrame.onload = function() {
+        const bubbleChartWindow = bubbleChartFrame.contentWindow;
+        const bubbleChartElement = bubbleChartWindow.document.querySelector('.plot-container.plotly');
 
-    
-</style>
+        // Ensure the bubble chart is found
+        if (bubbleChartElement) {
+            const plotlyChart = bubbleChartElement.querySelector('div'); // Access the Plotly chart
+
+            // Use Plotly's event handling
+            Plotly.d3.select(plotlyChart).on('plotly_click', function(data) {
+                const jobTitleClicked = data.points[0].text; // Get the job title clicked
+                console.log("Clicked Job Title:", jobTitleClicked);
+
+                // Access the salary chart data
+                const salaryChartWindow = salaryChartFrame.contentWindow;
+                const salaryData = salaryChartWindow.Plotly._fullData[0].x; // Assuming x contains job titles
+
+                // Find the index of the clicked job title in the salary chart
+                const index = Array.from(salaryData).indexOf(jobTitleClicked);
+                console.log("Corresponding Index in Salary Chart:", index);
+
+                // Reset all bars to default color (blue)
+                salaryChartWindow.Plotly.restyle('marker.color', 'blue'); // Reset all bars to blue
+
+                // Highlight the corresponding bar in the salary chart
+                if (index !== -1) {
+                    salaryChartWindow.Plotly.restyle('marker.color', 'red', [index]); // Highlight the corresponding bar
+                } else {
+                    console.error("Job title not found in the salary chart.");
+                }
+            });
+        } else {
+            console.error("Bubble chart not found in iframe.");
+        }
+    };
+</script>
 
 {% endblock %}
-
-

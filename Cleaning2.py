@@ -304,7 +304,41 @@ broader_categories_mapping = {
     "Construction & Civil Engineering": "Engineering"
 }
 
+# Convert salary columns to numeric (handling invalid data)
+data['Min Salary (K)'] = pd.to_numeric(data['Min Salary (K)'], errors='coerce')
+data['Max Salary (K)'] = pd.to_numeric(data['Max Salary (K)'], errors='coerce')
 
+# Check for missing values in salary columns
+print("Missing values in Min Salary (K):", data['Min Salary (K)'].isnull().sum())
+print("Missing values in Max Salary (K):", data['Max Salary (K)'].isnull().sum())
+
+# Drop rows with missing salary data
+data = data.dropna(subset=['Min Salary (K)', 'Max Salary (K)'])
+
+# Calculate Salary Range and Average Salary
+data['Salary Range (K)'] = data['Max Salary (K)'] - data['Min Salary (K)']
+data['Average Salary (K)'] = (data['Min Salary (K)'] + data['Max Salary (K)']) / 2
+
+# Convert 'Job Posting Date' to datetime
+data['Job Posting Date'] = pd.to_datetime(data['Job Posting Date'], errors='coerce')
+
+    # Check for invalid or missing dates after conversion
+if data['Job Posting Date'].isnull().any():
+        print("Invalid or missing 'Job Posting Date' entries found.")
+
+    # Create 'Year-Quarter' column
+data['Year-Quarter'] = data['Job Posting Date'].dt.to_period('Q').astype(str)  # Convert to string for better x-axis labels
+
+# Apply the cluster mapping
+data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
+
+# Apply the broader category mapping
+data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
+
+# Save the updated dataset with new columns
+data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False)
+
+print("Cluster names, broader categories, salary range, and average salary added and saved successfully!")
 # Apply the cluster mapping
 data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 
