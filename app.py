@@ -6,7 +6,7 @@ import os
 
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills
 
 
 app = Flask(__name__)
@@ -91,18 +91,39 @@ def industry_details():
     # print(f"Received industry: {industry_name}")
 
 
+
+    # find industry general skills
+
+    industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
+
+    with open(industry_path) as csvfile:
+        df = pd.read_csv(csvfile, index_col=False)
+
+    industry_general_skills(df,2,industry_name)
+
+
+    with open("analysis/industry_skills.json") as file:
+        industry_skills_pd = pd.read_json(file)
+
+    skill_list = pull_industry_skills(industry_skills_pd)
+
+
+    # end of find industry general skills
+
+    # start of job trends
     #industry_data_path = "data/V1 group"+ industry_id +".csv"
-    """ once data is in can uncomment
-    with open("data/V1 group0.csv") as datafile:
+    with open(industry_path) as datafile:
         df = pd.read_csv(datafile, index_col=False)
 
     job_trend_code = industry_job_trend(df)
 
-    """
+    # end of job trends
+
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
     
     
-    return render_template('industry_details.html',  industry=industry, other_industries=other_industries, job_trend_fig = None)
+    return render_template('industry_details.html',  industry=industry, other_industries=other_industries,
+                           job_trend_fig = job_trend_code, skill_list = skill_list)
 
 
 
