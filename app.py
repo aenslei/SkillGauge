@@ -93,7 +93,7 @@ def industry_details():
 
 
     # find industry general skills
-
+    industry_name = industry_name.replace(" ", "_")
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
 
     with open(industry_path) as csvfile:
@@ -111,7 +111,7 @@ def industry_details():
     # end of find industry general skills
 
     # start of job trends
-    #industry_data_path = "data/V1 group"+ industry_id +".csv"
+    print(industry_path)
     with open(industry_path) as datafile:
         df = pd.read_csv(datafile, index_col=False)
 
