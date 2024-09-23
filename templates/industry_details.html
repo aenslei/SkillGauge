@@ -22,8 +22,27 @@
 </div>
 
 <!-- Data Visualisation -->
-<div>
+
     <h3>{{ industry }}</h3>
+
+<div class="jumbotron" style="height: fit-content;">
+    <h1 class="display-1">{{ industry }}</h1>
+
+    <h3>Skills:</h3>
+
+    <div class="d-flex flex-wrap">
+        {% for skill in skill_list %}
+        <div class="border rounded-pill d-inline p-1 m-1">
+            {{ skill }}
+        </div>
+
+        {% endfor %}
+
+    </div>
+    <br>
+
+    <p class="lead">This is the dashboard.</p>
+
     <hr class="my-4">
     <div>
         <!-- Flexbox container to display the charts side by side -->

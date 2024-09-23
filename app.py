@@ -4,7 +4,9 @@ import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend
+
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills
+import Analysis_Visualisation
 
 app = Flask(__name__)
 
@@ -113,6 +115,40 @@ def industry_details():
 
     """
 
+    # find industry general skills
+    industry_name = industry_name.replace(" ", "_")
+    industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
+
+    with open(industry_path) as csvfile:
+        df = pd.read_csv(csvfile, index_col=False)
+
+    industry_general_skills(df,2,industry_name)
+
+
+    with open("analysis/industry_skills.json") as file:
+        industry_skills_pd = pd.read_json(file)
+
+    skill_list = pull_industry_skills(industry_skills_pd)
+
+
+    # end of find industry general skills
+
+    # start of job trends
+    print(industry_path)
+    with open(industry_path) as datafile:
+        df = pd.read_csv(datafile, index_col=False)
+
+    job_trend_code = industry_job_trend(df)
+
+    # end of job trends
+
+    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
+    
+    
+    return render_template('industry_details.html',  industry=industry, other_industries=other_industries,
+                           job_trend_fig = job_trend_code, skill_list = skill_list)
+
+
 
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
 
@@ -145,10 +181,17 @@ def Job_roles():
 
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
-    j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+
+    j1 = JobRole(1,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+
     skillsLacking = ['java', 'UI', 'python programming']
     urlCourses = course_url_crawler.search_courses(skillsLacking)
-    return render_template("expanded_job_roles.html", job_title=job_title, job_role=j1, courses=urlCourses)
+
+    userSkills = ["Graph QL", "AWS", "Jira"]
+    skillComparisonChart = Analysis_Visualisation.skills_comparison(userSkills)
+
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)
+
 
 @app.route('/resume')
 def Resume():
@@ -168,8 +211,11 @@ def upload_resume():
     pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(pdf_path)
     
-    # Get skills from the resume
-    skills_found = resume_skills_extractor.GatherSkills(pdf_path, "tech")
+
+    #get skills 
+    resume_skills_extractor.extract_text_from_pdf(pdf_path)
+    skills_found = resume_skills_extractor.outputSkillsExtracted(5)
+
     return render_template('edit_resume.html', skills=skills_found)
 
 @app.route('/add_skills', methods=['POST'])
