@@ -1,13 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
-from Analysis_Visualisation import load_data, analyse_industry_distribution
-
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart
+import resume_skills_extractor
 import os
-# import resume_skills_extractor
-
 import pandas as pd
 import course_url_crawler
 from data_analysis import industry_job_trend
-
 
 app = Flask(__name__)
 
@@ -15,13 +12,13 @@ UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Path to dataset
-file_path = r'Datasets\\Cleaned_Jobs_Dataset(FInal).csv'
+file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 class Industry:
-    def __init__(self,title):
+    def __init__(self, title):
         self.title = title
 
     def __repr__(self):
@@ -31,32 +28,31 @@ class Industry:
         return self.title
 
 class JobRole:
-    def __init__(self, id, title , skill , match_percent):
+    def __init__(self, id, title, skill, match_percent):
         self.id = id
         self.title = title
         self.skill = skill
         self.match_percent = match_percent
 
-
 @app.route('/')
 def Home():
     data = load_data(file_path)  # Load the data
-
     return render_template('home.html')
 
 industry_list = []
+
 @app.route('/industries')
-def Industries():    
-    #load csv file:
+def Industries():
+    # Load CSV file
     data = load_data(file_path)
     industry_list.clear()
 
-    # Count occurrences of each industry
-    industry_counts = data['Industry Name'].value_counts().reset_index()
-    industry_counts.columns = ['Industry Name', 'count']  # Rename columns to 'Industry' and 'count'
+    # Count occurrences of each industry (Broader Category)
+    industry_counts = data['Broader Category'].value_counts().reset_index()
+    industry_counts.columns = ['Broader Category', 'count']  # Rename columns to 'Broader Category' and 'count'
 
     # Get all industries (sorted alphabetically)
-    all_industries = industry_counts.sort_values(by='Industry Name').reset_index(drop=True)
+    all_industries = industry_counts.sort_values(by='Broader Category').reset_index(drop=True)
 
     # Analyze the industry distribution
     industry_distribution, total_jobs = analyse_industry_distribution(data)
@@ -64,7 +60,7 @@ def Industries():
     # Create industry list to pass to the template
     industry_list.clear()
     for idx, row in all_industries.iterrows():
-        industry = Industry(title=row['Industry Name'])
+        industry = Industry(title=row['Broader Category'])
         industry_list.append(industry)
 
     return render_template('industries.html', all_industries=industry_list, total_jobs=total_jobs, 
@@ -75,9 +71,9 @@ def load_data(file_path):
     return data
 
 def analyse_industry_distribution(data):
-    industry_distribution = data['Industry Name'].value_counts()
+    # Group data by 'Broader Category'
+    industry_distribution = data['Broader Category'].value_counts()
     total_jobs = len(data)
-
     return industry_distribution, total_jobs
 
 # POST request
@@ -87,50 +83,72 @@ def industry_details():
     print(f"Received industry_name: {industry_name}")
 
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
+    data = load_data(file_path)
+    app.logger.debug(f"Column names in the dataset: {data.columns}")
+   
 
-    # print(f"Received industry: {industry_name}")
+    os.makedirs('static/charts', exist_ok=True)
+
+    # Generate the bubble chart for job titles in the selected industry (Broader Category)
+    output_file = f'static/charts/{industry_name}_job_titles_bubble_chart.html'
+    create_job_title_bubble_chart(data, industry_name, output_file) # Call the bubble chart function
 
 
-    #industry_data_path = "data/V1 group"+ industry_id +".csv"
+    # Generate the salary variation bar chart for the selected industry
+    output_file_salary = f'static/charts/{industry_name}_salary_variation.html'
+    create_salary_variation_chart(data, industry_name, output_file_salary)  # Call the salary chart function
+
+    # Generate the salary trend chart for the selected industry
+    output_file_trend = f'static/charts/{industry_name}_salary_trend.html'
+    create_salary_trend_chart(data, industry_name, output_file_trend)  # Call the salary trend chart function
+
+
+
+        #industry_data_path = "data/V1 group"+ industry_id +".csv"
     """ once data is in can uncomment
     with open("data/V1 group0.csv") as datafile:
-        df = pd.read_csv(datafile, index_col=False)
+    df = pd.read_csv(datafile, index_col=False)
 
     job_trend_code = industry_job_trend(df)
 
     """
-    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 5 buttons
-    
-    
-    return render_template('industry_details.html',  industry=industry, other_industries=other_industries, job_trend_fig = None)
 
 
+    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
+
+    return render_template('industry_details.html',  
+                           industry=industry, 
+                           other_industries=other_industries, 
+                           job_trend_fig=None,
+                           job_title_chart=f'charts/{industry_name}_job_titles_bubble_chart.html',
+                           salary_chart=f'charts/{industry_name}_salary_variation.html',
+                           salary_trend_chart=f'charts/{industry_name}_salary_trend.html')
+
+
+    
 
 
 @app.route('/job_roles')
 def Job_roles():
-    # placeholder data
-    j1 = JobRole(1,"data engineer" , ["Python programming","Data analysis","Machine learning","Web development"],70 )
-    j2 = JobRole(2,"programmer", ["Python programming", "Debugging","Object-oriented programming","Algorithms and data structures", "Web development"], 90)
-    j3 = JobRole(3,"cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
-    j4 = JobRole(4,"Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
-    j5 = JobRole(5,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
-    j6 = JobRole(6,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    #j7 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    job_role_list = [j1,j2, j3,j4,j5,j6]
-    # sort by best matching percent
-    job_role_list.sort(key=lambda x:x.match_percent, reverse=True)
-
-    return render_template('job_roles.html' , job_role = job_role_list)
+    # Placeholder data
+    j1 = JobRole(1, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+    j2 = JobRole(2, "programmer", ["Python programming", "Debugging", "Object-oriented programming", "Web development"], 90)
+    j3 = JobRole(3, "cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
+    j4 = JobRole(4, "Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
+    j5 = JobRole(5, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
+    j6 = JobRole(6, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
+    job_role_list = [j1, j2, j3, j4, j5, j6]
+    
+    # Sort by best matching percentage
+    job_role_list.sort(key=lambda x: x.match_percent, reverse=True)
+    return render_template('job_roles.html', job_role=job_role_list)
 
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
     j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
-
     skillsLacking = ['java', 'UI', 'python programming']
     urlCourses = course_url_crawler.search_courses(skillsLacking)
-
-    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses)
+    return render_template("expanded_job_roles.html", job_title=job_title, job_role=j1, courses=urlCourses)
 
 @app.route('/resume')
 def Resume():
@@ -150,9 +168,8 @@ def upload_resume():
     pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(pdf_path)
     
-    #get skills 
-    skills_found = resume_skills_extractor.GatherSkills(pdf_path,"tech")
-
+    # Get skills from the resume
+    skills_found = resume_skills_extractor.GatherSkills(pdf_path, "tech")
     return render_template('edit_resume.html', skills=skills_found)
 
 @app.route('/add_skills', methods=['POST'])
@@ -164,7 +181,8 @@ def add_skills():
 @app.route('/update_skills', methods=['POST'])
 def update_skills():
     updated_skills = request.form.getlist('skills')
-    #remove all resumes once skills is submitted
+    
+    # Remove all resumes once skills are submitted
     for filename in os.listdir(UPLOAD_FOLDER):
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         if os.path.isfile(file_path):
