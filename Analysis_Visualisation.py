@@ -5,6 +5,7 @@ import plotly.io as pio
 import numpy as np
 import plotly.graph_objects as go
 import re
+import ast
 
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
@@ -187,17 +188,34 @@ def create_salary_trend_chart(data, industry_name, output_file):
     # Save the figure to the specified output file
     pio.write_html(fig, file=output_file, auto_open=False)
 
-def skills_comparison(user_skills):
-    # Define the fixed skills list
-    skills = ["Python", "SQL", "PHP", "Graph QL", "AWS", "Jira"]
+def skills_comparison(Industry,job_role,user_skills):    
+    industry_path = pd.read_csv(f"Datasets/(Final)_past_{Industry}.csv")
+
+    # get all skills from a particular job title
+    skills = industry_path[industry_path['Job Title'] == job_role]['skills'].tolist()
+
+    all_skills = []
+    for skill_set in skills:
+        try:
+            # Convert string representation of list to actual list
+            evaluated_skills = ast.literal_eval(skill_set)
+            # Extend the final list with the skills
+            all_skills.extend([skill.strip() for skill in evaluated_skills])
+        except (ValueError, SyntaxError):
+            # If the string isn't a list, split it by commas and process it
+            clean_skills = skill_set.replace("'", "").split(',')
+            all_skills.extend([skill.strip() for skill in clean_skills])
+
+    # Now 'all_skills' contains all skills for software engineer job title
+    print(f"{all_skills} {type(all_skills)}")
 
     # Calculate matched and missing skills
-    matched_skills = [skill for skill in user_skills if skill in skills]
-    missing_skills = [skill for skill in skills if skill not in user_skills]
+    matched_skills = [skill for skill in user_skills if skill in all_skills]
+    missing_skills = [skill for skill in all_skills if skill not in user_skills]
 
     # Calculate percentages
-    matched_percentage = (len(matched_skills) / len(skills)) * 100
-    missing_percentage = (len(missing_skills) / len(skills)) * 100
+    matched_percentage = (len(matched_skills) / len(all_skills)) * 100
+    missing_percentage = (len(missing_skills) / len(all_skills)) * 100
 
     # Create the donut chart
     fig = go.Figure(data=[go.Pie(values=[matched_percentage, missing_percentage],
