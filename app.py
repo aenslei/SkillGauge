@@ -179,7 +179,7 @@ def expanded_job_roles(job_title):
     skillsLacking = ['java', 'UI', 'python programming']
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-    userSkills = ["Graph QL", "AWS", "Jira"]
+    userSkills = ['s', 'q', 'Java', 'L', 'Python']
     skillComparisonChart = Analysis_Visualisation.skills_comparison("Information_Technology","Software Engineer",userSkills)
 
     return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)

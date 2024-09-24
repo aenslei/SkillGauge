@@ -266,13 +266,15 @@ def skills_comparison(Industry,job_role,user_skills):
     # Now 'all_skills' contains all skills for software engineer job title
     print(f"{sortedWords} {top10Skills} {type(sortedWords)}")
 
+    userSkillLowerCase, top10SkillsLowerCase = ([item.lower() for item in lst] for lst in (user_skills, top10Skills))
+
     # Calculate matched and missing skills
-    matched_skills = [skill for skill in user_skills if skill in top10Skills]
-    missing_skills = [skill for skill in top10Skills if skill not in user_skills]
+    matched_skills = [skill for skill in userSkillLowerCase if skill in top10SkillsLowerCase]
+    missing_skills = [skill for skill in top10SkillsLowerCase if skill not in userSkillLowerCase]
 
     # Calculate percentages
-    matched_percentage = (len(matched_skills) / len(top10Skills)) * 100
-    missing_percentage = (len(missing_skills) / len(top10Skills)) * 100
+    matched_percentage = (len(matched_skills) / len(top10SkillsLowerCase)) * 100
+    missing_percentage = (len(missing_skills) / len(top10SkillsLowerCase)) * 100
 
     # Create the donut chart
     fig = go.Figure(data=[go.Pie(values=[matched_percentage, missing_percentage],
