@@ -177,13 +177,14 @@ def expanded_job_roles(job_title):
 
     j1 = JobRole(1,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
 
-    skillsLacking = ['java', 'UI', 'python programming']
-    urlCourses = course_url_crawler.search_courses(skillsLacking)
     if 'userSkills' in session:
         userSkills = session['userSkills'] 
     else:
         userSkills = []
-    skillComparisonChart = Analysis_Visualisation.skills_comparison("Information_Technology","Software Engineer",userSkills)
+
+    skillComparisonChart,skillsLacking = Analysis_Visualisation.skills_comparison("Information_Technology","Software Engineer",userSkills)
+    
+    urlCourses = course_url_crawler.search_courses(skillsLacking)
 
     return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)
 
