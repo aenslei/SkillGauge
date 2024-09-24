@@ -314,5 +314,5 @@ def skills_comparison(Industry,job_role,user_skills):
             height=600  # Adjust height
         )
     # Return the HTML representation of the chart
-    return fig.to_html()
+    return fig.to_html(),missing_skills
 
