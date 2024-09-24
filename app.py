@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,session
 from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart
 import resume_skills_extractor
 import os
@@ -9,6 +9,7 @@ from data_analysis import industry_job_trend , industry_general_skills, pull_ind
 import Analysis_Visualisation
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24) 
 
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -178,8 +179,10 @@ def expanded_job_roles(job_title):
 
     skillsLacking = ['java', 'UI', 'python programming']
     urlCourses = course_url_crawler.search_courses(skillsLacking)
-
-    userSkills = ['s', 'q', 'Java', 'L', 'Python']
+    if 'userSkills' in session:
+        userSkills = session['userSkills'] 
+    else:
+        userSkills = []
     skillComparisonChart = Analysis_Visualisation.skills_comparison("Information_Technology","Software Engineer",userSkills)
 
     return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)
@@ -218,14 +221,14 @@ def add_skills():
 
 @app.route('/update_skills', methods=['POST'])
 def update_skills():
-    updated_skills = request.form.getlist('skills')
+    session['userSkills'] = request.form.getlist('skills')
     
     # Remove all resumes once skills are submitted
     for filename in os.listdir(UPLOAD_FOLDER):
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         if os.path.isfile(file_path):
             os.remove(file_path)
-    return redirect(url_for('Job_roles', skills=updated_skills))
+    return redirect(url_for('Job_roles'))
 
 if __name__ == '__main__':
     app.run(debug=True)
