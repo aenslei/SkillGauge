@@ -6,6 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 import re
 import ast
+from collections import defaultdict
 
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
@@ -188,6 +189,62 @@ def create_salary_trend_chart(data, industry_name, output_file):
     # Save the figure to the specified output file
     pio.write_html(fig, file=output_file, auto_open=False)
 
+def merge_sort(word_freq_list):
+    if len(word_freq_list) <= 1:
+        return word_freq_list
+    
+    mid = len(word_freq_list) // 2
+    left_half = merge_sort(word_freq_list[:mid])
+    right_half = merge_sort(word_freq_list[mid:])
+    
+    sorted_list = []
+    i = j = 0
+    
+    while i < len(left_half) and j < len(right_half):
+        if left_half[i][1] >= right_half[j][1]:  # Sort in descending order
+            sorted_list.append(left_half[i])
+            i += 1
+        else:
+            sorted_list.append(right_half[j])
+            j += 1
+            
+    sorted_list.extend(left_half[i:])
+    sorted_list.extend(right_half[j:])
+    
+    return sorted_list
+
+def CountWords(word_list,topNumOfItem):
+    if not isinstance(word_list, list) or len(word_list) == 0:
+        print("Your input is invalid!")
+        return []
+
+    try:
+        # Initialize a regular dictionary for word counts
+        word_counts = {}
+
+        # Count the frequency of each word
+        for word in word_list:
+            if word in word_counts:
+                word_counts[word] += 1
+            else:
+                word_counts[word] = 1
+
+        # Convert the dictionary to a list of tuples (word, frequency)
+        word_freq_list = list(word_counts.items())
+
+        # Sort the list of tuples using merge sort
+        sorted_word_freq = merge_sort(word_freq_list)
+
+        # Get the top 5 words
+        top_5_words = [word for word, freq in sorted_word_freq[:topNumOfItem]]
+
+        # Return the top 5 words as a list
+        return top_5_words,sorted_word_freq
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
+
 def skills_comparison(Industry,job_role,user_skills):    
     industry_path = pd.read_csv(f"Datasets/(Final)_past_{Industry}.csv")
 
@@ -205,17 +262,17 @@ def skills_comparison(Industry,job_role,user_skills):
             # If the string isn't a list, split it by commas and process it
             clean_skills = skill_set.replace("'", "").split(',')
             all_skills.extend([skill.strip() for skill in clean_skills])
-
+    top10Skills,sortedWords = CountWords(all_skills,10)
     # Now 'all_skills' contains all skills for software engineer job title
-    print(f"{all_skills} {type(all_skills)}")
+    print(f"{sortedWords} {top10Skills} {type(sortedWords)}")
 
     # Calculate matched and missing skills
-    matched_skills = [skill for skill in user_skills if skill in all_skills]
-    missing_skills = [skill for skill in all_skills if skill not in user_skills]
+    matched_skills = [skill for skill in user_skills if skill in top10Skills]
+    missing_skills = [skill for skill in top10Skills if skill not in user_skills]
 
     # Calculate percentages
-    matched_percentage = (len(matched_skills) / len(all_skills)) * 100
-    missing_percentage = (len(missing_skills) / len(all_skills)) * 100
+    matched_percentage = (len(matched_skills) / len(top10Skills)) * 100
+    missing_percentage = (len(missing_skills) / len(top10Skills)) * 100
 
     # Create the donut chart
     fig = go.Figure(data=[go.Pie(values=[matched_percentage, missing_percentage],
