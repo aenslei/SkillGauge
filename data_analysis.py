@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import ast
+import plotly.express as px
 
 def industry_job_trend(df):
 
@@ -79,7 +80,7 @@ def industry_general_skills(df, selection , industry_name):
     if selection == 2:
         path = "analysis/industry_skills.json"
 
-        print(total_skill_count)
+        #print(total_skill_count)
         top20_skill_json = total_skill_count.head(20)
         result = {
             'title': industry_name,
@@ -100,6 +101,39 @@ def pull_industry_skills(industry_skills):
     return skill_list
 
 
+
+
+def industry_hiring_trend(df):
+
+    # setting type to date time format
+    df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%d/%m/%Y")
+
+    current_year = pd.Timestamp.now().year
+    df["Job Posting Date"] = df["Job Posting Date"].apply(lambda x: x.replace(year=current_year))
+
+    # extract month from data
+    df["Month"] = df["Job Posting Date"].dt.to_period("M")
+
+    # group by month and get count of drop
+    df3 = df.groupby(["Month"]).size().to_frame("Count of job per month").reset_index()
+
+    month_names = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ]
+
+    fig = px.area(df3, x=month_names, y="Count of job per month")
+    fig.update_yaxes(range=[df3["Count of job per month"].min() * 0.75, df3["Count of job per month"].max() + 25])
+
+    fig.update_layout(
+        title = "Industry Hiring Trends",
+        xaxis_title="Period",
+        yaxis_title="No. of Job per Month",
+    )
+
+    html_code = fig.to_html(full_html=False)
+
+    return html_code
 
 
 
