@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart
-import resume_skills_extractor
+# import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
@@ -86,23 +86,19 @@ def industry_details():
 
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
     data = load_data(file_path)
-    app.logger.debug(f"Column names in the dataset: {data.columns}")
    
 
     os.makedirs('static/charts', exist_ok=True)
 
     # Generate the bubble chart for job titles in the selected industry (Broader Category)
-    output_file = f'static/charts/{industry_name}_job_titles_bubble_chart.html'
-    create_job_title_bubble_chart(data, industry_name, output_file) # Call the bubble chart function
+    job_title_chart = create_job_title_bubble_chart(data, industry_name) # Call the bubble chart function
 
 
     # Generate the salary variation bar chart for the selected industry
-    output_file_salary = f'static/charts/{industry_name}_salary_variation.html'
-    create_salary_variation_chart(data, industry_name, output_file_salary)  # Call the salary chart function
+    salary_chart = create_salary_variation_chart(data, industry_name)  # Call the salary chart function
 
     # Generate the salary trend chart for the selected industry
-    output_file_trend = f'static/charts/{industry_name}_salary_trend.html'
-    create_salary_trend_chart(data, industry_name, output_file_trend)  # Call the salary trend chart function
+    salary_trend_chart = create_salary_trend_chart(data, industry_name)  # Call the salary trend chart function
 
 
 
@@ -148,9 +144,9 @@ def industry_details():
                            other_industries=other_industries, 
                            job_trend_fig=job_trend_code,
                            skill_list = skill_list,
-                           job_title_chart=f'charts/{industry_name}_job_titles_bubble_chart.html',
-                           salary_chart=f'charts/{industry_name}_salary_variation.html',
-                           salary_trend_chart=f'charts/{industry_name}_salary_trend.html')
+                           job_title_chart=job_title_chart,
+                           salary_chart=salary_chart,
+                           salary_trend_chart=salary_trend_chart)
 
 
     

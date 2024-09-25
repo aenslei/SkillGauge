@@ -44,72 +44,65 @@
     <p class="lead">This is the dashboard.</p>
 
     <hr class="my-4">
-    <div>
-        <!-- Flexbox container to display the charts side by side -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <!-- First chart: Job Title Breakdown -->
-            <iframe id="bubble-chart" src="{{ url_for('static', filename=job_title_chart) }}" 
-            style="width: 49%; height: 600px; border: none;">
-            </iframe>
     
-        <iframe id="salary-chart" src="{{ url_for('static', filename=salary_chart) }}" 
-            style="width: 49%; height: 600px; border: none;"></iframe>
-            
-        </div>
-
-        <div>
-            
-            <iframe id="salary-trend-chart" src="{{ url_for('static', filename=salary_trend_chart) }}" 
-            style="width: 100%; height: 600px; border: none;"></iframe>
-        </div>
-        
-        <br>
-
-        <div>
-            {{ job_trend_fig | safe }}
-        </div>
+        <!-- Flexbox container to display the charts side by side -->
+    <div id="bubble-chart" style="flex-grow: 1; height: 650px;">
+        {{ job_title_chart|safe }}
     </div>
+    
+   
+    <div>
+        {{ job_trend_fig | safe }}
+    </div>
+
+    <br>
+
+    <div id="salary-chart">
+        {{ salary_chart|safe }}
+    </div>
+
+    <br>
+
+    <div id="salary-trend-chart"  >
+        {{ salary_trend_chart|safe }}
+    </div>
+        
+    
+    
+    <br>
+
+    
+    
 </div>
 
+<!-- JavaScript to Handle Click Events and Interaction Between Charts -->
 <script>
-    const bubbleChartFrame = document.getElementById('bubble-chart');
-    const salaryChartFrame = document.getElementById('salary-chart');
+    document.addEventListener("DOMContentLoaded", function() {
+        const bubbleChartFrame = document.querySelector('#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
+        const salaryTrendChartFrame = document.querySelector('#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
 
-    bubbleChartFrame.onload = function() {
-        const bubbleChartWindow = bubbleChartFrame.contentWindow;
-        const bubbleChartElement = bubbleChartWindow.document.querySelector('.plot-container.plotly');
+        // Ensure the charts are loaded properly
+        if (bubbleChartFrame && salaryTrendChartFrame) {
+            // Listen for a click event on the bubble chart
+            bubbleChartFrame.on('plotly_click', function(data) {
+                const clickedJobTitle = data.points[0].text;  // Get the clicked job title
+                console.log("Clicked Job Title:", clickedJobTitle);
 
-        // Ensure the bubble chart is found
-        if (bubbleChartElement) {
-            const plotlyChart = bubbleChartElement.querySelector('div'); // Access the Plotly chart
-
-            // Use Plotly's event handling
-            Plotly.d3.select(plotlyChart).on('plotly_click', function(data) {
-                const jobTitleClicked = data.points[0].text; // Get the job title clicked
-                console.log("Clicked Job Title:", jobTitleClicked);
-
-                // Access the salary chart data
-                const salaryChartWindow = salaryChartFrame.contentWindow;
-                const salaryData = salaryChartWindow.Plotly._fullData[0].x; // Assuming x contains job titles
-
-                // Find the index of the clicked job title in the salary chart
-                const index = Array.from(salaryData).indexOf(jobTitleClicked);
-                console.log("Corresponding Index in Salary Chart:", index);
-
-                // Reset all bars to default color (blue)
-                salaryChartWindow.Plotly.restyle('marker.color', 'blue'); // Reset all bars to blue
-
-                // Highlight the corresponding bar in the salary chart
-                if (index !== -1) {
-                    salaryChartWindow.Plotly.restyle('marker.color', 'red', [index]); // Highlight the corresponding bar
-                } else {
-                    console.error("Job title not found in the salary chart.");
+                // Show the salary line and trendline for the clicked job title
+                const salaryTrendTraces = salaryTrendChartFrame.data;
+                for (let i = 0; i < salaryTrendTraces.length; i++) {
+                    // Show only the salary line and trendline for the clicked job title
+                    if (salaryTrendTraces[i].name.includes(clickedJobTitle)) {
+                        Plotly.restyle(salaryTrendChartFrame, { visible: true }, [i]);
+                    } else {
+                        Plotly.restyle(salaryTrendChartFrame, { visible: 'legendonly' }, [i]);
+                    }
                 }
             });
         } else {
-            console.error("Bubble chart not found in iframe.");
+            console.error('Bubble chart or salary trend chart not found.');
         }
-    };
+    });
 </script>
 
 {% endblock %}

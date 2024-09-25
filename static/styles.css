@@ -1,5 +1,5 @@
 .logo {
-    height: 40px;
+    height: 80px;
     width: auto;
     margin-right: 15px;
 }
@@ -18,6 +18,7 @@
 .feature-card:hover::before {
     width: 5px;
 }
+
 
 .industryCard {
     color: white;
@@ -38,28 +39,251 @@
 }
 
 
-    .industry-buttons {
-        display: flex;
-        justify-content: space-between;  /* Evenly distribute buttons across the width */
-        flex-wrap: wrap;  /* Allow buttons to wrap on smaller screens */
+.industry-buttons {
+    display: flex;
+    justify-content: space-between;  /* Evenly distribute buttons across the width */
+    flex-wrap: wrap;  /* Allow buttons to wrap on smaller screens */
+}
+.industry-buttons form {
+    flex: 1;  /* Make each form/button take equal space */
+    margin: 0 10px;  /* Spacing between buttons */
+    min-width: 120px;  /* Minimum width for small screens */
+}
+.industry-buttons button {
+    width: 100%;  /* Ensure the button takes up the full width of its form container */
+    border-radius: 10px;  /* Rounded edges */
+    border: 2px solid black;  /* Black outline */
+    padding: 10px 20px;  /* Add some padding for better visual appeal */
+    font-size: 16px;  /* Increase the font size for readability */
+    background-color: white;  /* Set background to white */
+    color: black;  /* Black text color */
+    transition: all 0.3s ease;  /* Smooth transition for hover effect */
+}
+.industry-buttons button:hover {
+    background-color: black;  /* Background turns black on hover */
+    color: white;  /* Text turns white on hover */
+}
+
+.card-title {
+    font-weight: 900; /* Very thick bold */
+    font-family: 'Arial', sans-serif; /* Optional: You can specify a font-family */
+  }
+
+
+  .quote-container {
+    background-color: #f0f8ff; /* Light blue background */
+    border-left: 5px solid #1E90FF; /* Dodger blue border */
+    padding: 20px;
+    margin: 20px;
+    font-family: 'Georgia', serif; /* Elegant serif font */
+    font-size: 1.5em;
+    color: #333; /* Darker text for readability */
+    line-height: 1.6;
+    position: relative;
+    border-radius: 8px;
+}
+
+.quote-container::before {
+    content: "“";
+    font-size: 3em;
+    color: #1E90FF;
+    position: absolute;
+    top: -10px;
+    left: 10px;
+}
+
+.quote-container::after {
+    content: "”";
+    font-size: 3em;
+    color: #1E90FF;
+    position: absolute;
+    bottom: -10px;
+    right: 10px;
+}
+
+.quote-author {
+    text-align: right;
+    font-style: italic;
+    margin-top: 10px;
+    font-size: 1em;
+    color: #4682B4; /* Steel blue for the author */
+}
+
+.stats-section {
+    margin-bottom: 20px;
+    padding: 50px;
+}
+
+.stat-block {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.stat-number {
+    font-size: 4rem; /* Big bold numbers */
+    font-weight: bold;
+    margin: 0;
+}
+
+.stat-number::after {
+    content: "+"; /* Adds the plus sign after the number */
+}
+
+/* Different colors for each stat */
+.stat-jobs {
+    color: #FF5733; /* Orange */
+}
+
+.stat-users {
+    color: #28B463; /* Green */
+}
+
+.stat-companies {
+    color: #2980B9; /* Blue */
+}
+
+.stat-text {
+    font-size: 1.5rem; /* H3 size */
+    color: black;
+}
+
+.testimonials-container {
+    display: flex;
+    justify-content: space-around; /* Space between the two testimonials */
+    align-items: flex-start; /* Align testimonials vertically at the top */
+    margin: 20px 0;
+    flex-wrap: wrap; /* Wraps to next line on smaller screens */
+}
+
+.testimonial {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: 45%; /* Width of each testimonial */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 20px;
+}
+
+.testimonial-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.testimonial-text {
+    max-width: 300px;
+}
+
+blockquote {
+    font-size: 1.2rem;
+    font-style: italic;
+    margin: 0;
+}
+
+.blockquote-footer {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 10px;
+}
+
+/* Make testimonials stack on smaller screens */
+@media (max-width: 768px) {
+    .testimonials-container {
+        flex-direction: column;
+        align-items: center;
     }
-    .industry-buttons form {
-        flex: 1;  /* Make each form/button take equal space */
-        margin: 0 10px;  /* Spacing between buttons */
-        min-width: 120px;  /* Minimum width for small screens */
+
+    .testimonial {
+        width: 100%;
     }
-    .industry-buttons button {
-        width: 100%;  /* Ensure the button takes up the full width of its form container */
-        border-radius: 10px;  /* Rounded edges */
-        border: 2px solid black;  /* Black outline */
-        padding: 10px 20px;  /* Add some padding for better visual appeal */
-        font-size: 16px;  /* Increase the font size for readability */
-        background-color: white;  /* Set background to white */
-        color: black;  /* Black text color */
-        transition: all 0.3s ease;  /* Smooth transition for hover effect */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+}
+
+.roadmap-container {
+    background-image: url('static/Images/RoadMap.png'); /* Use your roadmap image */
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    height: 800px; /* Adjust based on the size of your image */
+    margin: 50px 0;
+    padding: 20px;
+}
+
+.step {
+    position: absolute;
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    width: 200px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Position each step along the roadmap */
+.step-1 {
+    top: 50px;
+    left: 10%;
+}
+
+.step-2 {
+    top: 200px;
+    left: 30%;
+}
+
+.step-3 {
+    top: 350px;
+    left: 50%;
+}
+
+.step-4 {
+    top: 500px;
+    left: 70%;
+}
+
+.step-5 {
+    top: 650px;
+    left: 90%;
+}
+
+.step h5 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.step p {
+    margin: 10px 0 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.step h2 {
+    font-size: 2em;
+    margin: 10px 0 0;
+    color: #007bff;
+}
+
+@media (max-width: 768px) {
+    .step {
+        width: 150px;
+        padding: 10px;
     }
-    .industry-buttons button:hover {
-        background-color: black;  /* Background turns black on hover */
-        color: white;  /* Text turns white on hover */
+
+    .step-1, .step-2, .step-3, .step-4, .step-5 {
+        left: 5%;
     }
-    
+}

@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="margin-bottom: 70px;">
       <ol class="carousel-indicators">
         <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
         <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -34,174 +34,215 @@
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
       </a>
-    </div>
+</div>
 
-    <br>
+  <div class="hero-section text-center" style="margin-bottom: 20px;">
+    <h1 style="font-weight: bold;">Find Your Passion. Find Your Career.</h1>
+    <p style="font-size: 1.2rem;">Match your skills with the latest job opportunities in top industries.</p>
+    <a href="#explore" class="btn btn-success">Get Started</a>
+  </div>
 
-    <h1 class="d-flex justify-content-center align-items-center">Explore Trending Jobs & Required Skills</h1>
-
-    <br>
-
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-auto">
-          <button type="button" class="btn btn-primary me-3">Get Started</button>
-        </div>
-        <div class="col-auto">
-          <button type="button" class="btn btn-outline-primary">Learn More</button>
+  <br>
+  <br>
+  <div class="quote-container">
+    The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.
+    <div class="quote-author">– Steve Jobs</div>
+  </div>
+  <br>
+  <br>
+  <div>
+  <div class="container" style="background-color: #ffffff; padding: 30px; border-radius: 10px;">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card" style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
+          <img src="static/Images/market-Trend-Analysis.jpg" class="card-img-top" alt="Card image" style="height: 250px; object-fit: cover;">
+          <div class="card-body">
+            <h3 class="card-title" style="color:#0767c7 ;">Explore Market Trends</h3>
+            <hr>
+            <p class="card-text" style="padding-bottom:50px;">Stay ahead of the curve with real-time insights into the latest industry trends. Discover which sectors are growing and where the best opportunities for fresh graduates lie</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
         </div>
       </div>
-    </div>
 
-    <br>
-
-    <div class="container mt-5">
-      <div class="row align-items-center">
-        <!-- Align items vertically -->
-        <!-- Image Column -->
-        <div class="col-md-4 text-center">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZUm-R0cnf8gEuLjDYiJJmaryzbSNLx6jvdbXeUF2BgoFLqnpKUHvPzEjzuZChPloYH_c&usqp=CAU"
-            alt="Placeholder Image" class="img-fluid mx-auto d-block">
+  
+      <div class="col-md-4 mb-4">
+        <div class="card" style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
+          <img src="static/Images/NewJobs.jpg" class="card-img-top" alt="Card image" style="height: 250px; object-fit: cover;">
+          <div class="card-body">
+            <h3 class="card-title" style="color: #306088">Discover New Jobs</h3>
+            <hr>
+            <p class="card-text" style="padding-bottom:50px;">Find your perfect role with our personalized job matching system. Explore a wide range of openings tailored to your qualifications, skills, and career interests.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
         </div>
-
-        <!-- Card Column -->
-        <div class="col-md-8">
-          <div class="d-flex flex-column align-items-end">
-            <div class="mb-3 w-100 mw-100">
-              <a href="#" class="card feature-card text-dark text-decoration-none">
-                <!-- Added text-decoration-none class -->
-                <div class="card-body h-100">
-                  <h4 class="card-title">Market Trends</h4>
-                  <p class="card-text">Visual Representation of current job market trends</p>
-                </div>
-              </a>
-            </div>
-
-            <div class="mb-3 w-100 mw-100">
-              <a href="{{ url_for('Industries') }}" class="card feature-card text-dark text-decoration-none">
-                <!-- Added text-decoration-none class -->
-                <div class="card-body h-100">
-                  <h4 class="card-title">Top Hiring Industries</h4>
-                  <p class="card-text">Visual Representation of current job market trends</p>
-                </div>
-              </a>
-            </div>
-
-            <div class="mb-3 w-100 mw-100">
-              <a href="#" class="card feature-card text-dark text-decoration-none">
-                <!-- Added text-decoration-none class -->
-                <div class="card-body h-100">
-                  <h4 class="card-title">Skills In Demand</h4>
-                  <p class="card-text">Explore Skills in Demand</p>
-                </div>
-              </a>
-            </div>
+      </div>
+  
+      <div class="col-md-4 mb-4">
+        <div class="card" style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
+          <img src="static/Images/Skills.jpg" class="card-img-top" alt="Card image" style="height: 250px; object-fit: cover;">
+          <div class="card-body">
+            <h3 class="card-title" style="color: #6495ED">Uncover New Skills</h3>
+            <hr>
+            <p class="card-text" style="padding-bottom:50px;">Bridge the gap between your current expertise and industry demands. Learn which skills are most in demand and how you can acquire them to boost your employability.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
           </div>
         </div>
       </div>
     </div>
-    <br>
+  </div>
 
-    <div class="container card bg-transparent text-black border-dark ">
-      <!--text boxes-->
-      <div class="row card-body">
-        <div class="col-md-7" style="margin-left:-15px;">
-          <img class="img-fluid rounded mb-3 mb-md-0"
-            src="https://media.graphassets.com/resize=fit:crop,width:1280,height:660/XeOQlFXQ46OjHGVSkVLw">
-        </div>
-        <div class="col-md-5 card-title">
-          <h3>Discover The Hottest Jobs</h3>
-          <p>Explore latest trending jobs opportunities</p>
-          <a class="btn btn-primary" href="#">Read More</a>
-        </div>
+  <br>
+
+  
+  <div class="stats-section" style="background-color: rgb(224, 244, 255); border-radius: 15px;">
+    <h3 style = "font-size:35px ;font-weight: bold; font-family: 'Arial', sans-serif; align-items: center; text-align: center;padding-bottom: 20px; padding-top:10px">Performances & Results</h3>
+    <div class="row">
+      <div class="col stat-block">
+          <h2 class="stat-number stat-jobs" data-target="50000">0</h2>
+          <h3 class="stat-text">Jobs Posted</h3>
+      </div>
+      <div class="col stat-block">
+          <h2 class="stat-number stat-users" data-target="10000">0</h2>
+          <h3 class="stat-text">Users Matched</h3>
+      </div>
+      <div class="col stat-block">
+          <h2 class="stat-number stat-companies" data-target="500">0</h2>
+          <h3 class="stat-text">Companies Hiring</h3>
       </div>
     </div>
-
-    <br>
-
-    <h1 class="d-flex justify-content-center align-items-center">Fast and easy process</h1>
-
-    <br>
-
-    <div class="container">
-      <div class="column">
-
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <h5 class="card-title">Select Industry</h5>
-              <p class="card-text">Select interested industry</p>
-              <div class="d-flex justify-content-end">
-                <h2>01</h2>
-              </div>
-            </div>
-          </div>
+  </div>
+  <br>
+  <br>
+  <h3 style = "padding-bottom:20px;font-size:35px ;font-weight: bold; font-family: 'Arial', sans-serif; align-items: center; text-align: center;padding-bottom: 20px; padding-top:10px">Testimonials</h3>
+ 
+  <div class="testimonials-container" style="padding-bottom:20px;">
+    <!-- First Testimonial -->
+    <div class="testimonial" style="background-color: none;" >
+        <div class="testimonial-image">
+            <img src="static/Images/man.jpeg" alt="Person Image"> <!-- Replace with actual image -->
         </div>
-
-        <br>
-
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <h5 class="card-title">Submit Resume</h5>
-              <p class="card-text">Populate your data to explore your future</p>
-              <div class="d-flex justify-content-end">
-                <h2>02</h2>
-              </div>
-            </div>
-          </div>
+        <div class="testimonial-text">
+            <blockquote class="blockquote">
+                <p>"SkillGauge helped me find the perfect job in just a few weeks! Highly Recommend!"</p>
+                <footer class="blockquote-footer">John Doe, Software Developer</footer>
+            </blockquote>
         </div>
-
-
-        <br>
-
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <h5 class="card-title">Identify Required Skills</h5>
-              <p class="card-text">Understand more about the job prospects
-                & skills needed for each trending job to
-                stay ahead of your career</p>
-              <div class="d-flex justify-content-end">
-                <h2>03</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <br>
-
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <h5 class="card-title">Develop your skills</h5>
-              <p class="card-text">Leverage on our AI to discover relevant courses
-                & take your skills to the next level</p>
-              <div class="d-flex justify-content-end">
-                <h2>04</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        <br>
-
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <h5 class="card-title">Advance your career</h5>
-              <p class="card-text">Take the next step in your career journey
-                with your newly acquired skills & knowledge</p>
-              <div class="d-flex justify-content-end">
-                <h2>05</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
     </div>
+
+    <!-- Second Testimonial -->
+    <div class="testimonial" style="background-color: none;">
+        <div class="testimonial-image">
+            <img src="static/Images/woman.jpg" alt="Person Image"> <!-- Replace with actual image -->
+        </div>
+        <div class="testimonial-text">
+            <blockquote class="blockquote">
+                <p>"Thanks to SkillGauge, I landed my dream job right out of college!"</p>
+                <footer class="blockquote-footer">Jane Smith, Graphic Designer</footer>
+            </blockquote>
+        </div>
+    </div>
+</div>
+  
+<div style="margin-bottom:150px;"></div>
+
+
+<div class="container card bg-transparent text-black border-dark">
+  <!--text boxes-->
+  <div class="row card-body">
+    <div class="col-md-7" style="margin-left:-15px;">
+      <img class="img-fluid rounded mb-3 mb-md-0"
+        src="https://media.graphassets.com/resize=fit:crop,width:1280,height:660/XeOQlFXQ46OjHGVSkVLw">
+    </div>
+    <div class="col-md-5 card-title">
+      <h3>Discover The Hottest Jobs</h3>
+      <p>Explore latest trending jobs opportunities</p>
+      <a class="btn btn-primary" href="#">Read More</a>
+    </div>
+  </div>
+</div>
+
+<br>
+
+<h1 class="d-flex justify-content-center align-items-center">Fast and easy process</h1>
+
+<br>
+
+
+<div class="roadmap-container">
+  <div class="step step-1">
+      <h5>Select Industry</h5>
+      <p>Select interested industry</p>
+      <h2>01</h2>
+  </div>
+
+  <div class="step step-2">
+      <h5>Submit Resume</h5>
+      <p>Populate your data to explore your future</p>
+      <h2>02</h2>
+  </div>
+
+  <div class="step step-3">
+      <h5>Identify Required Skills</h5>
+      <p>Understand job prospects & skills needed</p>
+      <h2>03</h2>
+  </div>
+
+  <div class="step step-4">
+      <h5>Develop Your Skills</h5>
+      <p>Leverage AI to discover courses & improve</p>
+      <h2>04</h2>
+  </div>
+
+  <div class="step step-5">
+      <h5>Advance Your Career</h5>
+      <p>Take the next step with new skills</p>
+      <h2>05</h2>
+  </div>
+</div>
+</div>
+  
+
+    <script>
+      // Function to animate the numbers
+      function animateNumbers() {
+          const numbers = document.querySelectorAll('.stat-number');
+          numbers.forEach(number => {
+              const updateCount = () => {
+                  const target = +number.getAttribute('data-target');
+                  const count = +number.innerText;
+                  const speed = 200; // You can adjust the speed here
+                  const increment = target / speed;
+                  
+                  if (count < target) {
+                      number.innerText = Math.ceil(count + increment);
+                      setTimeout(updateCount, 10);
+                  } else {
+                      number.innerText = target;
+                  }
+              };
+              updateCount();
+          });
+      }
+      
+      // Function to check if element is in viewport
+      function isInViewport(element) {
+          const rect = element.getBoundingClientRect();
+          return (
+              rect.top >= 0 &&
+              rect.left >= 0 &&
+              rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+              rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+          );
+      }
+      
+      // Scroll event listener to trigger animation
+      document.addEventListener('scroll', function() {
+          const statsSection = document.querySelector('.stats-section');
+          if (isInViewport(statsSection)) {
+              animateNumbers();
+          }
+      });
+      </script>
 
 {% endblock %}

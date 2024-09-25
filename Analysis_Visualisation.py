@@ -56,7 +56,7 @@ def analyse_industry_distribution(data):
 
 
 
-def create_job_title_bubble_chart(data, industry_name, output_file):
+def create_job_title_bubble_chart(data, industry_name):
     # Filter data for the selected 'Broader Category'
     industry_data = data[data['Broader Category'] == industry_name]
 
@@ -84,30 +84,26 @@ def create_job_title_bubble_chart(data, industry_name, output_file):
                      )
     
     # Customize the hovertemplate to show only the Job Title
-    # fig.update_traces(
-    #     hovertemplate="<b>%{text}</b><extra></extra>",  # Only display job title, remove other values
-    #     textposition='middle center'
-    # )
+    fig.update_traces(
+        hovertemplate="<b>%{text}</b><extra></extra>",  # Only display job title, remove other values
+        textposition='middle center'
+    )
 
     # Update layout for a clean look
-    fig.update_traces(textposition='middle center')
     fig.update_layout(showlegend=False, 
                       xaxis=dict(showticklabels=False), 
                       yaxis=dict(showticklabels=False),
-                      height=800,
+                      height=600,
                       margin=dict(l=20, r=20, t=40, b=80),
                       clickmode='event+select')  # Enable click events
 
-    # Add a custom click event handler to highlight the corresponding bar
-    fig.update_layout(
-        clickmode='event+select'
-    )
-
-    # Save the bubble chart as an HTML file
-    pio.write_html(fig, file=output_file, auto_open=False)
+    # Return the chart as HTML
+    html_code = fig.to_html(full_html=False)
+    return html_code
 
 
-def create_salary_variation_chart(data, industry_name, output_file):
+
+def create_salary_variation_chart(data, industry_name):
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name]
 
@@ -134,11 +130,13 @@ def create_salary_variation_chart(data, industry_name, output_file):
         clickmode='event+select'
     )
 
-    # Save the figure to the specified output file
-    pio.write_html(fig, file=output_file, auto_open=False)
+    # Return the bubble chart as HTML code
+    html_code = fig.to_html(full_html=False)
+    return html_code
 
-def create_salary_trend_chart(data, industry_name, output_file):
-# Filter data for the selected industry
+
+def create_salary_trend_chart(data, industry_name):
+       # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name]
 
     # Group by Job Title and Year-Quarter, then calculate average salary
@@ -148,31 +146,36 @@ def create_salary_trend_chart(data, industry_name, output_file):
     fig = go.Figure()
 
     job_titles = salary_trend['Job Title'].unique()
-    colors = px.colors.qualitative.Plotly  # Use a pre-defined color palette
+
+    # Use a color palette for consistency
+    colors = px.colors.qualitative.Plotly
 
     for i, job_title in enumerate(job_titles):
         job_data = salary_trend[salary_trend['Job Title'] == job_title]
 
-        # Add the actual salary line
+        # Add the actual salary line, initially hidden
         fig.add_trace(go.Scatter(
             x=job_data['Year-Quarter'],
             y=job_data['Average Salary (K)'],
             mode='lines+markers',
             name=f'{job_title} Salary',
-            line=dict(color=colors[i % len(colors)], width=2),
-            showlegend=True
+            line=dict(color=colors[i % len(colors)], width=2),  # Set color from palette
+            showlegend=True,
+            visible='legendonly'  # Initially hidden
         ))
 
-        # Add the trendline (linear regression)
-        z = np.polyfit(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q','')), job_data['Average Salary (K)'], 1)
+        # Add the trendline with the same color but dashed, initially hidden
+        z = np.polyfit(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', '')), job_data['Average Salary (K)'], 1)
         p = np.poly1d(z)
+
         fig.add_trace(go.Scatter(
             x=job_data['Year-Quarter'],
-            y=p(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q',''))),
+            y=p(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', ''))),
             mode='lines',
             name=f'{job_title} Trendline',
-            line=dict(dash='dash', color=colors[i % len(colors)], width=2),
-            showlegend=True
+            line=dict(dash='dash', color=colors[i % len(colors)], width=2),  # Same color but dashed
+            showlegend=True,
+            visible='legendonly'  # Initially hidden
         ))
 
     # Update layout
@@ -184,8 +187,9 @@ def create_salary_trend_chart(data, industry_name, output_file):
         margin=dict(l=20, r=20, t=40, b=80)
     )
 
-    # Save the figure to the specified output file
-    pio.write_html(fig, file=output_file, auto_open=False)
+    # Convert the figure to HTML
+    html_code = fig.to_html(full_html=False)
+    return html_code
 
 def skills_comparison(user_skills):
     # Define the fixed skills list
