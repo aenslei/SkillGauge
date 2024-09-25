@@ -1,14 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,session
 from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart
 # import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
 
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend
 import Analysis_Visualisation
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24) 
 
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -86,7 +87,6 @@ def industry_details():
 
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
     data = load_data(file_path)
-   
 
     os.makedirs('static/charts', exist_ok=True)
 
@@ -101,15 +101,6 @@ def industry_details():
     salary_trend_chart = create_salary_trend_chart(data, industry_name)  # Call the salary trend chart function
 
 
-
-        #industry_data_path = "data/V1 group"+ industry_id +".csv"
-    """ once data is in can uncomment
-    with open("data/V1 group0.csv") as datafile:
-    df = pd.read_csv(datafile, index_col=False)
-
-    job_trend_code = industry_job_trend(df)
-
-    """
 
     # find industry general skills
     industry_name = industry_name.replace(" ", "_")
@@ -137,13 +128,27 @@ def industry_details():
     job_trend_code = industry_job_trend(df)
 
     # end of job trends
+
+    # start of hiring trend code
+    hiring_trend_code = industry_hiring_trend(df)
+
+    # end of hiring trend code
+
+
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
+
+    wordCloud = Analysis_Visualisation.generate_wordcloud(industry_name)
 
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
                            job_trend_fig=job_trend_code,
                            skill_list = skill_list,
+
+                           wordCloud = wordCloud,
+
+                           hiring_trend_fig = hiring_trend_code,
+
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
                            salary_trend_chart=salary_trend_chart)
@@ -172,11 +177,14 @@ def expanded_job_roles(job_title):
 
     j1 = JobRole(1,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
 
-    skillsLacking = ['java', 'UI', 'python programming']
-    urlCourses = course_url_crawler.search_courses(skillsLacking)
+    if 'userSkills' in session:
+        userSkills = session['userSkills'] 
+    else:
+        userSkills = []
 
-    userSkills = ["Graph QL", "AWS", "Jira"]
-    skillComparisonChart = Analysis_Visualisation.skills_comparison(userSkills)
+    skillComparisonChart,skillsLacking = Analysis_Visualisation.skills_comparison("Information_Technology","Software Engineer",userSkills)
+    
+    urlCourses = course_url_crawler.search_courses(skillsLacking)
 
     return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)
 
@@ -214,14 +222,14 @@ def add_skills():
 
 @app.route('/update_skills', methods=['POST'])
 def update_skills():
-    updated_skills = request.form.getlist('skills')
+    session['userSkills'] = request.form.getlist('skills')
     
     # Remove all resumes once skills are submitted
     for filename in os.listdir(UPLOAD_FOLDER):
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         if os.path.isfile(file_path):
             os.remove(file_path)
-    return redirect(url_for('Job_roles', skills=updated_skills))
+    return redirect(url_for('Job_roles'))
 
 if __name__ == '__main__':
     app.run(debug=True)

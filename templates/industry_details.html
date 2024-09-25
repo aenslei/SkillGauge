@@ -44,16 +44,18 @@
     <p class="lead">This is the dashboard.</p>
 
     <hr class="my-4">
-    
-        <!-- Flexbox container to display the charts side by side -->
-    <div id="bubble-chart" style="flex-grow: 1; height: 650px;">
-        {{ job_title_chart|safe }}
-    </div>
-    
-   
     <div>
-        {{ job_trend_fig | safe }}
-    </div>
+        <!-- Flexbox container to display the charts side by side -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <!-- First chart: Job Title Breakdown -->
+            <iframe id="bubble-chart" src="{{ url_for('static', filename=job_title_chart) }}" 
+            style="width: 49%; height: 600px; border: none;">
+            </iframe>
+    
+        <iframe id="salary-chart" src="{{ url_for('static', filename=salary_chart) }}" 
+            style="width: 49%; height: 600px; border: none;"></iframe>
+            
+        </div>
 
     <br>
 
@@ -63,9 +65,27 @@
 
     <br>
 
-    <div id="salary-trend-chart"  >
-        {{ salary_trend_chart|safe }}
+        <div>
+            {{ job_trend_fig | safe }}
+        </div>
+
+        <br>
+
+        <div>
+            {{wordCloud | safe}}
+        </div>
+
+        <br>
+
+        <div>
+            {{ hiring_trend_fig | safe }}
+        </div>
+
     </div>
+
+
+
+
         
     
     
@@ -74,6 +94,25 @@
     
     
 </div>
+
+
+     <div class="container card bg-transparent text-black border-dark ">
+      <!--text boxes-->
+      <div class="row card-body">
+
+        <div class="card-title col-sm-10">
+          <h3>Discover your suitable role now!</h3>
+          <p>Find out more about your career</p>
+
+        </div>
+        <div class="col-sm-2 d-flex justify-content-center align-items-center">
+            <a class="btn btn-primary p-3" href="{{ url_for('Resume') }}">Find Now</a>
+
+        </div>
+      </div>
+    </div>
+
+
 
 <!-- JavaScript to Handle Click Events and Interaction Between Charts -->
 <script>
