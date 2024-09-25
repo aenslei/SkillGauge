@@ -88,7 +88,6 @@ def industry_details():
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
     data = load_data(file_path)
     app.logger.debug(f"Column names in the dataset: {data.columns}")
-   
 
     os.makedirs('static/charts', exist_ok=True)
 
@@ -144,17 +143,7 @@ def industry_details():
     # end of job trends
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
 
-    # Sample data for the word cloud
-    word_data = [
-        ["Python", 100],
-        ["Dash", 80],
-        ["Flask", 60],
-        ["Data Science", 50],
-        ["Machine Learning", 40],
-        ["Visualization", 30],
-    ]
-
-    wordCloud = Analysis_Visualisation.generate_wordcloud(word_data)
+    wordCloud = Analysis_Visualisation.generate_wordcloud(industry_name)
 
     return render_template('industry_details.html',  
                            industry=industry, 

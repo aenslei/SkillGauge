@@ -320,9 +320,27 @@ def skills_comparison(Industry,job_role,user_skills):
     # Return the HTML representation of the chart
     return fig.to_html(),missing_skills
 
-def generate_wordcloud(word_data):
+def generate_wordcloud(Industry):
+    industry_path = pd.read_csv(f"Datasets/(Final)_past_{Industry}.csv")
+
+    # get all skills from a particular job title
+    jobTitles = industry_path['Job Title'].apply(lambda x: x.split()[0])
+
+    all_skills = []
+    for skill_set in jobTitles:
+        try:
+            # Convert string representation of list to actual list
+            evaluated_skills = ast.literal_eval(skill_set)
+            # Extend the final list with the skills
+            all_skills.extend([skill.strip() for skill in evaluated_skills])
+        except (ValueError, SyntaxError):
+            # If the string isn't a list, split it by commas and process it
+            clean_skills = skill_set.replace("'", "").split(',')
+            all_skills.extend([skill.strip() for skill in clean_skills])
+    top10Jobs,sortedJobTitles = CountWords(all_skills,10)
+
     # Create a dictionary from the word data
-    word_dict = dict(word_data)
+    word_dict = dict(sortedJobTitles)
     
     # Generate the word cloud
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(word_dict)
