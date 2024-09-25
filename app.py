@@ -144,18 +144,27 @@ def industry_details():
     # end of job trends
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
 
+    # Sample data for the word cloud
+    word_data = [
+        ["Python", 100],
+        ["Dash", 80],
+        ["Flask", 60],
+        ["Data Science", 50],
+        ["Machine Learning", 40],
+        ["Visualization", 30],
+    ]
+
+    wordCloud = Analysis_Visualisation.generate_wordcloud(word_data)
+
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
                            job_trend_fig=job_trend_code,
                            skill_list = skill_list,
+                           wordCloud = wordCloud,
                            job_title_chart=f'charts/{industry_name}_job_titles_bubble_chart.html',
                            salary_chart=f'charts/{industry_name}_salary_variation.html',
                            salary_trend_chart=f'charts/{industry_name}_salary_trend.html')
-
-
-    
-
 
 @app.route('/job_roles')
 def Job_roles():

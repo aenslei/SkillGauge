@@ -8,6 +8,10 @@ import re
 import ast
 from collections import defaultdict
 
+import dash_bootstrap_components as dbc
+from wordcloud import WordCloud
+
+
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
     def clean_salary_value(val):
@@ -316,3 +320,26 @@ def skills_comparison(Industry,job_role,user_skills):
     # Return the HTML representation of the chart
     return fig.to_html(),missing_skills
 
+def generate_wordcloud(word_data):
+    # Create a dictionary from the word data
+    word_dict = dict(word_data)
+    
+    # Generate the word cloud
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(word_dict)
+    
+    # Create a Plotly figure
+    fig = go.Figure()
+    fig.add_trace(go.Image(z=wordcloud.to_array()))
+    
+    # Update layout for better display
+    fig.update_layout(
+        height=400,
+        xaxis={"visible": False},
+        yaxis={"visible": False},
+        margin={"t": 0, "b": 0, "l": 0, "r": 0},
+        hovermode=False,
+        paper_bgcolor="white",
+        plot_bgcolor="white"
+    )
+    
+    return pio.to_html(fig, full_html=False)
