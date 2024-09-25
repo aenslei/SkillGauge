@@ -88,7 +88,6 @@ def industry_details():
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
     data = load_data(file_path)
     app.logger.debug(f"Column names in the dataset: {data.columns}")
-   
 
     os.makedirs('static/charts', exist_ok=True)
 
@@ -142,19 +141,21 @@ def industry_details():
 
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
 
+    wordCloud = Analysis_Visualisation.generate_wordcloud(industry_name)
+
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
                            job_trend_fig=job_trend_code,
                            skill_list = skill_list,
+
+                           wordCloud = wordCloud,
+
                            hiring_trend_fig = hiring_trend_code,
+
                            job_title_chart=f'charts/{industry_name}_job_titles_bubble_chart.html',
                            salary_chart=f'charts/{industry_name}_salary_variation.html',
                            salary_trend_chart=f'charts/{industry_name}_salary_trend.html')
-
-
-    
-
 
 @app.route('/job_roles')
 def Job_roles():
