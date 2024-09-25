@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import course_url_crawler
 
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend
 import Analysis_Visualisation
 
 app = Flask(__name__)
@@ -106,15 +106,6 @@ def industry_details():
 
 
 
-        #industry_data_path = "data/V1 group"+ industry_id +".csv"
-    """ once data is in can uncomment
-    with open("data/V1 group0.csv") as datafile:
-    df = pd.read_csv(datafile, index_col=False)
-
-    job_trend_code = industry_job_trend(df)
-
-    """
-
     # find industry general skills
     industry_name = industry_name.replace(" ", "_")
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
@@ -141,6 +132,13 @@ def industry_details():
     job_trend_code = industry_job_trend(df)
 
     # end of job trends
+
+    # start of hiring trend code
+    hiring_trend_code = industry_hiring_trend(df)
+
+    # end of hiring trend code
+
+
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
 
     wordCloud = Analysis_Visualisation.generate_wordcloud(industry_name)
@@ -150,7 +148,11 @@ def industry_details():
                            other_industries=other_industries, 
                            job_trend_fig=job_trend_code,
                            skill_list = skill_list,
+
                            wordCloud = wordCloud,
+
+                           hiring_trend_fig = hiring_trend_code,
+
                            job_title_chart=f'charts/{industry_name}_job_titles_bubble_chart.html',
                            salary_chart=f'charts/{industry_name}_salary_variation.html',
                            salary_trend_chart=f'charts/{industry_name}_salary_trend.html')
