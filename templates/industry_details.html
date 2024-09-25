@@ -2,28 +2,30 @@
 
 {% block content %}
 
-<a href="{{ url_for('Industries') }}" class="btn mt-3" style="background-color: transparent; color: black; text-decoration: none; border: none; box-shadow: none;" onmouseover="this.style.color='gray'" onmouseout="this.style.color='black'">
-    Back to Industries 
+<a href="{{ url_for('Industries') }}" class="btn mt-3"
+    style="background-color: transparent; color: black; text-decoration: none; border: none; box-shadow: none;"
+    onmouseover="this.style.color='gray'" onmouseout="this.style.color='black'">
+    Back to Industries
 </a>
 
 <!-- Buttons for other industries -->
 <br>
 <div class="industry-buttons mb-4">
     {% for other_industry in other_industries %}
-        <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline;">
-            <input type="hidden" name="industry_name" value="{{ other_industry }}">
-            <button type="submit">{{ other_industry }}</button>
-        </form>
+    <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline;">
+        <input type="hidden" name="industry_name" value="{{ other_industry }}">
+        <button type="submit">{{ other_industry }}</button>
+    </form>
     {% endfor %}
 </div>
 
-<div class="container mt-4">   
+<div class="container mt-4">
     <p>More information about the {{ industry }} industry.</p>
 </div>
 
 <!-- Data Visualisation -->
 
-    <h3>{{ industry }}</h3>
+<h3>{{ industry }}</h3>
 
 <div class="jumbotron" style="height: fit-content;">
     <h1 class="display-1">{{ industry }}</h1>
@@ -44,85 +46,87 @@
     <p class="lead">This is the dashboard.</p>
 
     <hr class="my-4">
-    
-        
+
+
 
     <br>
 
-    <div id="salary-chart">
-        {{ salary_chart|safe }}
+    <div id="bubble-chart" style="flex-grow: 1; height: 800px;">
+        {{ job_title_chart|safe }}
     </div>
 
     <br>
 
-        <div>
-            {{ job_trend_fig | safe }}
-        </div>
-
-        <br>
-
-        <div>
-            {{wordCloud | safe}}
-        </div>
-
-        <br>
-
-        <div>
-            {{ hiring_trend_fig | safe }}
-        </div>
-
+    <div id="salary-trend-chart">
+        {{ salary_trend_chart|safe }}
     </div>
 
     <br>
+
+    <div>
+        {{ job_trend_fig | safe }}
+    </div>
+
+    <br>
+
+    <div>
+        {{wordCloud | safe}}
+    </div>
+
+    <br>
+
+    <div>
+        {{ hiring_trend_fig | safe }}
+    </div>
+
+</div>
+
+<br>
 </div>
 
 
-     <div class="container card bg-transparent text-black border-dark ">
-      <!--text boxes-->
-      <div class="row card-body">
+<div class="container card bg-transparent text-black border-dark ">
+    <!--text boxes-->
+    <div class="row card-body">
 
         <div class="card-title col-sm-10">
-          <h3>Discover your suitable role now!</h3>
-          <p>Find out more about your career</p>
+            <h3>Discover your suitable role now!</h3>
+            <p>Find out more about your career</p>
 
         </div>
         <div class="col-sm-2 d-flex justify-content-center align-items-center">
             <a class="btn btn-primary p-3" href="{{ url_for('Resume') }}">Find Now</a>
 
         </div>
-      </div>
     </div>
+</div>
 
 
 
 <!-- JavaScript to Handle Click Events and Interaction Between Charts -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const bubbleChartFrame = document.querySelector('#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
-        const salaryTrendChartFrame = document.querySelector('#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
+    const bubbleChartFrame = document.getElementById('bubble-chart');
+    const salaryTrendChartFrame = document.getElementById('salary-trend-chart');
 
-        // Ensure the charts are loaded properly
-        if (bubbleChartFrame && salaryTrendChartFrame) {
-            // Listen for a click event on the bubble chart
-            bubbleChartFrame.on('plotly_click', function(data) {
-                const clickedJobTitle = data.points[0].text;  // Get the clicked job title
-                console.log("Clicked Job Title:", clickedJobTitle);
+    bubbleChartFrame.onload = function () {
+        const bubbleChart = bubbleChartFrame.contentWindow.Plotly;
+        const salaryTrendChart = salaryTrendChartFrame.contentWindow.Plotly;
 
-                // Show the salary line and trendline for the clicked job title
-                const salaryTrendTraces = salaryTrendChartFrame.data;
-                for (let i = 0; i < salaryTrendTraces.length; i++) {
-                    // Show only the salary line and trendline for the clicked job title
-                    if (salaryTrendTraces[i].name.includes(clickedJobTitle)) {
-                        Plotly.restyle(salaryTrendChartFrame, { visible: true }, [i]);
-                    } else {
-                        Plotly.restyle(salaryTrendChartFrame, { visible: 'legendonly' }, [i]);
-                    }
+        bubbleChart.on('plotly_click', function (data) {
+            const clickedJobTitle = data.points[0].text; // Get the clicked job title
+            console.log("Clicked Job Title: " + clickedJobTitle);
+
+            // Loop through traces in the salary trend chart
+            salaryTrendChart.data.forEach((trace, index) => {
+                if (trace.name.includes(clickedJobTitle)) {
+                    // Make both the salary line and trendline visible for the clicked job title
+                    salaryTrendChart.restyle({
+                        'visible': true
+                    }, [index]);
                 }
             });
-        } else {
-            console.error('Bubble chart or salary trend chart not found.');
-        }
-    });
+        });
+    };
 </script>
 
 {% endblock %}
