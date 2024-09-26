@@ -18,6 +18,8 @@ file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+
+
 class Industry:
     def __init__(self, title):
         self.title = title
@@ -88,6 +90,7 @@ def industry_details():
 
     os.makedirs('static/charts', exist_ok=True)
 
+    
     # Generate the bubble chart for job titles in the selected industry (Broader Category)
     job_title_chart = create_job_title_bubble_chart(data, industry_name) # Call the bubble chart function
 
