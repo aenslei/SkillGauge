@@ -7,90 +7,89 @@
 <div>
 
 
-    <div class ="container">
+    <div class="container">
 
 
 
 
-        <div class ="container-fluid ">
+        <div class="container-fluid ">
             {% set counter = namespace(value=0) %}
             <h2 class="text-secondary">Matching Job roles ({{ job_role | length }})</h2>
-            <div class = "row justify-content-center" >
+            <div class="row justify-content-center">
 
-            {% for x in job_role %}
+                {% for x in job_role %}
 
-            {% if counter.value < 3 %}
+                {% if counter.value < 3 %}
                 {% set counter.value = counter.value + 1 %}
 
 
-            <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-
-                <h4> {{x.title}} </h4>
-                <b>Skills:</b>
-                <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
+                <div class="col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
 
 
-                {% if x.match_percent >= 70 %}
-                <div class= "text-success" style="position: absolute; bottom:5; right:5; font-size:2em;">
-                    {{ x.match_percent }}%
-                </div>
+                    <a href="{{ url_for('expanded_job_roles', job_title=x.title) }}" class="text-decoration-none"
+                        style="color: inherit;">
+                        <h4> {{x.title}} </h4>
+                    </a>
+                    <b>Skills:</b>
+                    <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
 
-                {% elif x.match_percent >= 50 or x.match_percent < 70 %}
-                <div class= "text-warning" style="position: absolute; bottom:5; right:5; font-size:2em;">
-                    {{ x.match_percent }}%
+                    {% if x.match_percent >= 70 %}
+                    <div class="text-success" style="position: absolute; bottom:5; right:5; font-size:2em;">
+                        {{ x.match_percent }}%
+                    </div>
+
+                    {% elif x.match_percent >= 50 or x.match_percent < 70 %}
+                    <div class="text-warning" style="position: absolute; bottom:5; right:5; font-size:2em;">
+                        {{ x.match_percent }}%
+                    </div>
+
+                    {% else %}
+                    <div class="text-danger" style="position: absolute; bottom:5; right:5; font-size:2em;">
+                        {{ x.match_percent }}%
+                    </div>
+
+                    {% endif %}
                 </div>
 
                 {% else %}
-                <div class= "text-danger" style="position: absolute; bottom:5; right:5; font-size:2em;">
-                    {{ x.match_percent }}%
+                {% set counter.value = 1 %}
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
+
+                    <a href="{{ url_for('expanded_job_roles', job_title=x.title) }}" class="text-decoration-none"
+                        style="color: inherit;">
+                        <h4> {{x.title}} </h4>
+                    </a>
+                    <b>Skills:</b>
+                    <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
+
+                    {% if x.match_percent >= 70 %}
+                    <div class="text-success" style="position: absolute; bottom:5; right:5; font-size:2em;">
+                        {{ x.match_percent }}%
+                    </div>
+
+                    {% elif x.match_percent >= 50 and x.match_percent < 70 %}
+                    <div class="text-warning" style="position: absolute; bottom:5; right:5; font-size:2em;">
+                        {{ x.match_percent }}%
+                    </div>
+
+                    {% else %}
+                    <div class="text-danger" style="position: absolute; bottom:5; right:5; font-size:2em;">
+                        {{ x.match_percent }}%
+                    </div>
+
+                    {% endif %}
+
+
                 </div>
+
+
 
                 {% endif %}
 
 
-
-
-
-
-
-            </div>
-
-            {% else %}
-            {% set counter.value = 1 %}
-            </div>
-            <div class = "row justify-content-center" >
-                <div class = "col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
-
-                <h4> {{x.title}} </h4>
-                <b>Skills:</b>
-                <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
-
-                {% if x.match_percent >= 70 %}
-                <div class= "text-success" style="position: absolute; bottom:5; right:5; font-size:2em;">
-                    {{ x.match_percent }}%
-                </div>
-
-                {% elif x.match_percent >= 50 and x.match_percent < 70 %}
-                <div class= "text-warning" style="position: absolute; bottom:5; right:5; font-size:2em;">
-                    {{ x.match_percent }}%
-                </div>
-
-                {% else %}
-                <div class= "text-danger" style="position: absolute; bottom:5; right:5; font-size:2em;">
-                    {{ x.match_percent }}%
-                </div>
-
-                {% endif %}
-
-
-                </div>
-
-
-
-            {% endif %}
-
-
-            {% endfor %}
+                {% endfor %}
             </div>
 
 
