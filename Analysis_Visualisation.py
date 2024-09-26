@@ -221,7 +221,22 @@ def merge_sort(word_freq_list):
     
     return sorted_list
 
-def CountWords(word_list,topNumOfItem):
+def CountWords(jobTitles,topNumOfItem):
+
+    word_list=[]
+
+    for jobs in jobTitles:
+        try:
+            # Convert string representation of list to actual list
+            evaluated_jobs = ast.literal_eval(jobs)
+            # Extend the final list with the skills
+            word_list.extend([job.strip() for job in evaluated_jobs])
+        except (ValueError, SyntaxError):
+            # If the string isn't a list, split it by commas and process it
+            clean_data = jobs.replace("'", "").split(',')
+            word_list.extend([job.strip() for job in clean_data])
+
+
     if not isinstance(word_list, list) or len(word_list) == 0:
         print("Your input is invalid!")
         return []
@@ -244,10 +259,12 @@ def CountWords(word_list,topNumOfItem):
         sorted_word_freq = merge_sort(word_freq_list)
 
         # Get the top 5 words
-        top_5_words = [word for word, freq in sorted_word_freq[:topNumOfItem]]
+        top_words = [word for word, freq in sorted_word_freq[:topNumOfItem]]
+
+        print(f"{sorted_word_freq} {top_words} {type(sorted_word_freq)}")
 
         # Return the top 5 words as a list
-        return top_5_words,sorted_word_freq
+        return top_words,sorted_word_freq
 
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -259,20 +276,8 @@ def skills_comparison(Industry,job_role,user_skills):
     # get all skills from a particular job title
     skills = industry_path[industry_path['Job Title'] == job_role]['skills'].tolist()
 
-    all_skills = []
-    for skill_set in skills:
-        try:
-            # Convert string representation of list to actual list
-            evaluated_skills = ast.literal_eval(skill_set)
-            # Extend the final list with the skills
-            all_skills.extend([skill.strip() for skill in evaluated_skills])
-        except (ValueError, SyntaxError):
-            # If the string isn't a list, split it by commas and process it
-            clean_skills = skill_set.replace("'", "").split(',')
-            all_skills.extend([skill.strip() for skill in clean_skills])
-    top10Skills,sortedWords = CountWords(all_skills,10)
-    # Now 'all_skills' contains all skills for software engineer job title
-    print(f"{sortedWords} {top10Skills} {type(sortedWords)}")
+    top10Skills,sortedWords = CountWords(skills,10)
+
 
     userSkillLowerCase, top10SkillsLowerCase = ([item.lower() for item in lst] for lst in (user_skills, top10Skills))
 
@@ -330,18 +335,7 @@ def generate_wordcloud(Industry):
     # get all skills from a particular job title
     jobTitles = industry_path['Job Title'].apply(lambda x: x.split()[0])
 
-    all_skills = []
-    for skill_set in jobTitles:
-        try:
-            # Convert string representation of list to actual list
-            evaluated_skills = ast.literal_eval(skill_set)
-            # Extend the final list with the skills
-            all_skills.extend([skill.strip() for skill in evaluated_skills])
-        except (ValueError, SyntaxError):
-            # If the string isn't a list, split it by commas and process it
-            clean_skills = skill_set.replace("'", "").split(',')
-            all_skills.extend([skill.strip() for skill in clean_skills])
-    top10Jobs,sortedJobTitles = CountWords(all_skills,10)
+    top10Jobs,sortedJobTitles = CountWords(jobTitles,10)
 
     # Create a dictionary from the word data
     word_dict = dict(sortedJobTitles)
