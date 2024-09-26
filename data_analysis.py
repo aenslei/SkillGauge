@@ -6,18 +6,22 @@ import plotly.express as px
 def industry_job_trend(df):
 
     # change date to pd datetime format
-    df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%d/%m/%Y")
+    df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
 
     # find top 5 job
     top_5_job = df["Job Title"].value_counts()
+
     top_5_jobs = top_5_job.head(5).index.tolist()
     # filter out top 5 job to display
     df = df[df['Job Title'].isin(top_5_jobs)]
 
     # set date to period and sort by quarter
     df["Quarter"] = df["Job Posting Date"].dt.to_period("Q")
+
+
     df3 = df.groupby(["Job Title", "Quarter"]).size().to_frame("Count of job per quarter").reset_index()
     df3 = df3.sort_values(by="Quarter")
+
 
     df3 = df3.pivot_table(index="Quarter", columns="Job Title", values="Count of job per quarter", fill_value=0)
     df3.reset_index(inplace=True)
@@ -106,13 +110,14 @@ def pull_industry_skills(industry_skills):
 def industry_hiring_trend(df):
 
     # setting type to date time format
-    df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%d/%m/%Y")
+    df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
 
     current_year = pd.Timestamp.now().year
     df["Job Posting Date"] = df["Job Posting Date"].apply(lambda x: x.replace(year=current_year))
 
     # extract month from data
     df["Month"] = df["Job Posting Date"].dt.to_period("M")
+
 
     # group by month and get count of drop
     df3 = df.groupby(["Month"]).size().to_frame("Count of job per month").reset_index()
