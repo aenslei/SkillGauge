@@ -142,11 +142,16 @@ def create_salary_variation_chart(data, industry_name):
 
 
 def create_salary_trend_chart(data, industry_name):
-       # Filter data for the selected industry
+    # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name]
 
     # Group by Job Title and Year-Quarter, then calculate average salary
     salary_trend = industry_data.groupby(['Job Title', 'Year-Quarter'])['Average Salary (K)'].mean().reset_index()
+
+    # Ensure Year-Quarter is sorted and convert to string
+    salary_trend['Year-Quarter'] = pd.Categorical(salary_trend['Year-Quarter'], 
+                                                  categories=sorted(salary_trend['Year-Quarter'].unique()),
+                                                  ordered=True)
 
     # Create a line chart for salary trends by job title
     fig = go.Figure()
@@ -159,8 +164,8 @@ def create_salary_trend_chart(data, industry_name):
     for i, job_title in enumerate(job_titles):
         job_data = salary_trend[salary_trend['Job Title'] == job_title]
 
-        # Add the actual salary line, initially hidden
-        fig.add_trace(go.Scatter(
+        # Add the actual salary line, initially hidden, using Scattergl for performance
+        fig.add_trace(go.Scattergl(
             x=job_data['Year-Quarter'],
             y=job_data['Average Salary (K)'],
             mode='lines+markers',
@@ -174,7 +179,7 @@ def create_salary_trend_chart(data, industry_name):
         z = np.polyfit(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', '')), job_data['Average Salary (K)'], 1)
         p = np.poly1d(z)
 
-        fig.add_trace(go.Scatter(
+        fig.add_trace(go.Scattergl(
             x=job_data['Year-Quarter'],
             y=p(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', ''))),
             mode='lines',
@@ -184,13 +189,19 @@ def create_salary_trend_chart(data, industry_name):
             visible='legendonly'  # Initially hidden
         ))
 
-    # Update layout
+    # Update layout with fixed x-axis
     fig.update_layout(
         title=f'Average Salary Trends by Job Title in {industry_name} (Quarterly)',
         xaxis_title='Quarter Year',
         yaxis_title='Average Salary (K)',
         height=600,
-        margin=dict(l=20, r=20, t=40, b=80)
+        margin=dict(l=20, r=20, t=40, b=80),
+        xaxis=dict(
+            tickmode='array',
+            tickvals=sorted(salary_trend['Year-Quarter'].unique()),  # Fixed, evenly spaced x-axis
+            ticktext=sorted(salary_trend['Year-Quarter'].unique()),   # Ensure all quarters are displayed
+            type='category'  # Keep the order of the quarters as categories
+        )
     )
 
     # Convert the figure to HTML

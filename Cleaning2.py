@@ -1,5 +1,6 @@
 import re
 import pandas as pd
+import os
 
 
 # Define a mapping between the 30 clusters and the new categories
@@ -346,9 +347,8 @@ data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
 
 
-
 # Step 1: Load abbreviations from the text file
-with open('unique_abbreviations.txt', 'r') as f:
+with open('Datasets/unique_abbreviations.txt', 'r') as f:
     abbreviations = [line.strip() for line in f.readlines()]
 
 # Add the list of abbreviations that should be kept together
@@ -423,7 +423,32 @@ def tokenize_and_find_combined_skills(skills_str):
     # Strip extra spaces and return the final list of skills
     return [skill.strip() for skill in merged_tokens if skill.strip()]
 
+def convert_df_list_to_csv(df_list,folder_path):
 
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    for df in df_list:        
+        industry_name = df["Broader Category"].unique()
+        industry_name = str(industry_name)
+        industry_name = industry_name[2:-2]
+        industry_name = industry_name.replace(" ", "_")
+        df.to_csv("(Final)_past_" + industry_name + ".csv", index=False)
+        # Save CSV to the specified folder
+        csv_file_path = os.path.join(folder_path, f"(Final)_past_{industry_name}.csv")
+        df.to_csv(csv_file_path, index=False)
+        print(f"File saved: {csv_file_path}")
+    
+
+with open("Datasets/sg_job_data-Cleaned-With Industry1.csv") as csvfile:
+    df = pd.read_csv(csvfile, index_col=False)
+df = df.groupby("Broader Category")
+df_list = [df.get_group(x) for x in df.groups]
+
+flask_dataset_folder = r"Datasets"
+
+convert_df_list_to_csv(df_list, flask_dataset_folder)
+print("Individual industry csv files created!")
 
 
 # Apply the tokenization to each row of the "skills" column
@@ -437,6 +462,7 @@ skills_text_file_path = 'all_skills.txt'  # Update this to your desired output p
 with open(skills_text_file_path, 'w') as f:
     for skill in all_skills:
         f.write(f"{skill}\n")
+
 
 # Check the output of tokenized skills
 print(data['Tokenized Skills'].head())
