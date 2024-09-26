@@ -43,15 +43,13 @@
     </div>
     <br>
 
-    <p class="lead">This is the dashboard.</p>
-
     <hr class="my-4">
 
 
 
     <br>
 
-    <div id="bubble-chart" style="flex-grow: 1; height: 800px;">
+    <div id="bubble-chart" style="flex-grow: 1; height:600px;">
         {{ job_title_chart|safe }}
     </div>
 
@@ -60,6 +58,13 @@
     <div id="salary-trend-chart">
         {{ salary_trend_chart|safe }}
     </div>
+
+    <br>
+
+    <div>
+        {{ salary_chart|safe }}
+    </div>
+
 
     <br>
 
@@ -107,9 +112,9 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const bubbleChartFrame = document.querySelector(
-        '#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
+            '#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
         const salaryTrendChartFrame = document.querySelector(
-        '#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
+            '#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
         // Ensure the charts are loaded properly
         if (bubbleChartFrame && salaryTrendChartFrame) {
             // Listen for a click event on the bubble chart

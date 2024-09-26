@@ -14,15 +14,15 @@ nlp = spacy.load("en_core_web_sm")
 
 # Define the list of industry JSON files
 industry_files = [
-    "engineering_skills.json",
-    "healthcare_skills.json",
-    "legal_service_skills.json",
-    "finance_skills.json",
-    "tech_skills.json"
+    "Skills/engineering_skills.json",
+    "Skills/healthcare_skills.json",
+    "Skills/legal_service_skills.json",
+    "Skills/finance_skills.json",
+    "Skills/tech_skills.json"
 ]
 
 # Define the general skills JSON file
-general_skills_file = "general_skills.json"
+general_skills_file = "Skills/general_skills.json"
 file_path = os.path.join('uploads', 'results.txt')
 
 #extract text from pdf and output as txt file
