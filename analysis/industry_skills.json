@@ -1,6 +1,28 @@
 {
     "title":"Information_Technology",
     "data":{
+
+        "Communication skills":466,
+        "Data analysis":349,
+        "Problem":298,
+        "Communication skills]]":235,
+        "Google":193,
+        "Attention to detail":188,
+        "Analytics":152,
+        "Account management":128,
+        "Budget management":125,
+        "Product knowledge":124,
+        "Financial analysis":121,
+        "O optimization":120,
+        "Facebook":117,
+        "Market research":117,
+        "Attention to detail]]":115,
+        "S E O":115,
+        "Inventory management":113,
+        "Contract negotiation":113,
+        "Supplier relationship management":111,
+        "Relationship building":109
+
         "Problem":282,
         "Python":270,
         "Java":260,
@@ -21,5 +43,6 @@
         "Usability testing":104,
         "UX":103,
         "Network security":103
+
     }
 }

@@ -385,7 +385,7 @@ def tokenize_and_find_combined_skills(skills_str):
         return []
     
     # Replace different delimiters (commas, semicolons) with a uniform delimiter (comma)
-    skills_str = skills_str.replace(';', ',').replace('/', ',')
+    skills_str = skills_str.replace(';', ',').replace('/', ',').replace('\\', '')  # Added this line to handle slashes
     
     # Split the string by commas
     tokens = skills_str.split(',')
@@ -393,7 +393,7 @@ def tokenize_and_find_combined_skills(skills_str):
     # Preserve abbreviations and multi-word combinations
     refined_tokens = []
     for token in tokens:
-        token = token.strip()
+        token = token.strip().replace("'", "") 
         
         # Check if the token is in the list of abbreviations to preserve
         if token in preserve_abbreviations or token in abbreviations:
