@@ -1,12 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for,session
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud
 import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-
 from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend
-import Analysis_Visualisation
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) 
@@ -137,7 +135,7 @@ def industry_details():
 
     other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
 
-    wordCloud = Analysis_Visualisation.generate_wordcloud(industry_name)
+    wordCloud = generate_wordcloud(industry_name)
 
     return render_template('industry_details.html',  
                            industry=industry, 
@@ -182,7 +180,7 @@ def expanded_job_roles(job_title):
     else:
         userSkills = []
 
-    skillComparisonChart,skillsLacking = Analysis_Visualisation.skills_comparison("Information_Technology","Software Engineer",userSkills)
+    skillComparisonChart,skillsLacking = skills_comparison("Information_Technology","Software Engineer",userSkills)
     
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
