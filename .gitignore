@@ -3,3 +3,4 @@ venv/
 __pycache__/
 analysis/
 uploads/
+analysis/industry_skills.json
