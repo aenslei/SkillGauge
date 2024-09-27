@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 import os
+import ast
 
 
 # Define a mapping between the 30 clusters and the new categories
@@ -358,25 +359,26 @@ preserve_abbreviations = ['XML', 'LEED', 'HTML', 'CSS', 'AJAX', 'UI UX', 'CI,', 
 skills_to_token_together = [
     ['Java', 'Script'],
     ['Mongo', 'D B'],
-    ['S Q', 'L', 'Server'],
-    ['My', 'S Q', 'L Oracle'],
-    ['S E', 'O'],
-    ['S E', 'M'],
-    ['U X design', '3', 'D modeling'],
-    ['I S', 'O 9001'],
-    ['L E', 'E D certification'],
-    ['Auto', 'C A', 'D Aerodynamics'],
-    ['Power', 'B I'],
-    ['Metrics and', 'K P', 'Is'],
-    ['A P', 'I knowledge'],
-    ['X M', 'L sitemaps'],
-    ['I E', 'Ps'],
-    ['C A', 'D software'],
-    ['Auto', 'C A', 'D Aerodynamics']
+    ['SQ', 'L', 'Server'],
+    ['My', 'SQ', 'L Oracle'],
+    ['SE', 'O'],
+    ['SE', 'M'],
+    ['UX design', '3', 'D modeling'],
+    ['IS', 'O 9001'],
+    ['LE', 'ED certification'],
+    ['Auto', 'CA', 'D Aerodynamics'],
+    ['Power', 'BI'],
+    ['Metrics and', 'KP', 'Is'],
+    ['AP', 'I knowledge'],
+    ['XM', 'L sitemaps'],
+    ['IE', 'Ps'],
+    ['CA', 'D software'],
+    ['Auto', 'CA', 'D Aerodynamics']
 ]
 
 # Convert the list to a dictionary to map the tokens to their merged version
-skills_dict = {" ".join(key): " ".join(key) for key in skills_to_token_together}
+skills_dict = {"".join(key) for key in skills_to_token_together}
+print(skills_dict)
 
 
 # Step 3: Define the tokenization function with abbreviations and merging logic
@@ -388,7 +390,7 @@ def tokenize_and_find_combined_skills(skills_str):
     skills_str = skills_str.replace(';', ',').replace('/', ',').replace('\\', '')  # Added this line to handle slashes
     
     # Split the string by commas
-    tokens = skills_str.split(',')
+    tokens = ast.literal_eval(skills_str)
 
     # Preserve abbreviations and multi-word combinations
     refined_tokens = []
@@ -422,6 +424,7 @@ def tokenize_and_find_combined_skills(skills_str):
 
     # Strip extra spaces and return the final list of skills
     return [skill.strip() for skill in merged_tokens if skill.strip()]
+
 
 def convert_df_list_to_csv(df_list,folder_path):
 
