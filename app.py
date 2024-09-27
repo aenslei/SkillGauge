@@ -87,21 +87,12 @@ def industry_details():
 
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
     data = load_data(file_path)
-
-    os.makedirs('static/charts', exist_ok=True)
-
-    
     # Generate the bubble chart for job titles in the selected industry (Broader Category)
     job_title_chart = create_job_title_bubble_chart(data, industry_name) # Call the bubble chart function
-
-
     # Generate the salary variation bar chart for the selected industry
     salary_chart = create_salary_variation_chart(data, industry_name)  # Call the salary chart function
-
     # Generate the salary trend chart for the selected industry
     salary_trend_chart = create_salary_trend_chart(data, industry_name)  # Call the salary trend chart function
-
-
 
     # find industry general skills
     industry_name = industry_name.replace(" ", "_")

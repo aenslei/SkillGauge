@@ -66,15 +66,16 @@ def create_job_title_bubble_chart(data, industry_name):
     # Filter data for the selected 'Broader Category'
     industry_data = data[data['Broader Category'] == industry_name]
 
-    # Get unique job titles for the selected industry
-    job_titles = industry_data['Job Title'].unique()
+    # Count the frequency of each job title in the selected industry
+    job_title_counts = industry_data['Job Title'].value_counts().reset_index()
+    job_title_counts.columns = ['Job Title', 'Job Count']
 
     # Create a DataFrame for the bubble chart
     job_title_df = pd.DataFrame({
-        'Job Title': job_titles,
-        'Bubble Size': [10] * len(job_titles),  # Set all bubble sizes equally
-        'x': np.random.rand(len(job_titles)),   # Generate random x values
-        'y': np.random.rand(len(job_titles))    # Generate random y values
+        'Job Title': job_title_counts['Job Title'],
+        'Bubble Size': job_title_counts['Job Count'] * 2,  # Increase bubble size proportional to the frequency
+        'x': np.random.rand(len(job_title_counts)) * 100,  # Spread out x values more widely
+        'y': np.random.rand(len(job_title_counts)) * 100   # Spread out y values more widely
     })
     
     # Create a bubble chart using Plotly
@@ -86,20 +87,20 @@ def create_job_title_bubble_chart(data, industry_name):
                      text='Job Title',  # Use job titles as bubble labels
                      title=f'Job Titles in {industry_name}', 
                      labels={'x': ' ', 'y': ' '},  # Hide x and y axis labels
-                     size_max=40  # Control the maximum size of the bubbles
+                     size_max=80  # Increase the maximum size of the bubbles
                      )
     
     # Customize the hovertemplate to show only the Job Title
     fig.update_traces(
-        hovertemplate="<b>%{text}</b><extra></extra>",  # Only display job title, remove other values
-        textposition='middle center'
+        hovertemplate="<b>%{text}</b><extra></extra>",  # Only display job title on hover
+        textposition='middle center'  # Position text inside the bubble
     )
 
-    # Update layout for a clean look
+    # Update layout for a clean look and to spread out the bubbles
     fig.update_layout(showlegend=False, 
-                      xaxis=dict(showticklabels=False), 
-                      yaxis=dict(showticklabels=False),
-                      height=600,
+                      xaxis=dict(showticklabels=False, range=[-10, 110]),  # Spread x axis range
+                      yaxis=dict(showticklabels=False, range=[-10, 110]),  # Spread y axis range
+                      height=700,  # Adjust the height to give more room for the bubbles
                       margin=dict(l=20, r=20, t=40, b=80),
                       clickmode='event+select')  # Enable click events
 
@@ -108,38 +109,51 @@ def create_job_title_bubble_chart(data, industry_name):
     return html_code
 
 
-
 def create_salary_variation_chart(data, industry_name):
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name]
 
-    # Group by Job Title and calculate average salary range
-    salary_range_by_job_title = industry_data.groupby('Job Title').agg(
-        avg_salary_range=('Salary Range (K)', 'mean'),
-        min_salary=('Min Salary (K)', 'mean'),
-        max_salary=('Max Salary (K)', 'mean')
-    ).reset_index()
+    # Get all unique job titles
+    job_titles = industry_data['Job Title'].unique()
 
-    # Sort by average salary range
-    salary_range_by_job_title = salary_range_by_job_title.sort_values(by='avg_salary_range', ascending=False)
+    # Create the box plot
+    fig = go.Figure()
 
-    # Create a bar chart to visualize the variation in salary range across job titles
-    fig = px.bar(salary_range_by_job_title,
-                 x='Job Title',
-                 y='avg_salary_range',
-                 title=f'Average Salary Range by Job Title in {industry_name}',
-                 labels={'avg_salary_range': 'Average Salary Range (K)', 'Job Title': 'Job Title'},
-                 color='Job Title',
-                 height=600)
+    # Plot the first 5 job titles and show them by default
+    for i, job_title in enumerate(job_titles[:5]):
+        job_data = industry_data[industry_data['Job Title'] == job_title]
+        fig.add_trace(go.Box(
+            y=job_data['Average Salary (K)'],
+            name=job_title,
+            boxmean=True,
+            marker_color=px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)],
+            showlegend=True,
+            visible=True  # Show the first 5 job titles initially
+        ))
 
+    # Plot the rest of the job titles but keep them hidden initially
+    for i, job_title in enumerate(job_titles[5:], start=5):
+        job_data = industry_data[industry_data['Job Title'] == job_title]
+        fig.add_trace(go.Box(
+            y=job_data['Average Salary (K)'],
+            name=job_title,
+            boxmean=True,
+            marker_color=px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)],
+            showlegend=True,
+            visible='legendonly'  # Keep the other job titles hidden initially
+        ))
+
+    # Update layout to make the chart larger
     fig.update_layout(
+        title=f'Salary Distribution by Job Title in {industry_name}',
+        yaxis_title='Average Salary (K)',
+        height=800,  # Adjusted height
         clickmode='event+select'
     )
 
-    # Return the bubble chart as HTML code
+    # Return the box plot as HTML code
     html_code = fig.to_html(full_html=False)
     return html_code
-
 
 def create_salary_trend_chart(data, industry_name):
     # Filter data for the selected industry
