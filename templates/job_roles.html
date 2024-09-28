@@ -28,8 +28,9 @@
 
                     <a href="{{ url_for('expanded_job_roles', job_title=x.title) }}" class="text-decoration-none"
                         style="color: inherit;">
-                        <h4> {{x.title}} </h4>
+
                     </a>
+                    <h4> {{x.title}} </h4>
                     <b>Skills:</b>
                     <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
 
@@ -59,8 +60,9 @@
 
                     <a href="{{ url_for('expanded_job_roles', job_title=x.title) }}" class="text-decoration-none"
                         style="color: inherit;">
-                        <h4> {{x.title}} </h4>
+
                     </a>
+                    <h4> {{x.title}} </h4>
                     <b>Skills:</b>
                     <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
 
@@ -73,7 +75,7 @@
                     <div class="text-warning" style="position: absolute; bottom:5; right:5; font-size:2em;">
                         {{ x.match_percent }}%
                     </div>
-
+                    
                     {% else %}
                     <div class="text-danger" style="position: absolute; bottom:5; right:5; font-size:2em;">
                         {{ x.match_percent }}%
