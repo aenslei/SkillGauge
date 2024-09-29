@@ -287,3 +287,83 @@ body {
         left: 5%;
     }
 }
+
+/* Full-height container with two halves */
+.full-height-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 50vh; /* Full viewport height */
+}
+
+/* Second half of the screen (with background image) */
+.second-half {
+    background-size:cover; /* Makes the image as large as possible without covering the whole container */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    display:grid;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px; /* Adjust the height as needed */
+}
+
+/* Styling for the "Back to Home" link */
+.back-link {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.back-link:hover {
+    color: #FF5733;
+}
+
+/* Centering the text */
+.industries-content {
+    text-align: center;
+    padding-top: 10px;
+}
+
+.card h4 {
+    font-size: 1.5rem; /* Adjust this value to make the text larger */
+    font-weight: bold; /* Makes the text bold */
+    color: #333; /* Optional: Change the text color if needed */
+    margin: 0; /* Optional: Remove margin if needed */
+    text-align: center; /* Centers the text */
+}
+
+/* Styling for industry cards */
+.card {
+    padding: 25px;
+    background: #f7f9fc;
+    border: none;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: auto;
+    margin-bottom: 15px; /* Adjusted to reduce gap between cards */
+}
+
+.card:hover {
+    transform: translateY(-10px); /* Lift the card on hover */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    .card {
+        padding: 15px;
+        height: auto;
+    }
+
+    .industries-content h2 {
+        font-size: 2rem;
+    }
+
+    .industries-content p {
+        font-size: 1rem;
+    }
+}

@@ -4,27 +4,47 @@
 {% extends "index.html" %}
 
 {% block content %}
-<div class="container">
 
-    <h2>Industries</h2>
-    <br>
 
-    <div class="container-fluid">
+
+<div class="container full-height-container">
+    <div>
+        <a href="/" class="back-link">← Back to Home</a> <!-- Updated link to point to the home route -->
+        <p class="text-center" style="font-size: 1.2rem; margin-bottom: 10px; padding-top: 20px;">Choose Your Industry. <br> Explore trending industries and find your passion</p>
+        <br>
         <div class="row justify-content-center">
             {% for industry, count in industry_distribution.items() %}
-                {% set col_class = 12 // columns_count %}
-                <div class="col-md-4 col-sm-12 mb-4">
+                {% set bg_color = '' %}
+                {% if industry == 'Business' %}
+                    {% set bg_color = '#FFDDC1' %}  <!-- Light Peach Color -->
+                {% elif industry == 'Information Technology' %}
+                    {% set bg_color = '#C1E1C1' %}  <!-- Light Green Color -->
+                {% elif industry == 'Engineering' %}
+                    {% set bg_color = '#C1C1E1' %}  <!-- Light Purple Color -->
+                {% elif industry == 'Healthcare' %}
+                    {% set bg_color = '#FFD1DC' %}  <!-- Light Pink Color -->
+                {% elif industry == 'Legal Services' %}
+                    {% set bg_color = '#C1D7E1' %}  <!-- Light Blue Color -->
+                {% else %}
+                    {% set bg_color = '#F7F7F7' %}  <!-- Default Light Gray Color -->
+                {% endif %}
+    
+                <div class="col-md-4 col-sm-12 mb-3">
                     <form action="/industry_details" method="POST">
                         <input type="hidden" name="industry_name" value="{{ industry }}">
-                        <div class="card border-b p-3 shadow-sm bg-white rounded" style="cursor: pointer;" onclick="this.parentNode.submit();">
+                        <div class="card shadow-sm" style="cursor: pointer; background-color: {{ bg_color }};" onclick="this.parentNode.submit();">
                             <h4>{{ industry }}</h4>
-                            <!-- <img src="{{ industry.img_url }}" alt="{{ industry.title }}" class="img-fluid" style="width: 100%; height: 200px; object-fit: cover;"> -->
                         </div>
                     </form>
                 </div>
             {% endfor %}
         </div>
+    
+    
+    </div>
+
+    <!-- Second Half (with background image) -->
+    <div class="second-half" style="background-image: url('/static/Images/People.png');">
     </div>
 </div>
-
 {% endblock %}
