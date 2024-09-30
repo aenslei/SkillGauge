@@ -436,7 +436,7 @@ def convert_df_list_to_csv(df_list,folder_path):
         industry_name = str(industry_name)
         industry_name = industry_name[2:-2]
         industry_name = industry_name.replace(" ", "_")
-        df.to_csv("(Final)_past_" + industry_name + ".csv", index=False)
+        #df.to_csv("(Final)_past_" + industry_name + ".csv", index=False)
         # Save CSV to the specified folder
         csv_file_path = os.path.join(folder_path, f"(Final)_past_{industry_name}.csv")
         df.to_csv(csv_file_path, index=False)
