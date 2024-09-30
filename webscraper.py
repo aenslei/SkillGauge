@@ -7,6 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException, ElementClickInterceptedException, TimeoutException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.proxy import Proxy, ProxyType
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import random
 from concurrent.futures import ThreadPoolExecutor
 from fake_useragent import UserAgent
@@ -35,9 +37,6 @@ Current main() variables in this version you can change:
 
 #--------------------INITIALIZATION--------------------
 
-#Initialize Selenium WebDriver for Chrome 
-driver = webdriver.Chrome()
-
 # Initialize the UserAgent object
 ua = UserAgent()
 
@@ -46,7 +45,7 @@ ua = UserAgent()
 def wait_for_element(driver, by, value, timeout=15):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
 
-#Function to initialise a new WebDriver instance with a random user-agent. Used for Parallel Processing and Dynamic User-Agents
+# Function to initialize a new WebDriver instance with a random user-agent
 def create_driver():
     options = Options()
     options.add_argument('--headless')  # Run Chromium in headless mode
@@ -54,11 +53,17 @@ def create_driver():
     options.add_argument('--no-sandbox')  # Bypass OS security model
     options.add_argument('--disable-dev-shm-usage')  # Overcome limited resource problems
     options.add_argument('--window-size=1920x1080')  # Set window size to avoid issues with elements not being visible
+    
+    # Set a random user-agent
     user_agent = ua.random
     options.add_argument(f'user-agent={user_agent}')
 
-    driver = webdriver.Chrome(options=options)
+    # Initialize the WebDriver with the specified options
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     return driver
+
+# Example of using the create_driver function
+driver = create_driver()
 
 
 # #Function to calculate the exponential backoff delay with optional jitter
