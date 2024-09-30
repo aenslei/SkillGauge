@@ -2,7 +2,7 @@ name: Selenium Web Scraper Automation
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs every day at midnight UTC
+    - cron: '*/30 * * * *'  # Runs every day at midnight UTC
 
 jobs:
   run-scraper:
@@ -35,8 +35,8 @@ jobs:
 
       - name: Configure git
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'actions'
+          git config --global user.email 'actions@github.com'
 
       - name: Commit and push changes
         run: |
