@@ -367,3 +367,93 @@ body {
         font-size: 1rem;
     }
 }
+/* Container for arranging the cards in two rows */
+.two-rows-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two cards per row */
+    grid-gap: 40px; /* Space between the cards */
+    justify-items: center;
+    margin: 50px auto;
+    max-width: 1200px;
+}
+
+/* Step wrapper for individual steps */
+.step-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+/* Circle for numbering each step */
+.step-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px; /* Size of the circle */
+    height: 80px; /* Size of the circle */
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    font-size: 2rem; /* Large font size */
+    margin-right: 30px;
+}
+
+/* Styling for step cards */
+.step-card {
+    width: 400px; /* Width of the card */
+    height: 150px; /* Height of the card */
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+/* Different colors for each card */
+.step-wrapper:nth-child(odd) .step-card {
+    background-color: #ffdb4a; /* Yellow for odd-numbered cards */
+}
+
+.step-wrapper:nth-child(even) .step-card {
+    background-color: #2196F3; /* Blue for even-numbered cards */
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+    .two-rows-container {
+        grid-template-columns: 1fr; /* Stack the cards in one column on smaller screens */
+        grid-gap: 20px;
+    }
+
+    .step-card {
+        width: 100%; /* Full width on smaller screens */
+    }
+
+    .step-circle {
+        width: 60px; /* Smaller circle for smaller screens */
+        height: 60px;
+        font-size: 1.5rem; /* Smaller font size for numbers */
+    }
+}
+
+
+/* Process section container for centering content */
+.process-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+/* Style the image */
+.process-image {
+    width: 100%; /* Ensure the image is responsive */
+    max-width: 1200px; /* Increase the maximum width to make the image bigger */
+    height: auto; /* Maintain aspect ratio */
+    margin-top: 10px; /* Add space between the heading and the image */
+}
