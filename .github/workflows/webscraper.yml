@@ -39,11 +39,17 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
+      # Pull the latest changes before pushing (to avoid conflicts)
+      - name: Pull latest changes from GitHub
+        run: |
+          git pull origin main --rebase
+
+      # Commit and push the new data
       - name: Commit and push changes
         run: |
-          git add job_listings.csv  # Add your CSV file (replace with actual file path)
-          git commit -m "Update scraped data [skip ci]"
-          git push
+          git add job_listings.csv  # Ensure your CSV file path is correct
+          git commit -m "Update scraped data [skip ci]" || echo "No changes to commit"
+          git push origin main
         env:
           # This GITHUB_TOKEN is automatically provided by GitHub Actions
           TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
