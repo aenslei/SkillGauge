@@ -1,7 +1,12 @@
+import struct
+
 import pandas as pd
 import plotly.graph_objects as go
 import ast
 import plotly.express as px
+
+
+# ========================================    Industry Section      ========================================================
 
 def industry_job_trend(df):
 
@@ -139,6 +144,67 @@ def industry_hiring_trend(df):
     html_code = fig.to_html(full_html=False)
 
     return html_code
+
+
+
+
+# ============================    Job Role Section      ===============================================================
+
+# get top 10 job roles skills and save to an analysis file
+def skill_match_analysis(df, industry_name):
+
+
+    # get list of unique job title
+    unique_job_list = df["Job Title"].unique()
+    # set skill list value to list type
+    try:
+        df["skills"] = df["skills"].apply(ast.literal_eval)
+    except:
+        print("alr converted")
+
+    json_data = {}
+    for job in unique_job_list:
+
+        filtered_df = df[df["Job Title"] == job]
+        job_skill_series = filtered_df["skills"].explode().value_counts()
+        # get top 10 skill per job role
+        json_dict = { job : job_skill_series.head(10).to_dict()}
+        json_data.update(json_dict)
+    #print(json_data)
+    file_path = "analysis/job_role_skill_" + industry_name + ".json"
+    pd.Series(json_data).to_json(file_path, indent=4)
+
+
+
+
+
+def match_user_to_job_role(job_role_skills_series, user_skill_list):
+
+    grouped = job_role_skills_series.groupby(level=0)
+    # convert series to dict key value and skills to list
+    job_role_skill_dict = {key: group.index.get_level_values(1).tolist() for key, group in grouped}
+
+    match_dict = {}
+    user_skill_list = list(map(str.upper, user_skill_list))
+
+
+
+    for key , value in job_role_skill_dict.items():
+        # find matching percent
+        value = list(map(str.upper, value))
+
+        matched_skill = set(value) & set(user_skill_list)
+
+        if matched_skill:
+            # percentage calculated by length of match skills over len of job role skills * 100
+            percentage = (len(matched_skill) / len(set(value))) * 100
+
+            match_dict[key] = round(percentage)
+
+
+
+
+    return match_dict, job_role_skill_dict
 
 
 
