@@ -9,17 +9,20 @@
 
     <!-- skill section -->
 
-    <h3>Skills:</h3>
 
-    <div>
-        {% for x in job_role.skill %}
+     <h3>Skills:</h3>
+
+    <div class="d-flex flex-wrap">
+        {% for skill in job_role.skill %}
         <div class="border rounded-pill d-inline p-1 m-1">
-            {{ x.title() }}
+            {{ skill.title() }}
         </div>
 
         {% endfor %}
 
     </div>
+
+
     <br>
 
     <!-- Skills comparison chart-->
