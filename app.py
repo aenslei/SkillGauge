@@ -220,12 +220,15 @@ def expanded_job_roles(job_title):
     else:
         userSkills = []
 
-    skillComparisonChart,skillsLacking = skills_comparison("Information_Technology","Software Engineer",userSkills)
+    if 'industry' in session:
+        industry_name = session["industry"]
+        industry_name = industry_name.replace(" ", "_")
+
+    skillComparisonChart,skillsLacking = skills_comparison(industry_name,job_title ,userSkills)
     
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
     return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)
-
 
 @app.route('/resume')
 def Resume():
