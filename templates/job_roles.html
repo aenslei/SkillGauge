@@ -39,7 +39,9 @@
                         {{ x.match_percent }}%
                     </div>
 
-                    {% elif x.match_percent >= 50 or x.match_percent < 70 %}
+
+
+                    {% elif x.match_percent >= 50 and x.match_percent < 70 %}
                     <div class="text-warning" style="position: absolute; bottom:5; right:5; font-size:2em;">
                         {{ x.match_percent }}%
                     </div>

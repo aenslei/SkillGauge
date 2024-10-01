@@ -186,7 +186,9 @@ def match_user_to_job_role(job_role_skills_series, user_skill_list):
 
     match_dict = {}
     user_skill_list = list(map(str.upper, user_skill_list))
-    print(user_skill_list)
+
+
+
     for key , value in job_role_skill_dict.items():
         # find matching percent
         value = list(map(str.upper, value))
@@ -198,6 +200,9 @@ def match_user_to_job_role(job_role_skills_series, user_skill_list):
             percentage = (len(matched_skill) / len(set(value))) * 100
 
             match_dict[key] = round(percentage)
+
+
+
 
     return match_dict, job_role_skill_dict
 

@@ -184,18 +184,28 @@ def Job_roles():
         job_role_skills_series = job_role_skill_df.stack()
 
     match_dict , job_role_skill_dict = match_user_to_job_role(job_role_skills_series, userSkills)
-    print(match_dict)
-    print(job_role_skill_dict)
+
     job_role_list = []
+    print(job_role_skill_dict)
+    # if not match job take the first 6 job roles
+    if len(match_dict) == 0:
+        no_match_list  = list(job_role_skill_dict.items())[:6]
 
-    for job, percent in match_dict.items():
-        skill_list = job_role_skill_dict[job]
-        job_object = JobRole(job, skill_list,percent)
-        job_role_list.append(job_object)
+        for job in no_match_list:
+            print(job)
 
-    print(job_role_list)
+            job_object = JobRole(job[0], job[1],0)
+            job_role_list.append(job_object)
 
-    
+
+    else:
+
+        for job, percent in match_dict.items():
+            skill_list = job_role_skill_dict[job]
+            job_object = JobRole(job, skill_list,int(percent))
+            job_role_list.append(job_object)
+
+
     # Sort by best matching percentage
     job_role_list.sort(key=lambda x: x.match_percent, reverse=True)
     return render_template('job_roles.html', job_role=job_role_list)
@@ -203,7 +213,7 @@ def Job_roles():
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
 
-    j1 = JobRole(1,"data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
+    j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
 
     if 'userSkills' in session:
         userSkills = session['userSkills'] 
