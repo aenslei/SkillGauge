@@ -39,10 +39,20 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      # Pull the latest changes before pushing (to avoid conflicts)
+      # Stash any unstaged changes before pulling
+      - name: Stash unstaged changes
+        run: |
+          git stash
+
+      # Pull the latest changes from GitHub with rebase
       - name: Pull latest changes from GitHub
         run: |
           git pull origin main --rebase
+
+      # Apply stashed changes
+      - name: Apply stashed changes
+        run: |
+          git stash pop || echo "No changes to apply"
 
       # Commit and push the new data
       - name: Commit and push changes
