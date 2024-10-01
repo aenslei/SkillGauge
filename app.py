@@ -7,7 +7,8 @@ import course_url_crawler
 from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24) 
+app.secret_key = os.urandom(24)
+
 
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -31,7 +32,7 @@ class Industry:
         return self.title
 
 class JobRole:
-    def __init__(self, title, skill, match_percent):
+    def __init__(self, title, skill, match_percent = 0):
 
         self.title = title
         self.skill = skill
@@ -156,14 +157,7 @@ def industry_details():
 
 @app.route('/job_roles')
 def Job_roles():
-    """    # Placeholder data
-    j1 = JobRole(1, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
-    j2 = JobRole(2, "programmer", ["Python programming", "Debugging", "Object-oriented programming", "Web development"], 90)
-    j3 = JobRole(3, "cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
-    j4 = JobRole(4, "Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
-    j5 = JobRole(5, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
-    j6 = JobRole(6, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    """
+
     if 'userSkills' in session:
         userSkills = session['userSkills']
     else:
@@ -213,7 +207,6 @@ def Job_roles():
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
 
-    j1 = JobRole("data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
 
     if 'userSkills' in session:
         userSkills = session['userSkills'] 
@@ -224,11 +217,17 @@ def expanded_job_roles(job_title):
         industry_name = session["industry"]
         industry_name = industry_name.replace(" ", "_")
 
-    skillComparisonChart,skillsLacking = skills_comparison(industry_name,job_title ,userSkills)
-    
+    else:
+        return redirect(url_for("Industries"))
+
+    skillComparisonChart,skillsLacking , match_skills = skills_comparison(industry_name,job_title ,userSkills)
+    total_skill = skillsLacking + match_skills
+    job = JobRole(job_title, total_skill)
+
+
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = j1, courses = urlCourses, chart=skillComparisonChart)
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = job, courses = urlCourses, chart=skillComparisonChart)
 
 @app.route('/resume')
 def Resume():
