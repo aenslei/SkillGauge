@@ -4,7 +4,7 @@ import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) 
@@ -31,8 +31,8 @@ class Industry:
         return self.title
 
 class JobRole:
-    def __init__(self, id, title, skill, match_percent):
-        self.id = id
+    def __init__(self, title, skill, match_percent):
+
         self.title = title
         self.skill = skill
         self.match_percent = match_percent
@@ -84,6 +84,9 @@ def analyse_industry_distribution(data):
 def industry_details():
     industry_name = request.form.get('industry_name')
     print(f"Received industry_name: {industry_name}")
+    # add current industry to session
+    session["industry"] = industry_name
+
 
     industry = next((ind for ind in industry_list if ind.title == industry_name), None)
     data = load_data(file_path)
@@ -103,6 +106,8 @@ def industry_details():
 
     industry_general_skills(df,2,industry_name)
 
+    # analysis for job role skills
+    skill_match_analysis(df,industry_name)
 
     with open("analysis/industry_skills.json") as file:
         industry_skills_pd = pd.read_json(file)
@@ -151,14 +156,45 @@ def industry_details():
 
 @app.route('/job_roles')
 def Job_roles():
-    # Placeholder data
+    """    # Placeholder data
     j1 = JobRole(1, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 70)
     j2 = JobRole(2, "programmer", ["Python programming", "Debugging", "Object-oriented programming", "Web development"], 90)
     j3 = JobRole(3, "cloud engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 50)
     j4 = JobRole(4, "Network engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 49)
     j5 = JobRole(5, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 69)
     j6 = JobRole(6, "data engineer", ["Python programming", "Data analysis", "Machine learning", "Web development"], 90)
-    job_role_list = [j1, j2, j3, j4, j5, j6]
+    """
+    if 'userSkills' in session:
+        userSkills = session['userSkills']
+    else:
+        userSkills = []
+
+    if 'industry' in session:
+        industry_name = session["industry"]
+        industry_name = industry_name.replace(" ", "_")
+        path = "analysis/job_role_skill_"+industry_name+".json"
+
+    else:
+        print("no industry")
+        return redirect(url_for("Industries"))
+
+
+    with open(path) as file:
+        job_role_skill_df = pd.read_json(file, orient="index")
+        job_role_skills_series = job_role_skill_df.stack()
+
+    match_dict , job_role_skill_dict = match_user_to_job_role(job_role_skills_series, userSkills)
+    print(match_dict)
+    print(job_role_skill_dict)
+    job_role_list = []
+
+    for job, percent in match_dict.items():
+        skill_list = job_role_skill_dict[job]
+        job_object = JobRole(job, skill_list,percent)
+        job_role_list.append(job_object)
+
+    print(job_role_list)
+
     
     # Sort by best matching percentage
     job_role_list.sort(key=lambda x: x.match_percent, reverse=True)
