@@ -10,7 +10,7 @@
     <!-- skill section -->
 
 
-     <h3>Skills:</h3>
+    <h3>Skills:</h3>
 
     <div class="d-flex flex-wrap">
         {% for skill in job_role.skill %}
@@ -75,16 +75,8 @@
     <br>
 
     <!-- Geographical Data chart -->
-    <div>
 
-        <h3 class="text-center"> Geographical Data </h3>
-        <div>
-
-            enter chart here
-
-        </div>
-
-    </div>
+    <div>{{ jobMap | safe }}</div>
 
     <br>
 

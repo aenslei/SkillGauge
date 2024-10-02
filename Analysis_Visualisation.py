@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
-
+from geopy.geocoders import Nominatim
 import numpy as np
 import plotly.graph_objects as go
 import re
@@ -384,3 +384,54 @@ def generate_wordcloud(Industry):
     )
     
     return pio.to_html(fig, full_html=False)
+
+def load_and_geocode_data(industry):
+    # Load your CSV data into a pandas DataFrame
+    df = pd.read_csv(f"Datasets/(Final)_past_{industry}.csv")
+
+    if 'Location' not in df.columns:
+        raise ValueError("CSV must contain a 'Location' column.")
+    
+    # Group by location, count occurrences
+    df_grouped = df.groupby('Location').size().reset_index()
+    
+    # Rename the columns
+    df_grouped.columns = ['Location', 'Value']
+    print("Grouped DataFrame:")
+    print(df_grouped)
+
+    # Geocode location names to get latitude and longitude
+    geolocator = Nominatim(user_agent="geoapi")
+    
+    # Add new columns for latitude and longitude
+    df_grouped['Latitude'] = None
+    df_grouped['Longitude'] = None
+    
+    for index, row in df_grouped.iterrows():
+        location = geolocator.geocode(row['Location'])
+        if location:
+            df_grouped.at[index, 'Latitude'] = location.latitude
+            df_grouped.at[index, 'Longitude'] = location.longitude
+
+    return df_grouped
+
+def GeographicalMap(industry):
+    # Convert location names to lat/lon
+    df = load_and_geocode_data(industry)
+    
+    # Filter out rows where geocoding failed
+    df = df.dropna(subset=['Latitude', 'Longitude'])
+    singapore_center = dict(lat=1.3521, lon=103.8198)
+
+    # Create a density heatmap using the converted lat/lon
+    fig = px.density_mapbox(df, lat='Latitude', lon='Longitude', z='Value', radius=10,
+                            center=singapore_center,
+                            mapbox_style="open-street-map", zoom=10)
+    
+    fig.update_layout(
+        title="job locations",
+        width=800,  # Adjust width
+        height=600  # Adjust height
+    )
+    # Convert the plotly figure to HTML
+    return fig.to_html()

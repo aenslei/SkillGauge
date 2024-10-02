@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for,session
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap
 import resume_skills_extractor
 import os
 import pandas as pd
@@ -224,6 +224,7 @@ def expanded_job_roles(job_title):
     total_skill = skillsLacking + match_skills
     job = JobRole(job_title, total_skill)
 
+    #jobMap = GeographicalMap(industry_name)
 
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
