@@ -62,9 +62,9 @@ def analyse_industry_distribution(data):
 
 
 
-def create_job_title_bubble_chart(data, industry_name):
+def create_job_title_bubble_chart(data, industry_name_orig):
     # Filter data for the selected 'Broader Category'
-    industry_data = data[data['Broader Category'] == industry_name]
+    industry_data = data[data['Broader Category'] == industry_name_orig]
 
     # Count the frequency of each job title in the selected industry
     job_title_counts = industry_data['Job Title'].value_counts().reset_index()
@@ -85,7 +85,7 @@ def create_job_title_bubble_chart(data, industry_name):
                      size='Bubble Size',
                      color='Job Title',  
                      text='Job Title',  # Use job titles as bubble labels
-                     title=f'Job Titles in {industry_name}', 
+                     title=f'Job Titles in {industry_name_orig}', 
                      labels={'x': ' ', 'y': ' '},  # Hide x and y axis labels
                      size_max=80  # Increase the maximum size of the bubbles
                      )
@@ -109,9 +109,9 @@ def create_job_title_bubble_chart(data, industry_name):
     return html_code
 
 
-def create_salary_variation_chart(data, industry_name):
+def create_salary_variation_chart(data, industry_name_orig):
     # Filter data for the selected industry
-    industry_data = data[data['Broader Category'] == industry_name]
+    industry_data = data[data['Broader Category'] == industry_name_orig]
 
     # Get all unique job titles
     job_titles = industry_data['Job Title'].unique()
@@ -145,7 +145,7 @@ def create_salary_variation_chart(data, industry_name):
 
     # Update layout to make the chart larger
     fig.update_layout(
-        title=f'Salary Distribution by Job Title in {industry_name}',
+        title=f'Salary Distribution by Job Title in {industry_name_orig}',
         yaxis_title='Average Salary (K)',
         height=800,  # Adjusted height
         clickmode='event+select'
@@ -155,9 +155,9 @@ def create_salary_variation_chart(data, industry_name):
     html_code = fig.to_html(full_html=False)
     return html_code
 
-def create_salary_trend_chart(data, industry_name):
+def create_salary_trend_chart(data, industry_name_orig):
     # Filter data for the selected industry
-    industry_data = data[data['Broader Category'] == industry_name]
+    industry_data = data[data['Broader Category'] == industry_name_orig]
 
     # Group by Job Title and Year-Quarter, then calculate average salary
     salary_trend = industry_data.groupby(['Job Title', 'Year-Quarter'])['Average Salary (K)'].mean().reset_index()
@@ -205,7 +205,7 @@ def create_salary_trend_chart(data, industry_name):
 
     # Update layout with fixed x-axis
     fig.update_layout(
-        title=f'Average Salary Trends by Job Title in {industry_name} (Quarterly)',
+        title=f'Average Salary Trends by Job Title in {industry_name_orig} (Quarterly)',
         xaxis_title='Quarter Year',
         yaxis_title='Average Salary (K)',
         height=600,

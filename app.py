@@ -83,23 +83,23 @@ def analyse_industry_distribution(data):
 # POST request
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
-    industry_name = request.form.get('industry_name')
-    print(f"Received industry_name: {industry_name}")
+    industry_name_orig = request.form.get('industry_name')
+    print(f"Received industry_name: {industry_name_orig}")
     # add current industry to session
-    session["industry"] = industry_name
+    session["industry"] = industry_name_orig
 
 
-    industry = next((ind for ind in industry_list if ind.title == industry_name), None)
+    industry = next((ind for ind in industry_list if ind.title == industry_name_orig), None)
     data = load_data(file_path)
     # Generate the bubble chart for job titles in the selected industry (Broader Category)
-    job_title_chart = create_job_title_bubble_chart(data, industry_name) # Call the bubble chart function
+    job_title_chart = create_job_title_bubble_chart(data, industry_name_orig) # Call the bubble chart function
     # Generate the salary variation bar chart for the selected industry
-    salary_chart = create_salary_variation_chart(data, industry_name)  # Call the salary chart function
+    salary_chart = create_salary_variation_chart(data, industry_name_orig)  # Call the salary chart function
     # Generate the salary trend chart for the selected industry
-    salary_trend_chart = create_salary_trend_chart(data, industry_name)  # Call the salary trend chart function
+    salary_trend_chart = create_salary_trend_chart(data, industry_name_orig)  # Call the salary trend chart function
 
     # find industry general skills
-    industry_name = industry_name.replace(" ", "_")
+    industry_name = industry_name_orig.replace(" ", "_")
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
 
     with open(industry_path) as csvfile:
@@ -132,8 +132,7 @@ def industry_details():
 
     # end of hiring trend code
 
-
-    other_industries = [ind for ind in industry_list if ind.title != industry_name][:4]  # Limit to 4 buttons
+    other_industries = [ind.title for ind in industry_list if ind.title != industry_name_orig][:4]  # Limit to 4 buttons
 
     wordCloud = generate_wordcloud(industry_name)
 
