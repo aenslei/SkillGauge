@@ -314,6 +314,9 @@ def skills_comparison(Industry,job_role,user_skills):
     matched_percentage = (len(matched_skills) / len(top10SkillsLowerCase)) * 100
     missing_percentage = (len(missing_skills) / len(top10SkillsLowerCase)) * 100
 
+    matched_skills_multiline = '<br>'.join(matched_skills)
+    missing_skills_multiline = '<br>'.join(missing_skills)
+
     # Create the donut chart
     fig = go.Figure(data=[go.Pie(values=[matched_percentage, missing_percentage],
                                     labels=["Skills Match", "Skills Missing"],
@@ -321,13 +324,13 @@ def skills_comparison(Industry,job_role,user_skills):
                                     marker=dict(colors=["green", "red"]),
                                     hoverinfo="label+percent",  # This controls what is shown when hovering
                                     # Add custom data for hover information
-                                    customdata=[matched_skills, missing_skills],
+                                    customdata=[matched_skills_multiline, missing_skills_multiline],
                                     
                                     # Configure hover template to show skills
                                     hovertemplate=(
                                         '<b>%{label}</b><br>'  # Display label ("Skills Match" or "Skills Missing")
                                         '%{percent:.1%}<br>'  # Display percentage
-                                        '<b>Skills:</b> %{customdata}<extra></extra>'  # Show the list of skills
+                                        '<b>Skills:</b><br>%{customdata}<extra></extra>'  # Show the list of skills
                                     )
                                     )])
 
