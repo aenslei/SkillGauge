@@ -133,7 +133,8 @@ def industry_details():
     # end of hiring trend code
 
     other_industries = [ind.title for ind in industry_list if ind.title != industry_name_orig][:4]  # Limit to 4 buttons
-
+    other_industries = other_industries[:4] 
+    
     wordCloud = generate_wordcloud(industry_name)
 
     return render_template('industry_details.html',  

@@ -13,7 +13,7 @@
 <div class="industry-buttons mb-4">
     {% for other_industry in other_industries %}
         {% if other_industry != current_industry %}  <!-- Exclude the current industry -->
-        <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline">
+        <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline;">
             <input type="hidden" name="industry_name" value="{{ other_industry }}">
             <button type="submit">{{ other_industry }}</button>
         </form>
