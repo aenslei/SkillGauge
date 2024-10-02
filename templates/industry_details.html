@@ -12,10 +12,12 @@
 <br>
 <div class="industry-buttons mb-4">
     {% for other_industry in other_industries %}
-    <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline;">
-        <input type="hidden" name="industry_name" value="{{ other_industry }}">
-        <button type="submit">{{ other_industry }}</button>
-    </form>
+        {% if other_industry != current_industry %}  <!-- Exclude the current industry -->
+        <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline">
+            <input type="hidden" name="industry_name" value="{{ other_industry }}">
+            <button type="submit">{{ other_industry }}</button>
+        </form>
+        {% endif %}
     {% endfor %}
 </div>
 
@@ -25,86 +27,65 @@
 
 <!-- Data Visualisation -->
 
-<h3>{{ industry }}</h3>
-
 <div class="jumbotron" style="height: fit-content;">
     <h1 class="display-1">{{ industry }}</h1>
-
     <h3>Skills:</h3>
+    <br>
 
     <div class="d-flex flex-wrap">
         {% for skill in skill_list %}
-        <div class="border rounded-pill d-inline p-1 m-1">
+        <div class="border rounded-pill d-inline p-1 m-1" style="background-color: rgb(255, 255, 255); border-color: rgb(255, 168, 61);" >
             {{ skill }}
         </div>
-
         {% endfor %}
-
     </div>
     <br>
-
     <hr class="my-4">
-
-
-
     <br>
-
     <div id="bubble-chart" style="flex-grow: 1; height:600px;">
         {{ job_title_chart|safe }}
     </div>
-
     <br>
-
     <div id="salary-trend-chart">
         {{ salary_trend_chart|safe }}
     </div>
-
     <br>
-
     <div>
         {{ salary_chart|safe }}
     </div>
-
-
     <br>
-
     <div>
         {{ job_trend_fig | safe }}
     </div>
-
     <br>
-
     <div>
         {{wordCloud | safe}}
     </div>
-
     <br>
-
     <div>
         {{ hiring_trend_fig | safe }}
     </div>
-
 </div>
-
 <br>
 </div>
 
 
-<div class="container card bg-transparent text-black border-dark ">
+<div class="container card text-black border-dark" style="background-color: rgb(255, 218, 53)">
     <!--text boxes-->
-    <div class="row card-body">
-
+    <div class="row card-body" style="background-color: rgb(255, 218, 53)">
         <div class="card-title col-sm-10">
             <h3>Discover your suitable role now!</h3>
             <p>Find out more about your career</p>
 
         </div>
-        <div class="col-sm-2 d-flex justify-content-center align-items-center">
-            <a class="btn btn-primary p-3" href="{{ url_for('Resume') }}">Find Now</a>
+        <div class="col-sm-2 d-flex justify-content-center align-items-center" >
+            <a class="btn btn-primary p-3" style="border-radius: 35px;" href="{{ url_for('Resume') }}">Find Now</a>
 
         </div>
     </div>
 </div>
+<button onclick="scrollToTop()" id="scrollTopBtn" title="Go to top">⬆️</button>
+
 
 
 
@@ -140,6 +121,26 @@
             console.error('Bubble chart or salary trend chart not found.');
         }
     });
+
+        // Show/Hide the button when scrolling
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            scrollTopBtn.style.display = "block"; // Show the button
+        } else {
+            scrollTopBtn.style.display = "none"; // Hide the button
+        }
+    }
+
+    // Scroll to the top when the user clicks the button
+    function scrollToTop() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+    }
 </script>
+
+
 
 {% endblock %}

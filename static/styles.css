@@ -457,3 +457,25 @@ body {
     height: auto; /* Maintain aspect ratio */
     margin-top: 10px; /* Add space between the heading and the image */
 }
+
+/* Scroll to Top Button */
+#scrollTopBtn {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99; /* Make sure it is on top of other elements */
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #007BFF; /* Blue background */
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 50%; /* Round shape */
+    transition: all 0.3s ease;
+}
+
+#scrollTopBtn:hover {
+    background-color: #555; /* Darken background on hover */
+}
