@@ -331,6 +331,14 @@ if data['Job Posting Date'].isnull().any():
     # Create 'Year-Quarter' column
 data['Year-Quarter'] = data['Job Posting Date'].dt.to_period('Q').astype(str)  # Convert to string for better x-axis labels
 
+# Split the 'Experience' column into two new columns: 'Job Minimum Experience' and 'Job Maximum Experience'
+data[['Job Minimum Experience', 'Job Maximum Experience']] = data['Experience'].str.extract(r'(\d+)\s+to\s+(\d+)')
+
+# Convert the extracted values to integers
+data['Job Minimum Experience'] = data['Job Minimum Experience'].astype(int)
+data['Job Maximum Experience'] = data['Job Maximum Experience'].astype(int)
+
+
 # Apply the cluster mapping
 data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 
@@ -467,6 +475,16 @@ if 'Abbreviations' in data.columns:
 if 'Tokenized Skills' in data.columns:
     data['skills'] = data['Tokenized Skills']
     data.drop(columns=['Tokenized Skills'], inplace=True)
+
+
+columns_to_drop = [
+    'Experience', 'Country', 'Role', 'Cluster Name', 'Text', 
+    'Company Profile', 'Responsibilities', 'Benefits', 'Job Portal', 
+    'Company Size', 'Qualifications'
+]
+
+# Drop the columns if they exist in the DataFrame
+data.drop(columns=columns_to_drop, inplace=True, errors='ignore')
 
 
 # Step 5: Save the changes back to the same file
