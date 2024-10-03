@@ -19,8 +19,6 @@ file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
-
 class Industry:
     def __init__(self, title):
         self.title = title
@@ -220,7 +218,7 @@ def expanded_job_roles(job_title):
     else:
         return redirect(url_for("Industries"))
 
-    skillComparisonChart,skillsLacking , match_skills = skills_comparison(industry_name,job_title ,userSkills)
+    skillComparisonChart,skillsLacking , match_skills = skills_comparison(userSkills,job_title, industry_name)
     total_skill = skillsLacking + match_skills
     job = JobRole(job_title, total_skill)
 
