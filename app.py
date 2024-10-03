@@ -21,8 +21,6 @@ file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
-
 class Industry:
     def __init__(self, title):
         self.title = title
@@ -223,12 +221,13 @@ def expanded_job_roles(job_title):
         return redirect(url_for("Industries"))
 
 
+
     with open("Datasets/(Final)_past_"+ industry_name +".csv") as file:
         df = pd.read_csv(file, index_col=False)
         job_df = filter_df_by_job_role(df, job_title)
 
 
-    skillComparisonChart,skillsLacking , match_skills = skills_comparison(industry_name,job_title ,userSkills)
+    skillComparisonChart,skillsLacking , match_skills = skills_comparison(userSkills,job_title, industry_name)
     total_skill = skillsLacking + match_skills
     job = JobRole(job_title, total_skill)
 

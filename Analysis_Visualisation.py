@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 import re
 import ast
 from collections import defaultdict
-
+import json
 import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
 
@@ -295,67 +295,54 @@ def CountWords(jobTitles,topNumOfItem):
         print(f"An error occurred: {e}")
         return []
 
-def skills_comparison(Industry,job_role,user_skills):    
-    industry_path = pd.read_csv(f"Datasets/(Final)_past_{Industry}.csv")
+def skills_comparison(userSkills, job_type, industry, top_searches=10):
+    # Load the JSON data
+    with open(f'analysis/job_role_skill_{industry}.json', 'r') as f:
+        data = json.load(f)
 
-    # get all skills from a particular job title
-    skills = industry_path[industry_path['Job Title'] == job_role]['skills'].tolist()
+    # Convert user skills to lowercase for case-insensitive comparison
+    userSkillLowerCase = [skill.lower() for skill in userSkills]
 
-    top10Skills,sortedWords = CountWords(skills,10)
-
-
-    userSkillLowerCase, top10SkillsLowerCase = ([item.lower() for item in lst] for lst in (user_skills, top10Skills))
+    # Extract top skills for the selected job type
+    top_skills = data[job_type]
+    
+    # Sort and get the top N skills
+    top_n_skills = sorted(top_skills.items(), key=lambda x: x[1], reverse=True)[:top_searches]
+    top_n_skills_lower_case = {skill[0].lower(): skill[1] for skill in top_n_skills}
 
     # Calculate matched and missing skills
-    matched_skills = [skill for skill in userSkillLowerCase if skill in top10SkillsLowerCase]
-    missing_skills = [skill for skill in top10SkillsLowerCase if skill not in userSkillLowerCase]
+    matched_skills = [skill for skill in userSkillLowerCase if skill in top_n_skills_lower_case]
+    missing_skills = [skill for skill in top_n_skills_lower_case if skill not in userSkillLowerCase]
 
     # Calculate percentages
-    matched_percentage = (len(matched_skills) / len(top10SkillsLowerCase)) * 100
-    missing_percentage = (len(missing_skills) / len(top10SkillsLowerCase)) * 100
+    matched_percentage = (len(matched_skills) / len(top_n_skills_lower_case)) * 100 if top_n_skills_lower_case else 0
+    missing_percentage = (len(missing_skills) / len(top_n_skills_lower_case)) * 100 if top_n_skills_lower_case else 0
 
     matched_skills_multiline = '<br>'.join(matched_skills)
     missing_skills_multiline = '<br>'.join(missing_skills)
 
     # Create the donut chart
     fig = go.Figure(data=[go.Pie(values=[matched_percentage, missing_percentage],
-                                    labels=["Skills Match", "Skills Missing"],
-                                    hole=0.4,
-                                    marker=dict(colors=["green", "red"]),
-                                    hoverinfo="label+percent",  # This controls what is shown when hovering
-                                    # Add custom data for hover information
-                                    customdata=[matched_skills_multiline, missing_skills_multiline],
-                                    
-                                    # Configure hover template to show skills
-                                    hovertemplate=(
-                                        '<b>%{label}</b><br>'  # Display label ("Skills Match" or "Skills Missing")
-                                        '%{percent:.1%}<br>'  # Display percentage
-                                        '<b>Skills:</b><br>%{customdata}<extra></extra>'  # Show the list of skills
-                                    )
-                                    )])
-
-    # Add annotations for the percentages
-    # fig.add_annotation(text=f"{matched_percentage}%", x=0.2, y=0.5, showarrow=False)
-    # fig.add_annotation(text=f"{missing_percentage}%", x=0.8, y=0.5, showarrow=False)
-
-    # Add text for matched and missing skills
-    # fig.add_annotation(text="Skills Match", x=0.15, y=0.2, showarrow=False)
-    # fig.add_annotation(text="Skills Missing", x=0.85, y=0.2, showarrow=False)
-
-    # Add text for specific skills
-    # for i, skill in enumerate(skills):
-    #     if skill in matched_skills:
-    #         fig.add_annotation(text=skill, x=0, y=0.6 - 0.05 * i, showarrow=False)
-    #     else:
-    #         fig.add_annotation(text=skill, x=1.0, y=0.6 - 0.05 * i, showarrow=False)
+                                   labels=["Skills Match", "Skills Missing"],
+                                   hole=0.4,
+                                   marker=dict(colors=["green", "red"]),
+                                   hoverinfo="label+percent",
+                                   customdata=[matched_skills_multiline, missing_skills_multiline],
+                                   hovertemplate=(
+                                       '<b>%{label}</b><br>'
+                                       '%{percent:.1%}<br>'
+                                       '<b>Skills:</b><br>%{customdata}<extra></extra>'
+                                   ))])
 
     fig.update_layout(
-            title="Skills Comparison",
-            width=800,  # Adjust width
-            height=600  # Adjust height
-        )
-    # Return the HTML representation of the chart
-    return fig.to_html(),missing_skills , matched_skills
+        title="Skills Comparison",
+        width=800,
+        height=600
+    )
+
+    # Return the HTML representation of the chart along with matched and missing skills
+    return fig.to_html(), missing_skills, matched_skills
+
 
 def generate_wordcloud(Industry):
     industry_path = pd.read_csv(f"Datasets/(Final)_past_{Industry}.csv")
