@@ -55,6 +55,9 @@
     </div>
     <br>
     <div>
+        {{ salary_growth_chart | safe }}
+    </div>
+    <div>
         {{ job_trend_fig | safe }}
     </div>
     <br>
@@ -96,8 +99,11 @@
             '#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
         const salaryTrendChartFrame = document.querySelector(
             '#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
-        // Ensure the charts are loaded properly
-        if (bubbleChartFrame && salaryTrendChartFrame) {
+        const salaryGrowthChartFrame = document.querySelector(
+            '#salary-growth-chart .plotly-graph-div'); 
+        
+            // Ensure the charts are loaded properly
+        if (bubbleChartFrame && salaryTrendChartFrame && salaryGrowthChartFrame) {
             // Listen for a click event on the bubble chart
             bubbleChartFrame.on('plotly_click', function (data) {
                 const clickedJobTitle = data.points[0].text; // Get the clicked job title
@@ -112,6 +118,20 @@
                         }, [i]);
                     } else {
                         Plotly.restyle(salaryTrendChartFrame, {
+                            visible: 'legendonly'
+                        }, [i]);
+                    }
+                }
+
+                const salaryGrowthTrendTraces = salaryGrowthChartFrame.data;
+                for (let i = 0; i < salaryGrowthTrendTraces.length; i++) {
+                    // Show only the salary line and trendline for the clicked job title
+                    if (salaryGrowthTrendTraces[i].name.includes(clickedJobTitle)) {
+                        Plotly.restyle(salaryGrowthChartFrame, {
+                            visible: true
+                        }, [i]);
+                    } else {
+                        Plotly.restyle(salaryGrowthChartFrame, {
                             visible: 'legendonly'
                         }, [i]);
                     }

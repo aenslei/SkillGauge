@@ -1,13 +1,12 @@
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
-
 import numpy as np
 import plotly.graph_objects as go
 import re
 import ast
 from collections import defaultdict
-
+from sklearn.linear_model import LinearRegression
 import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
 
@@ -61,7 +60,7 @@ def analyse_industry_distribution(data):
     return industry_distribution, total_jobs
 
 
-
+# ----------- Job Titles by industry - BUBBLE CHART ---------------------
 def create_job_title_bubble_chart(data, industry_name_orig):
     # Filter data for the selected 'Broader Category'
     industry_data = data[data['Broader Category'] == industry_name_orig]
@@ -107,8 +106,9 @@ def create_job_title_bubble_chart(data, industry_name_orig):
     # Return the chart as HTML
     html_code = fig.to_html(full_html=False)
     return html_code
+#  -----------------------------------------------------------
 
-
+#  --------  Average Salary trend over time for job role selected- LINE CHART --------------------
 def create_salary_variation_chart(data, industry_name_orig):
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name_orig]
@@ -154,7 +154,9 @@ def create_salary_variation_chart(data, industry_name_orig):
     # Return the box plot as HTML code
     html_code = fig.to_html(full_html=False)
     return html_code
+#  --------------------------------------------------------------
 
+#  ----------------- Salary Range of job titeles - BOX PLOT ----------------
 def create_salary_trend_chart(data, industry_name_orig):
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name_orig]
@@ -221,6 +223,88 @@ def create_salary_trend_chart(data, industry_name_orig):
     # Convert the figure to HTML
     html_code = fig.to_html(full_html=False)
     return html_code
+
+#  ---------------------------------------------------------------
+
+#  --------------- Salary Growth Rate by experience --------------
+# 1. Calculate the average salary growth rate based on experience
+# grouping the data by "Job Minimum Experience" 
+# and calculating the salary growth per year of experience.
+
+# 2. Forcast of Salary for the next 5 years
+# Using linear regression
+# model the relationship between experience and salary, 
+# and use this to predict future salaries for the next 5 years.
+
+def create_salary_growth_chart(data, industry_name_orig):
+# Filter data for the selected industry
+    industry_data = data[data['Broader Category'] == industry_name_orig]
+
+    # Group data by both Job Title and Job Minimum Experience and calculate the average salary
+    experience_salary = industry_data.groupby(['Job Title', 'Job Minimum Experience'])['Average Salary (K)'].mean().reset_index()
+
+    # Create a line chart for Salary Growth by Experience for each job title in the selected industry
+    fig = go.Figure()
+
+    # Get unique job titles in the selected industry
+    job_titles = experience_salary['Job Title'].unique()
+
+    # Use a color palette for consistency
+    colors = px.colors.qualitative.Plotly
+
+    for i, job_title in enumerate(job_titles):
+        job_data = experience_salary[experience_salary['Job Title'] == job_title]
+
+        # Add the actual salary line for the job title
+        fig.add_trace(go.Scatter(
+            x=job_data['Job Minimum Experience'],
+            y=job_data['Average Salary (K)'],
+            mode='lines+markers',
+            name=f'{job_title} Salary Growth',
+            line=dict(color=colors[i % len(colors)], width=2),
+            showlegend=True
+        ))
+
+        # Salary prediction for the next 5 years
+        # Prepare data for linear regression model (experience vs. salary)
+        X = np.array(job_data['Job Minimum Experience']).reshape(-1, 1)
+        y = job_data['Average Salary (K)']
+
+        # Train the model using current salary data
+        model = LinearRegression().fit(X, y)
+
+        # Predict for the next 5 years (based on the maximum experience in the current data)
+        max_experience = job_data['Job Minimum Experience'].max()
+        future_experience = np.array(range(max_experience + 1, max_experience + 6)).reshape(-1, 1)
+        predicted_salaries = model.predict(future_experience)
+
+        # Add the predicted salary line (dashed) for the next 5 years
+        fig.add_trace(go.Scatter(
+            x=future_experience.flatten(),
+            y=predicted_salaries,
+            mode='lines',
+            name=f'{job_title} Salary Prediction (Next 5 Years)',
+            line=dict(dash='dash', color=colors[i % len(colors)], width=2),
+            showlegend=True
+        ))
+
+    # Update the layout for the chart
+    fig.update_layout(
+        title=f'Salary Growth by Experience and Prediction in {industry_name_orig} (Next 5 Years)',
+        xaxis_title='Years of Experience',
+        yaxis_title='Average Salary (K)',
+        height=600,
+        margin=dict(l=20, r=20, t=40, b=80)
+    )
+
+    # Convert the chart to HTML
+    html_code = fig.to_html(full_html=False)
+    return html_code
+
+
+
+
+
 
 def merge_sort(word_freq_list):
     if len(word_freq_list) <= 1:

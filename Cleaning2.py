@@ -468,6 +468,19 @@ if 'Tokenized Skills' in data.columns:
     data['skills'] = data['Tokenized Skills']
     data.drop(columns=['Tokenized Skills'], inplace=True)
 
+# Split the 'Experience' column into two new columns: 'Job Minimum Experience' and 'Job Maximum Experience'
+data[['Job Minimum Experience', 'Job Maximum Experience']] = data['Experience'].str.extract(r'(\d+)\s+to\s+(\d+)')
+# Split the 'Experience' column into two new columns: 'Job Minimum Experience' and 'Job Maximum Experience'
+data[['Job Minimum Experience', 'Job Maximum Experience']] = data['Experience'].str.extract(r'(\d+)\s+to\s+(\d+)')
+
+columns_to_drop = [
+    'Experience', 'Country', 'Role', 'Cluster Name', 'Text', 
+    'Company Profile', 'Responsibilities', 'Benefits', 'Job Portal', 
+    'Company Size', 'Qualifications'
+]
+
+# Drop the columns if they exist in the DataFrame
+data.drop(columns=columns_to_drop, inplace=True, errors='ignore')
 
 # Step 5: Save the changes back to the same file
 data.to_csv(csv_file_path, index=False)

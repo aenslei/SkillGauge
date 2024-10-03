@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for,session
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud,create_salary_growth_chart
 import resume_skills_extractor
 import os
 import pandas as pd
@@ -97,7 +97,8 @@ def industry_details():
     salary_chart = create_salary_variation_chart(data, industry_name_orig)  # Call the salary chart function
     # Generate the salary trend chart for the selected industry
     salary_trend_chart = create_salary_trend_chart(data, industry_name_orig)  # Call the salary trend chart function
-
+    # Generate the salary growth chart for the selected industry
+    salary_growth_chart = create_salary_growth_chart(data, industry_name_orig)
     # find industry general skills
     industry_name = industry_name_orig.replace(" ", "_")
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
@@ -142,14 +143,12 @@ def industry_details():
                            other_industries=other_industries, 
                            job_trend_fig=job_trend_code,
                            skill_list = skill_list,
-
                            wordCloud = wordCloud,
-
                            hiring_trend_fig = hiring_trend_code,
-
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
-                           salary_trend_chart=salary_trend_chart)
+                           salary_trend_chart=salary_trend_chart,
+                           salary_growth_chart = salary_growth_chart)
 
 
     
