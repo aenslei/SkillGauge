@@ -4,7 +4,9 @@ import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role
+import time
+
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -219,6 +221,12 @@ def expanded_job_roles(job_title):
 
     else:
         return redirect(url_for("Industries"))
+
+
+    with open("Datasets/(Final)_past_"+ industry_name +".csv") as file:
+        df = pd.read_csv(file, index_col=False)
+        job_df = filter_df_by_job_role(df, job_title)
+
 
     skillComparisonChart,skillsLacking , match_skills = skills_comparison(industry_name,job_title ,userSkills)
     total_skill = skillsLacking + match_skills

@@ -6,7 +6,24 @@ import ast
 import plotly.express as px
 
 
+
+#============================================       helper code     =============================================
+
+def filter_df_by_job_role(df, job_role):
+
+        job_role_df = df[df["Job Title"] == job_role].copy()
+        return job_role_df
+
+
 # ========================================    Industry Section      ========================================================
+
+
+
+
+
+
+
+
 
 def industry_job_trend(df):
 
