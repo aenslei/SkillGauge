@@ -10,7 +10,7 @@ from collections import defaultdict
 import json
 import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
-
+import numpy
 
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
@@ -358,4 +358,80 @@ def GeographicalMap(industry):
         height=600  # Adjust height
     )
     # Convert the plotly figure to HTML
+    return fig.to_html()
+
+
+def skill_in_demand(job_role_df):
+    # Convert date and eval skills
+    job_role_df['Job Posting Date'] = pd.to_datetime(job_role_df['Job Posting Date'], format="%Y-%m-%d")
+    job_role_df["skills"] = job_role_df["skills"].apply(ast.literal_eval)
+
+    # Sort by Job Posting Date
+    job_role_df.sort_values(by="Job Posting Date", inplace=True, ascending=True)
+
+    # Get unique years
+    years = job_role_df["Job Posting Date"].dt.to_period("Y").unique()
+    df_list = []
+
+    # Prepare data for each year
+    for year in years:
+        year_df = job_role_df[job_role_df["Job Posting Date"].dt.to_period("Y") == year]
+        skill_per_year = year_df["skills"].explode().value_counts()
+
+        total_count = skill_per_year.values.sum()
+        skill_per_year = skill_per_year.reset_index()
+        skill_per_year.columns = ["skill", "count"]
+        skill_per_year["percent"] = np.floor((skill_per_year["count"] / total_count) * 100)
+        skill_per_year["year"] = str(year)  # Convert year to string for easier labeling
+
+        leftover = 100 - skill_per_year["percent"].sum()
+        # Allocate leftover percentage
+        if leftover > 0:
+            leftover_row = skill_per_year["percent"].nlargest(int(leftover)).index
+            for x in leftover_row:
+                skill_per_year.at[x, "percent"] += 1
+
+        df_list.append(skill_per_year)
+
+    # Concatenate all years' data
+    job_df = pd.concat(df_list)
+
+    # Create a Plotly pie chart with dropdowns to switch between years
+    fig = go.Figure()
+
+    # Add traces for each year, only the first one will be visible initially
+    for i, year in enumerate(job_df["year"].unique()):
+        year_df = job_df[job_df["year"] == year]
+        fig.add_trace(go.Pie(
+            labels=year_df["skill"], 
+            values=year_df["percent"], 
+            name=year, 
+            visible=(i == 0),
+            textinfo='label+percent',  # Show skill label and percentage in the pie sections
+            textposition='inside',  # Position text inside
+            insidetextorientation='horizontal',  # Align text horizontally
+            textfont_size=10  # Adjust font size as needed
+        ))
+
+    # Create dropdown buttons to switch between years
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                buttons=[
+                    dict(label=str(year), method="update", 
+                         args=[{"visible": [year == y for y in job_df["year"].unique()]}]) 
+                    for year in job_df["year"].unique()
+                ],
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.1,
+                xanchor="left",
+                y=1.1,
+                yanchor="top"
+            )
+        ],
+        width=1000,  # Adjust width
+        height=800  # Adjust height
+    )
     return fig.to_html()
