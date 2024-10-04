@@ -7,7 +7,7 @@ import os
 import pandas as pd
 import course_url_crawler
 from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend ,  skill_match_analysis , match_user_to_job_role, filter_df_by_job_role, pull_in_hiring_trend
-
+from data_analysis import industry_job_trend2
 
 import time
 
@@ -137,7 +137,7 @@ def industry_details():
         df = pd.read_csv(datafile, index_col=False)
 
     job_trend_code = industry_job_trend(df)
-
+    job_trend_code_2 = industry_job_trend2(df)
     # end of job trends
 
     # start of hiring trend code
@@ -157,7 +157,8 @@ def industry_details():
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
-                           job_trend_fig=job_trend_code,
+                           job_trend_fig=job_trend_code_2,
+
                            skill_list = skill_list,
 
                            wordCloud = wordCloud,
