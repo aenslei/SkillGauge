@@ -1,9 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for,session
-
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud, GeographicalMap,create_salary_growth_chart,create_salary_trend_chart, industry_salary
-
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap,skill_in_demand
-
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud,create_salary_growth_chart,create_salary_trend_chart, industry_salary,skill_in_demand
 import resume_skills_extractor
 import os
 from flask import Flask, jsonify, request, session
@@ -11,7 +7,7 @@ import pandas as pd
 import course_url_crawler
 from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job
 import time
-
+import threading
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -48,6 +44,10 @@ def Home():
 
     data = load_data(file_path)  # Load the data
     industry_job(data)
+    
+    # Start the jobs in separate threads
+    thread1 = threading.Thread(target=industry_job, args=(data,))
+    thread1.start()
 
     return render_template('home.html')
 
