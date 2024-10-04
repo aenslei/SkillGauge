@@ -105,37 +105,6 @@ def remove_duplicates(input_csv_file, output_csv_file):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(unique_rows)
-
-def SaveDataToNewCSV(outputfile,new_data):
-    # Read the existing file or create a new DataFrame if it doesn't exist
-    if os.path.isfile(outputfile):
-        existing_df = pd.read_csv(outputfile)
-    else:
-        existing_df = pd.DataFrame()
-
-    # Ensure all columns in new_data_dict exist in the DataFrame
-    for column_name in new_data.keys():
-        if column_name not in existing_df.columns:
-            existing_df[column_name] = None  # Create the column if it doesn't exist
-
-    # Prepare a new DataFrame to hold the new data
-    new_rows = pd.DataFrame(new_data)
-
-    # Append new data for each column
-    for column_name in new_data.keys():
-        # Find the last index of valid data in the column
-        last_index = existing_df[column_name].last_valid_index()
-        if last_index is None:
-            last_index = -1  # If no valid index exists, start from the first row
-        
-        # Assign new data to the corresponding rows in the existing DataFrame
-        for i in range(len(new_rows)):
-            existing_df.at[last_index + 1 + i, column_name] = new_rows.iloc[i][column_name]
-
-    # Write the updated DataFrame back to the file without appending the header
-    existing_df.to_csv(outputfile, mode='w', index=False)
-    print("Data appended successfully.")
-
 def ReformatSalary(input_csv_file,outputfile):
     # Read the input CSV file into a DataFrame
     df = pd.read_csv(input_csv_file, index_col=False)
@@ -163,36 +132,29 @@ def ReformatSalary(input_csv_file,outputfile):
         df['Average Salary (K)'] = (df['Min Salary (K)'] + df['Max Salary (K)']) / 2
 
         # Prepare a new DataFrame with just the columns to append
-        new_data = df[['Min Salary (K)', 'Max Salary (K)', 'Average Salary (K)','Salary Range (K)']].copy()  
+        new_data = df[['Min Salary (K)', 'Max Salary (K)', 'Average Salary (K)','Salary Range (K)']]
 
-        SaveDataToNewCSV(outputfile,new_data)
+        # Check if the output file exists
+        if os.path.isfile(outputfile):
+            # Read the existing file to match the columns
+            existing_df = pd.read_csv(outputfile)
+
+            # Append new rows to the existing DataFrame, aligning with the columns
+            combined_df = pd.concat([existing_df, new_data], ignore_index=True)
+
+            # Write the updated DataFrame back to the file
+            combined_df.to_csv(outputfile, mode='w', index=False)
+        else:
+            # If file doesn't exist, write the new data with header
+            new_data.to_csv(outputfile, mode='w', index=False)
 
     else:
         print("The 'Job Salary Range' column does not exist in the provided CSV file.")
-
-def ProcessWorkType(input_csv_file,outputfile):
-    # Read the input CSV file into a DataFrame
-    df = pd.read_csv(input_csv_file, index_col=False)
-    df.rename(columns={'Job Employment Type': 'Work Type'}, inplace=True)
-    df['Work Type'] = df['Work Type'].str.split(',').str[0].str.split('/').str[0]
-    replacements = {
-        'Full Time': 'Full-Time',
-        'Part Time': 'Part-Time'
-    }
-
-    # Replace spaces with dashes for specific values
-    for key, value in replacements.items():
-        df['Work Type'] = df['Work Type'].str.replace(key, value, regex=False)
-
-    new_data = df[['Work Type']].copy()     
-
-    SaveDataToNewCSV(outputfile,new_data)
 
 def main():
     # industryTranslate(csv_file, NewIndustries_csv_file, industryTranslation)
     # remove_duplicates(NewIndustries_csv_file, NoDupes_csv_file)
     ReformatSalary(csv_file,file_path)
-    ProcessWorkType(csv_file,file_path)
 
 if __name__ == "__main__":
     main()
