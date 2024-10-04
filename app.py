@@ -125,10 +125,9 @@ def industry_details():
     # analysis for job role skills
     skill_match_analysis(df,industry_name)
 
-    with open("analysis/industry_skills.json") as file:
-        industry_skills = json.load(file)
 
-    skill_list = pull_industry_skills(industry_skills, industry_name)
+
+    skill_list = pull_industry_skills( industry_name)
 
     # end of find industry general skills
 

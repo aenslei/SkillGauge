@@ -124,7 +124,10 @@ def industry_general_skills(df):
     pd.Series(json_dict).to_json("analysis/industry_skills.json", indent=4)
 
 
-def pull_industry_skills(industry_skills ,industry_name):
+def pull_industry_skills(industry_name):
+    with open("analysis/industry_skills.json") as file:
+        industry_skills = json.load(file)
+
     skill_list = []
     data = industry_skills[industry_name]
 
