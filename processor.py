@@ -105,7 +105,7 @@ def remove_duplicates(input_csv_file, output_csv_file):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(unique_rows)
-def ReformatIndustry(input_csv_file,outputfile):
+def ReformatSalary(input_csv_file,outputfile):
     # Read the input CSV file into a DataFrame
     df = pd.read_csv(input_csv_file, index_col=False)
 
@@ -154,7 +154,7 @@ def ReformatIndustry(input_csv_file,outputfile):
 def main():
     # industryTranslate(csv_file, NewIndustries_csv_file, industryTranslation)
     # remove_duplicates(NewIndustries_csv_file, NoDupes_csv_file)
-    ReformatIndustry(csv_file,file_path)
+    ReformatSalary(csv_file,file_path)
 
 if __name__ == "__main__":
     main()
