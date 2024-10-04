@@ -4,7 +4,7 @@ import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job
 import time
 
 
@@ -41,6 +41,7 @@ class JobRole:
 @app.route('/')
 def Home():
     data = load_data(file_path)  # Load the data
+    industry_job(data)
     return render_template('home.html')
 
 industry_list = []
