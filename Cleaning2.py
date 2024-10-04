@@ -486,6 +486,8 @@ columns_to_drop = [
 # Drop the columns if they exist in the DataFrame
 data.drop(columns=columns_to_drop, inplace=True, errors='ignore')
 
+if 'Predicted Industry' in data.columns:
+    data.drop(columns=['Predicted Industry'], inplace=True)
 
 # Step 5: Save the changes back to the same file
 data.to_csv(csv_file_path, index=False)
