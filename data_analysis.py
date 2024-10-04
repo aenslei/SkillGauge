@@ -91,8 +91,6 @@ def industry_general_skills(df, selection , industry_name):
 
     # apply cause input value to be str ast literal eval to change it to list type before apply again to clean out single letter skills
     df["skills"] = df["skills"].apply(ast.literal_eval)
-    df["skills"] = df["skills"].apply(filter_skills)
-
 
     all_skills = df['skills'].explode()
     total_skill_count = all_skills.value_counts()
@@ -114,6 +112,25 @@ def industry_general_skills(df, selection , industry_name):
 
         }
         pd.Series(result).to_json(path, indent=4)
+
+def industry_job(data):
+    # Create a dictionary to hold the final result
+    result = {}
+
+    # Group the data by 'Broader Category' (industry) and count job titles
+    grouped_data = data.groupby('Broader Category')['Job Title'].value_counts()
+
+    # Loop through each industry and its job titles
+    for (industry, job_title), count in grouped_data.items():
+        if industry not in result:
+            result[industry] = {}
+        result[industry][job_title] = count
+
+    # Specify the path for saving the JSON file
+    path = "analysis/industry_Jobs.json"
+
+    # Save the result as a JSON file
+    pd.Series(result).to_json(path, indent=4)
 
 
 def pull_industry_skills(industry_skills):
