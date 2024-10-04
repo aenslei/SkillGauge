@@ -4,7 +4,8 @@ import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend ,  skill_match_analysis , match_user_to_job_role, filter_df_by_job_role, pull_in_hiring_trend
+
 import time
 
 
@@ -42,7 +43,15 @@ class JobRole:
 
 @app.route('/')
 def Home():
+    start_time = time.time()
     data = load_data(file_path)  # Load the data
+
+
+    industry_hiring_trend(data)
+
+    end_time  = time.time()
+    print(f"Execution Time Home: {end_time - start_time} seconds")
+
     return render_template('home.html')
 
 industry_list = []
@@ -85,6 +94,7 @@ def analyse_industry_distribution(data):
 # POST request
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
+    start_time = time.time()
     industry_name_orig = request.form.get('industry_name')
     print(f"Received industry_name: {industry_name_orig}")
     # add current industry to session
@@ -130,7 +140,8 @@ def industry_details():
     # end of job trends
 
     # start of hiring trend code
-    hiring_trend_code = industry_hiring_trend(df)
+    hiring_trend_code = pull_in_hiring_trend(industry_name)
+
 
     # end of hiring trend code
 
@@ -139,6 +150,9 @@ def industry_details():
     
     wordCloud = generate_wordcloud(industry_name)
 
+    end_time  = time.time()
+    print(f"Execution Time: {end_time - start_time} seconds")
+
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
@@ -146,9 +160,7 @@ def industry_details():
                            skill_list = skill_list,
 
                            wordCloud = wordCloud,
-
                            hiring_trend_fig = hiring_trend_code,
-
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
                            salary_trend_chart=salary_trend_chart)

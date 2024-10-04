@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import ast
 import plotly.express as px
-
+import json
 
 
 #============================================       helper code     =============================================
@@ -140,25 +140,48 @@ def industry_hiring_trend(df):
     # extract month from data
     df["Month"] = df["Job Posting Date"].dt.to_period("M")
 
+    df = df.groupby("Broader Category")
+    df_list = [df.get_group(x) for x in df.groups]
+    json_dict ={}
+    for df in df_list:
+        industry_name = df["Broader Category"].unique()
+        industry_name = str(industry_name)
+        industry_name = industry_name[2:-2]
+        industry_name = industry_name.replace(" ", "_")
+        # group by month and get count of drop
+        df3 = df.groupby(["Month"]).size().to_frame("Count of job per month").reset_index()
 
-    # group by month and get count of drop
-    df3 = df.groupby(["Month"]).size().to_frame("Count of job per month").reset_index()
+        month_names = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ]
 
-    month_names = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ]
+        fig = px.area(df3, x=month_names, y="Count of job per month")
+        fig.update_yaxes(range=[df3["Count of job per month"].min() * 0.75, df3["Count of job per month"].max() + 25])
 
-    fig = px.area(df3, x=month_names, y="Count of job per month")
-    fig.update_yaxes(range=[df3["Count of job per month"].min() * 0.75, df3["Count of job per month"].max() + 25])
+        fig.update_layout(
+            title = "Industry Hiring Trends",
+            xaxis_title="Period",
+            yaxis_title="No. of Job per Month",
+        )
 
-    fig.update_layout(
-        title = "Industry Hiring Trends",
-        xaxis_title="Period",
-        yaxis_title="No. of Job per Month",
-    )
+        html_code = fig.to_html(full_html=False)
 
-    html_code = fig.to_html(full_html=False)
+        json_dict[industry_name] = html_code
+
+
+    with open("analysis/in_hiring_trend.json" , "w") as file:
+
+        json.dump(json_dict, file, indent=4)
+
+
+
+
+def pull_in_hiring_trend(industry):
+    with open("analysis/in_hiring_trend.json" , "r") as file:
+        json_dict = json.load(file)
+
+    html_code = json_dict[industry]
 
     return html_code
 
