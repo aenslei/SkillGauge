@@ -93,7 +93,6 @@ def industry_job_trend(df):
 
 
 
-    return new_skill_list
 
 
 
