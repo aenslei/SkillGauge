@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for,session
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap,skill_in_demand
 import resume_skills_extractor
 import os
 import pandas as pd
@@ -138,6 +138,8 @@ def industry_details():
     
     wordCloud = generate_wordcloud(industry_name)
 
+    skillsDemand= skill_in_demand()
+
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
@@ -150,7 +152,8 @@ def industry_details():
 
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
-                           salary_trend_chart=salary_trend_chart)
+                           salary_trend_chart=salary_trend_chart,
+                           skillsDemand = skillsDemand)
 
 
     
