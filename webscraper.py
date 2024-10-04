@@ -99,7 +99,6 @@ def scrape_job_info(driver, selector):
 def write_jobs_to_csv(job_list, csv_file):
     with open(csv_file, mode='a', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=job_list[0].keys())
-        writer.writeheader()
         writer.writerows(job_list)
 
 # Function to scrape a single page
