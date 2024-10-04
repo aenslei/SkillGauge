@@ -14,6 +14,21 @@ def filter_df_by_job_role(df, job_role):
         job_role_df = df[df["Job Title"] == job_role].copy()
         return job_role_df
 
+def filter_skills(skills_list):
+
+    skills_list = list(skills_list)
+    new_skill_list = []
+    for skill in skills_list:
+        if len(skill) > 1:
+            new_skill_list.append(skill)
+
+
+def get_industry_name(df):
+    industry_name = df["Broader Category"].unique()
+    industry_name = str(industry_name)
+    industry_name = industry_name[2:-2]
+    industry_name = industry_name.replace(" ", "_")
+    return industry_name
 
 # ========================================    Industry Section      ========================================================
 
@@ -76,52 +91,45 @@ def industry_job_trend(df):
 
 
 
-def filter_skills(skills_list):
 
-    skills_list = list(skills_list)
-    new_skill_list = []
-    for skill in skills_list:
-        if len(skill) > 1:
-            new_skill_list.append(skill)
 
     return new_skill_list
 
 
-def industry_general_skills(df, selection , industry_name):
+
+
+
+
+def industry_general_skills(df):
 
     # apply cause input value to be str ast literal eval to change it to list type before apply again to clean out single letter skills
     df["skills"] = df["skills"].apply(ast.literal_eval)
-    df["skills"] = df["skills"].apply(filter_skills)
 
+    df = df.groupby("Broader Category")
+    df_list = [df.get_group(x) for x in df.groups]
+    json_dict = {}
+    for df in df_list:
 
-    all_skills = df['skills'].explode()
-    total_skill_count = all_skills.value_counts()
+        industry_name = get_industry_name(df)
 
-
-    if selection == 1:
-
-        with open("skill_count.txt", "w") as file:
-            file.write(str(total_skill_count))
-
-    if selection == 2:
-        path = "analysis/industry_skills.json"
+        all_skills = df['skills'].explode()
+        total_skill_count = all_skills.value_counts()
 
         #print(total_skill_count)
         top20_skill_json = total_skill_count.head(20)
-        result = {
-            'title': industry_name,
-            'data': top20_skill_json.to_dict()
-
-        }
-        pd.Series(result).to_json(path, indent=4)
+        #print(top20_skill_json)
+        json_dict[industry_name] = top20_skill_json.to_dict()
 
 
-def pull_industry_skills(industry_skills):
+    pd.Series(json_dict).to_json("analysis/industry_skills.json", indent=4)
+
+
+def pull_industry_skills(industry_skills ,industry_name):
     skill_list = []
-    data = industry_skills["data"]
+    data = industry_skills[industry_name]
 
-    # print(data)
     for k, v in data.items():
+
         skill_list.append(k)
 
     return skill_list
@@ -144,10 +152,7 @@ def industry_hiring_trend(df):
     df_list = [df.get_group(x) for x in df.groups]
     json_dict ={}
     for df in df_list:
-        industry_name = df["Broader Category"].unique()
-        industry_name = str(industry_name)
-        industry_name = industry_name[2:-2]
-        industry_name = industry_name.replace(" ", "_")
+        industry_name = get_industry_name(df)
         # group by month and get count of drop
         df3 = df.groupby(["Month"]).size().to_frame("Count of job per month").reset_index()
 

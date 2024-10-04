@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request, redirect, url_for,session
 from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap
 import resume_skills_extractor
@@ -5,6 +7,7 @@ import os
 import pandas as pd
 import course_url_crawler
 from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend ,  skill_match_analysis , match_user_to_job_role, filter_df_by_job_role, pull_in_hiring_trend
+
 
 import time
 
@@ -46,7 +49,7 @@ def Home():
     start_time = time.time()
     data = load_data(file_path)  # Load the data
 
-
+    industry_general_skills(data)
     industry_hiring_trend(data)
 
     end_time  = time.time()
@@ -117,16 +120,15 @@ def industry_details():
     with open(industry_path) as csvfile:
         df = pd.read_csv(csvfile, index_col=False)
 
-    industry_general_skills(df,2,industry_name)
+
 
     # analysis for job role skills
     skill_match_analysis(df,industry_name)
 
     with open("analysis/industry_skills.json") as file:
-        industry_skills_pd = pd.read_json(file)
+        industry_skills = json.load(file)
 
-    skill_list = pull_industry_skills(industry_skills_pd)
-
+    skill_list = pull_industry_skills(industry_skills, industry_name)
 
     # end of find industry general skills
 
@@ -143,7 +145,7 @@ def industry_details():
     hiring_trend_code = pull_in_hiring_trend(industry_name)
 
 
-    # end of hiring trend code
+
 
     other_industries = [ind.title for ind in industry_list if ind.title != industry_name_orig][:4]  # Limit to 4 buttons
     other_industries = other_industries[:4] 
