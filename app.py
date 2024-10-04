@@ -138,8 +138,6 @@ def industry_details():
     
     wordCloud = generate_wordcloud(industry_name)
 
-    skillsDemand= skill_in_demand()
-
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
@@ -152,8 +150,7 @@ def industry_details():
 
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
-                           salary_trend_chart=salary_trend_chart,
-                           skillsDemand = skillsDemand)
+                           salary_trend_chart=salary_trend_chart)
 
 
     
@@ -236,10 +233,10 @@ def expanded_job_roles(job_title):
     job = JobRole(job_title, total_skill)
 
     #jobMap = GeographicalMap(industry_name)
-
+    skillsDemandChart = skill_in_demand(job_df)
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = job, courses = urlCourses, chart=skillComparisonChart)
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = job, courses = urlCourses, chart=skillComparisonChart, skillsDemand_Chart = skillsDemandChart )
 
 @app.route('/resume')
 def Resume():

@@ -361,14 +361,7 @@ def GeographicalMap(industry):
     return fig.to_html()
 
 
-def skill_in_demand():
-    # Load the CSV
-    with open("Datasets/(Final)_past_Business.csv") as file:
-        df = pd.read_csv(file, index_col=False)
-
-    # Filter job roles
-    job_role_df = df[df["Job Title"] == "Customer Support Specialist"].copy()
-
+def skill_in_demand(job_role_df):
     # Convert date and eval skills
     job_role_df['Job Posting Date'] = pd.to_datetime(job_role_df['Job Posting Date'], format="%Y-%m-%d")
     job_role_df["skills"] = job_role_df["skills"].apply(ast.literal_eval)
@@ -406,9 +399,19 @@ def skill_in_demand():
     # Create a Plotly pie chart with dropdowns to switch between years
     fig = go.Figure()
 
-    for year in job_df["year"].unique():
+    # Add traces for each year, only the first one will be visible initially
+    for i, year in enumerate(job_df["year"].unique()):
         year_df = job_df[job_df["year"] == year]
-        fig.add_trace(go.Pie(labels=year_df["skill"], values=year_df["percent"], name=year))
+        fig.add_trace(go.Pie(
+            labels=year_df["skill"], 
+            values=year_df["percent"], 
+            name=year, 
+            visible=(i == 0),
+            textinfo='label+percent',  # Show skill label and percentage in the pie sections
+            textposition='inside',  # Position text inside
+            insidetextorientation='horizontal',  # Align text horizontally
+            textfont_size=10  # Adjust font size as needed
+        ))
 
     # Create dropdown buttons to switch between years
     fig.update_layout(
@@ -427,7 +430,8 @@ def skill_in_demand():
                 y=1.1,
                 yanchor="top"
             )
-        ]
+        ],
+        width=1000,  # Adjust width
+        height=800  # Adjust height
     )
-
     return fig.to_html()
