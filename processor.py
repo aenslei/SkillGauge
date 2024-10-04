@@ -188,42 +188,11 @@ def ProcessWorkType(input_csv_file,outputfile):
 
     SaveDataToNewCSV(outputfile,new_data)
 
-def RemoveExtraHeaderRows():
-    # Load the CSV file
-    df = pd.read_csv(csv_file)
-
-    #2685
-
-    # Define the list of values to remove rows if any cell contains these values
-    values_to_remove = [   
-    "Job URL", 
-    "Job Title", 
-    "Job Location", 
-    "Job Employment Type", 
-    "Job Seniority", 
-    "Job Minimum Experience", 
-    "Job Industry", 
-    "Job Salary Range", 
-    "Job Description", 
-    "Job Skills Needed",
-    ">>>>>>> Stashed changes",
-    "<<<<<<< Updated upstream",
-    "======="
-    ]
-
-    # Remove rows that contain any of the specified values
-    df_cleaned = df[~df.isin(values_to_remove).any(axis=1)]
-
-    # Save the cleaned DataFrame back to a CSV file
-    df_cleaned.to_csv(csv_file, index=False)
-
 def main():
     # industryTranslate(csv_file, NewIndustries_csv_file, industryTranslation)
     # remove_duplicates(NewIndustries_csv_file, NoDupes_csv_file)
-    # RemoveExtraHeaderRows()
     ReformatSalary(csv_file,file_path)
     ProcessWorkType(csv_file,file_path)
-    
 
 if __name__ == "__main__":
     main()
