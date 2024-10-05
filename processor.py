@@ -468,6 +468,10 @@ def main(input_csv_file, output_csv_file):
 
             # Remove extra colummns at the end.
             PruneExtraCols(output_csv_file)
+
+            #remove duplicate rows
+            RemoveExtraHeaderRows()
+            
             print("Extra Data Columns Pruned. Data successfully appended. EXITING...")
     except Exception as e:
         print(f"An error occurred: {e}")
