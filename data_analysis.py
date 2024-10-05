@@ -287,3 +287,26 @@ def match_user_to_job_role(job_role_skills_series, user_skill_list):
 
 
 
+
+def get_job_detail_url(job_df):
+
+    #print(job_df)
+    curr_date = pd.to_datetime('today').date()
+    print(curr_date)
+    job_df['Job Posting Date'] = pd.to_datetime(job_df['Job Posting Date'], format='%Y-%m-%d')
+    last_14_days = curr_date - pd.offsets.Day(14)
+    print(last_14_days)
+    filtered_df = job_df.query("`Job Posting Date` >= @last_14_days")
+    print(filtered_df)
+
+    if len(filtered_df.index) == 0:
+        return None
+    elif len(filtered_df.index) > 5:
+        job_detail_data = filtered_df.head(5).to_dict(orient="records")
+        return job_detail_data
+
+
+    else:
+        job_detail_data = filtered_df.to_dict(orient= "records")
+        return job_detail_data
+

@@ -70,14 +70,36 @@
 
     <!-- Related Jobs -->
     <div>
+        {% if job_detail_data == None %}
+        <h3>Unable to find jobs</h3>
+
+        {% else %}
 
         <h3>Related Jobs</h3>
+        <br>
         <div>
+            {% for job in job_detail_data %}
 
-            enter link here
+            <div class="card">
+            <div class="card-title text-left">
+                {{ job["Job Title"] }}
+            </div>
+            <div class="card-body text-left">
+
+                {{ job["skills"] | join(',') }}
+                <br>
+
+                <a href= "{{ job['Job URL'] }}" class="card-link" target="_blank">Job Link</a>
+
+            </div>
+
+
+            </div>
+
+            {% endfor %}
 
         </div>
-
+        {% endif %}
     </div>
 
     <br>
