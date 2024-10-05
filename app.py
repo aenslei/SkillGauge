@@ -7,9 +7,10 @@ import os
 import pandas as pd
 import course_url_crawler
 from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend ,  skill_match_analysis , match_user_to_job_role, filter_df_by_job_role, pull_in_hiring_trend
-from data_analysis import industry_job_trend2
+from data_analysis import  pull_in_job_trend
 
 import time
+import copy
 
 
 app = Flask(__name__)
@@ -48,9 +49,15 @@ class JobRole:
 def Home():
     start_time = time.time()
     data = load_data(file_path)  # Load the data
+    data1 = copy.deepcopy(data)
+    data2 = copy.deepcopy(data)
 
     industry_general_skills(data)
-    industry_hiring_trend(data)
+
+    industry_hiring_trend(data2)
+
+    industry_job_trend(data1)
+
 
     end_time  = time.time()
     print(f"Execution Time Home: {end_time - start_time} seconds")
@@ -132,12 +139,8 @@ def industry_details():
     # end of find industry general skills
 
     # start of job trends
-    print(industry_path)
-    with open(industry_path) as datafile:
-        df = pd.read_csv(datafile, index_col=False)
 
-    job_trend_code = industry_job_trend(df)
-    job_trend_code_2 = industry_job_trend2(df)
+    job_trend_code = pull_in_job_trend(industry_name)
     # end of job trends
 
     # start of hiring trend code
@@ -157,7 +160,7 @@ def industry_details():
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
-                           job_trend_fig=job_trend_code_2,
+                           job_trend_fig=job_trend_code,
 
                            skill_list = skill_list,
 

@@ -35,122 +35,77 @@ def get_industry_name(df):
 
 
 
-
-
-
-
-
 def industry_job_trend(df):
+    df2 = df.groupby("Broader Category")
 
-    # change date to pd datetime format
-    df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
+    df_list = [df2.get_group(x) for x in df2.groups]
 
-    # find top 5 job
-    top_5_job = df["Job Title"].value_counts()
+    json_dict = {}
+    for df in df_list:
 
-    top_5_jobs = top_5_job.head(5).index.tolist()
-    # filter out top 5 job to display
-    df = df[df['Job Title'].isin(top_5_jobs)]
+        # change date to pd datetime format
+        df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
 
-    # set date to period and sort by quarter
-    df["Quarter"] = df["Job Posting Date"].dt.to_period("Q")
+        # set date to period and sort by quarter
+        df["Quarter"] = df["Job Posting Date"].dt.to_period("Q")
 
-
-    df3 = df.groupby(["Job Title", "Quarter"]).size().to_frame("Count of job per quarter").reset_index()
-    df3 = df3.sort_values(by="Quarter")
+        industry_name = get_industry_name(df)
 
 
-    df3 = df3.pivot_table(index="Quarter", columns="Job Title", values="Count of job per quarter", fill_value=0)
-    df3.reset_index(inplace=True)
+        df3 = df.groupby(["Job Title", "Quarter"]).size().to_frame("Count of job per quarter").reset_index()
 
-    # add a line for every job role
-    fig = go.Figure()
-    for job in df3.columns[1:]:
-        fig.add_trace(go.Scatter(
-            x=df3['Quarter'].astype(str),
-            y=df3[job],
-            mode='lines+markers',
-            name=job
-        ))
+        df3 = df3.sort_values(by="Quarter")
 
+        df3 = df3.pivot_table(index="Quarter", columns="Job Title", values="Count of job per quarter", fill_value=0)
+        df3.reset_index(inplace=True)
 
-    fig.update_layout(
-        title = "Industry Job Trends",
-        xaxis_title="Period",
-        yaxis_title="No. of Job",
+        last_6_quarter = df3.tail(6)
+        diff_df = last_6_quarter.diff()
 
+        sum_diff = diff_df.iloc[:,1:].sum()
 
-    )
+        sort_df = sum_diff.sort_values()
+        trending_up_job = sort_df.tail(5).index.tolist()
+        trending_up_job = ["Quarter"] + trending_up_job
+
+        df4 = df3[trending_up_job]
 
 
-    html_code = fig.to_html(full_html=False)
-    #fig.write_html("fig.html", full_html= False, auto_open=True)
+
+        # add a line for every job role
+        fig = go.Figure()
+        for job in df4.columns[1:]:
+            fig.add_trace(go.Scatter(
+                x=df4['Quarter'].astype(str),
+                y=df4[job],
+                mode='lines+markers',
+                name=job
+            ))
+
+
+        fig.update_layout(
+            title = "Industry Job Trends",
+            xaxis_title="Period",
+            yaxis_title="No. of Job",
+
+
+        )
+
+
+        html_code = fig.to_html(full_html=False)
+        json_dict[industry_name] = html_code
+
+    with open("analysis/in_job_trend.json", "w") as file:
+        json.dump(json_dict, file)
+
+
+def pull_in_job_trend(industry):
+    with open("analysis/in_job_trend.json") as file:
+        job_trend  = json.load(file)
+
+    html_code = job_trend[industry]
+
     return html_code
-
-
-
-def industry_job_trend2(df):
-
-    # change date to pd datetime format
-    df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
-
-    # find top 5 job
-    #top_5_job = df["Job Title"].value_counts()
-
-    #top_5_jobs = top_5_job.head(5).index.tolist()
-    # filter out top 5 job to display
-    #df = df[df['Job Title'].isin(top_5_jobs)]
-
-    # set date to period and sort by quarter
-    df["Quarter"] = df["Job Posting Date"].dt.to_period("Q")
-
-
-    df3 = df.groupby(["Job Title", "Quarter"]).size().to_frame("Count of job per quarter").reset_index()
-    df3 = df3.sort_values(by="Quarter")
-
-
-    df3 = df3.pivot_table(index="Quarter", columns="Job Title", values="Count of job per quarter", fill_value=0)
-    df3.reset_index(inplace=True)
-
-    last_6_quarter = df3.tail(6)
-    diff_df = last_6_quarter.diff()
-    sum_diff = diff_df.iloc[:,1:].sum()
-
-    sort_df = sum_diff.sort_values()
-    trending_up_job = sort_df.tail(5).index.tolist()
-    trending_up_job = ["Quarter"] + trending_up_job
-
-    df4 = df3[trending_up_job]
-
-
-
-    # add a line for every job role
-    fig = go.Figure()
-    for job in df4.columns[1:]:
-        fig.add_trace(go.Scatter(
-            x=df4['Quarter'].astype(str),
-            y=df4[job],
-            mode='lines+markers',
-            name=job
-        ))
-
-
-    fig.update_layout(
-        title = "Industry Job Trends",
-        xaxis_title="Period",
-        yaxis_title="No. of Job",
-
-
-    )
-
-
-    html_code = fig.to_html(full_html=False)
-    #fig.write_html("fig.html", full_html= False, auto_open=True)
-    return html_code
-
-
-
-
 
 
 
