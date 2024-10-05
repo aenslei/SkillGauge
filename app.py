@@ -8,7 +8,7 @@ from flask import Flask, jsonify, request, session
 import pandas as pd
 import course_url_crawler
 
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job
 from data_analysis import  pull_in_job_trend,  pull_in_hiring_trend
  
 import time
