@@ -24,7 +24,6 @@ kmeans.fit(X)
 # Assign each job a cluster (predicted industry)
 data['Predicted Industry'] = kmeans.labels_
 
-
 # Group jobs by predicted clusters (Predicted Industry)
 grouped_jobs = data.groupby('Predicted Industry')['Job Title'].apply(list)
 
@@ -36,6 +35,7 @@ with open('Datasets/clustered_jobs.txt', 'w') as f:
             f.write(f"- {job}\n")
         f.write("\n")
 
+
 # Print the jobs grouped by clusters to inspect
 for cluster, jobs in grouped_jobs.items():
     print(f"Cluster {cluster}:")
@@ -46,8 +46,6 @@ for cluster, jobs in grouped_jobs.items():
 # Display the predicted industries
 print(data[['Job Title', 'Predicted Industry']].head())
 print(data[['Job Title', 'Predicted Industry']])
-
-# data['Industry Name'] = data['Predicted Industry'].map(cluster_names)
 
 
 # Reorder columns to insert the new columns before 'Job Title'

@@ -9,13 +9,10 @@ column_names = data.columns.tolist()
 # Remove brackets {}, quotation marks ", and single quotes ' from the Benefits column
 data['Benefits'] = data['Benefits'].str.replace(r'[{}"\']', '', regex=True)
 
-
-
 # Define a function to split the text by capitalized words and list them vertically
 def split_by_capital_words(text):
     # Use regular expression to split the string at every capitalized word
     return '\n'.join(re.findall(r'[A-Z][a-zA-Z\s]+', text))
-
 
 # Define a function to split the text by words or phrases, keeping them together
 def split_phrases_with_commas(text):
@@ -27,7 +24,6 @@ def split_phrases_with_commas(text):
 
 # Apply the updated function to the "skills" column
 data['skills'] = data['skills'].apply(split_phrases_with_commas)
-
 
 # Remove any unwanted characters (e.g., currency symbols, commas, etc.)
 data['Salary Range'] = data['Salary Range'].str.replace(r'[^\d-]', '', regex=True)
@@ -47,7 +43,6 @@ data.insert(5, 'Min Salary (K)', data.pop('Min Salary'))
 
 # Insert 'Max Salary' after 'Min Salary' (index 6)
 data.insert(6, 'Max Salary (K)', data.pop('Max Salary'))
-
 
 # Save the cleaned and formatted DataFrame to a new CSV file
 data.to_csv('Datasets\sg_job_data-Cleaned.csv', index=False)

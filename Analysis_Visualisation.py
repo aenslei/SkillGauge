@@ -5,13 +5,10 @@ from geopy.geocoders import Nominatim
 import numpy as np
 import plotly.graph_objects as go
 import re
-import os
 import ast
 from collections import defaultdict
 from sklearn.linear_model import LinearRegression
-
 import json
-
 import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
 import numpy
@@ -67,6 +64,8 @@ def analyse_industry_distribution(data):
 
 
 def create_job_title_bubble_chart(data, industry_name_orig):
+
+    #  -- ANALYSIS -- 
     # Filter data for the selected 'Broader Category'
     industry_data = data[data['Broader Category'] == industry_name_orig]
 
@@ -82,7 +81,8 @@ def create_job_title_bubble_chart(data, industry_name_orig):
         'y': np.random.rand(len(job_title_counts)) * 100   # Spread out y values more widely
     })
     
-    # Create a bubble chart using Plotly
+
+    # -- VISUALISATION -- Create a bubble chart 
     fig = px.scatter(job_title_df, 
                      x='x', 
                      y='y', 
@@ -115,13 +115,15 @@ def create_job_title_bubble_chart(data, industry_name_orig):
 #  ------------ Start of Salary Variation Boxplot  -------------------
 
 def create_salary_variation_chart(data, industry_name_orig):
+
+    #  -- ANALYSIS --
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name_orig]
 
     # Get all unique job titles
     job_titles = industry_data['Job Title'].unique()
 
-    # Create the box plot
+    # -- VISUALISAITON -- Create the box plot
     fig = go.Figure()
 
     # Plot the first 5 job titles and show them by default
@@ -160,258 +162,100 @@ def create_salary_variation_chart(data, industry_name_orig):
     html_code = fig.to_html(full_html=False)
     return html_code
 
-#  ------------ End of Salary Variation Boxplot -------------------
 
 
 #  ------------ Start of Salary Trend Line Graph  -------------------
 
-# ----- Analysis Function -------
-# def salary_trend_analysis(data, industry_name_orig):
-#     # Filter data for the selected industry
-#     industry_data = data[data['Broader Category'] == industry_name_orig]
+def create_salary_trend_chart(data, industry_name_orig):
 
-#     # Group by Job Title and Year-Quarter, then calculate average salary
-#     salary_trend = industry_data.groupby(['Job Title', 'Year-Quarter'])['Average Salary (K)'].mean().reset_index()
+    # -- ANALYSIS --
+    # Filter data for the selected industry
+    industry_data = data[data['Broader Category'] == industry_name_orig]
 
-#     # Ensure Year-Quarter is sorted and convert to string
-#     salary_trend['Year-Quarter'] = pd.Categorical(
-#         salary_trend['Year-Quarter'], 
-#         categories=sorted(salary_trend['Year-Quarter'].unique()),
-#         ordered=True
-#     )
+    # Group by Job Title and Year-Quarter, then calculate average salary
+    salary_trend = industry_data.groupby(['Job Title', 'Year-Quarter'])['Average Salary (K)'].mean().reset_index()
 
-#     # Define the path to save the JSON file with the industry name
-#     salary_trend_chart = f'analysis/{industry_name_orig}_salary_trend_data.json'
-    
-#     # Save the salary_trend DataFrame as a JSON file
-#     salary_trend.to_json(salary_trend_chart, orient='records', lines=True)
-    
-# # ------ Visualisation Function ------
-# def create_salary_trend_chart(df):
-#     # Read the JSON file into a DataFrame
-#     salary_trend = pd.read_json(df, orient='records', lines=True)
+    # Separate 'Year-Quarter' into 'Year' and 'Quarter' for proper sorting
+    salary_trend['Year'] = salary_trend['Year-Quarter'].str[:4].astype(int)
+    salary_trend['Quarter'] = salary_trend['Year-Quarter'].str[-1].astype(int)
 
-#     # Create a line chart for salary trends by job title
-#     fig = go.Figure()
-
-#     job_titles = salary_trend['Job Title'].unique()
-
-#     # Define some colors for consistency
-#     colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A']
-
-#     for i, job_title in enumerate(job_titles):
-#         job_data = salary_trend[salary_trend['Job Title'] == job_title]
-
-#         # Add the actual salary line for each job title
-#         fig.add_trace(go.Scattergl(
-#             x=job_data['Year-Quarter'],
-#             y=job_data['Average Salary (K)'],
-#             mode='lines+markers',
-#             name=f'{job_title} Salary',
-#             line=dict(color=colors[i % len(colors)], width=2),
-#             showlegend=True,
-#             visible='legendonly'  # Initially hidden for better interaction
-#         ))
-
-#         # Add the trendline for each job title
-#         z = np.polyfit(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', '')), job_data['Average Salary (K)'], 1)
-#         p = np.poly1d(z)
-
-#         fig.add_trace(go.Scattergl(
-#             x=job_data['Year-Quarter'],
-#             y=p(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', ''))),
-#             mode='lines',
-#             name=f'{job_title} Trendline',
-#             line=dict(dash='dash', color=colors[i % len(colors)], width=2),
-#             showlegend=True,
-#             visible='legendonly'  # Initially hidden for better interaction
-#         ))
-
-#     # Update layout with fixed x-axis
-#     fig.update_layout(
-#         title='Average Salary Trends by Job Title (Quarterly)',
-#         xaxis_title='Quarter Year',
-#         yaxis_title='Average Salary (K)',
-#         height=600,
-#         margin=dict(l=20, r=20, t=40, b=80),
-#         xaxis=dict(
-#             tickmode='array',
-#             tickvals=sorted(salary_trend['Year-Quarter'].unique()),
-#             ticktext=sorted(salary_trend['Year-Quarter'].unique()),
-#             type='category'
-#         ),
-#         yaxis=dict(showgrid=True),  # Add grid for better readability
-#         template='plotly_white'  # White background for better contrast
-#     )
-
-#     # Convert the figure to HTML for embedding or return the figure object
-#     html_code = fig.to_html(full_html=False)
-#     return html_code
-
-# def create_salary_trend_chart(data, industry_name_orig):
-#     # Filter data for the selected industry
-#     industry_data = data[data['Broader Category'] == industry_name_orig]
-
-#     # Group by Job Title and Year-Quarter, then calculate average salary
-#     salary_trend = industry_data.groupby(['Job Title', 'Year-Quarter'])['Average Salary (K)'].mean().reset_index()
-
-#     # Ensure Year-Quarter is sorted and convert to string
-#     salary_trend['Year-Quarter'] = pd.Categorical(salary_trend['Year-Quarter'], 
-#                                                   categories=sorted(salary_trend['Year-Quarter'].unique()),
-#                                                   ordered=True)
-
-#     # Create a line chart for salary trends by job title
-#     fig = go.Figure()
-
-#     job_titles = salary_trend['Job Title'].unique()
-
-#     # Use a color palette for consistency
-#     colors = px.colors.qualitative.Plotly
-
-#     for i, job_title in enumerate(job_titles):
-#         job_data = salary_trend[salary_trend['Job Title'] == job_title]
-
-#         # Add the actual salary line, initially hidden, using Scattergl for performance
-#         fig.add_trace(go.Scattergl(
-#             x=job_data['Year-Quarter'],
-#             y=job_data['Average Salary (K)'],
-#             mode='lines+markers',
-#             name=f'{job_title} Salary',
-#             showlegend=True,
-#             visible='legendonly'  # Initially hidden
-#         ))
-
-#         # Add the trendline with the same color but dashed, initially hidden
-#         z = np.polyfit(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', '')), job_data['Average Salary (K)'], 1)
-#         p = np.poly1d(z)
-
-#         fig.add_trace(go.Scattergl(
-#             x=job_data['Year-Quarter'],
-#             y=p(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', ''))),
-#             mode='lines',
-#             name=f'{job_title} Trendline',
-#             line=dict(dash='dash', color=colors[i % len(colors)], width=2),  # Same color but dashed
-#             showlegend=True,
-#             visible='legendonly'  # Initially hidden
-#         ))
-
-#     # Update layout with fixed x-axis
-#     fig.update_layout(
-#         title=f'Average Salary Trends by Job Title in {industry_name_orig} (Quarterly)',
-#         xaxis_title='Quarter Year',
-#         yaxis_title='Average Salary (K)',
-#         height=600,
-#         margin=dict(l=20, r=20, t=40, b=80),
-#         xaxis=dict(
-#             tickmode='array',
-#             tickvals=sorted(salary_trend['Year-Quarter'].unique()),  # Fixed, evenly spaced x-axis
-#             ticktext=sorted(salary_trend['Year-Quarter'].unique()),   # Ensure all quarters are displayed
-#             type='category'  # Keep the order of the quarters as categories
-#         )
-#     )
-
-#     # Convert the figure to HTML
-#     html_code = fig.to_html(full_html=False)
-#     return html_code
+    # Sort the data by 'Year' and 'Quarter'
+    salary_trend = salary_trend.sort_values(by=['Year', 'Quarter'])
 
 
-
-def industry_salary(data, industry_name_orig):
-    # Filter data for the selected category
-    category_data = data[data['Broader Category'] == industry_name_orig]
-    
-    # Select only the necessary columns
-    selected_columns = category_data[['Broader Category', 'Job Title', 'Year-Quarter', 'Average Salary (K)']]
-    
-    # Define JSON file path for the selected category
-    json_file_path = os.path.join('static/json', f"{industry_name_orig.replace(' ', '_')}_salary_data.json")
-    
-    # Create directory if it doesn't exist
-    os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
-    
-    # Save the data as a JSON file for the selected category
-    selected_columns.to_json(json_file_path, orient='records', lines=True)
-    
-    # Check if the JSON file was created and print confirmation
-    if os.path.exists(json_file_path):
-        print(f"JSON file for '{industry_name_orig}' created successfully at '{json_file_path}'.")
-    else:
-        print(f"Error: JSON file for '{industry_name_orig}' was not created.")
-
-
-# ------ Visualisation Function ------
-def create_salary_trend_chart(json_file_path):
-    # Read the JSON file into a DataFrame
-    salary_trend = pd.read_json(json_file_path, orient='records', lines=True)
-
-    # Create a line chart for salary trends by job title
+    # -- VISUALISATION -- Create a line chart for salary trends by job title
     fig = go.Figure()
 
+    # Get unique job titles and use a color palette for consistency
     job_titles = salary_trend['Job Title'].unique()
-
-    # Define some colors for consistency
-    colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A']
+    colors = px.colors.qualitative.Plotly
 
     for i, job_title in enumerate(job_titles):
         job_data = salary_trend[salary_trend['Job Title'] == job_title]
+        color = colors[i % len(colors)]  # Use a consistent color for both lines
 
-        # Add the actual salary line for each job title
+        # Add the actual salary line
         fig.add_trace(go.Scattergl(
             x=job_data['Year-Quarter'],
             y=job_data['Average Salary (K)'],
             mode='lines+markers',
             name=f'{job_title} Salary',
-            line=dict(color=colors[i % len(colors)], width=2),
+            line=dict(color=color, width=2),  # Use the same color for the salary line
             showlegend=True,
-            visible='legendonly'  # Initially hidden for better interaction
+            visible='legendonly'  # Initially hidden
         ))
 
-        # Add the trendline for each job title
-        z = np.polyfit(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', '')), job_data['Average Salary (K)'], 1)
+        # Calculate and add the trendline
+        numeric_quarter = job_data['Year'] * 10 + job_data['Quarter']
+        z = np.polyfit(numeric_quarter, job_data['Average Salary (K)'], 1)
         p = np.poly1d(z)
 
         fig.add_trace(go.Scattergl(
             x=job_data['Year-Quarter'],
-            y=p(pd.to_numeric(job_data['Year-Quarter'].str.replace('Q', ''))),
+            y=p(numeric_quarter),
             mode='lines',
             name=f'{job_title} Trendline',
-            line=dict(dash='dash', color=colors[i % len(colors)], width=2),
+            line=dict(dash='dash', color=color, width=2),  # Same color but dashed for the trendline
             showlegend=True,
-            visible='legendonly'  # Initially hidden for better interaction
+            visible='legendonly'  # Initially hidden
         ))
 
-    # Update layout with the same background style as the bubble chart
+    # Sort 'Year-Quarter' for fixed and evenly spaced x-axis
+    sorted_quarters = salary_trend['Year-Quarter'].unique()
+
+    # Update layout with fixed x-axis
     fig.update_layout(
-        title='Average Salary Trends by Job Title (Quarterly)',
+        title=f'Average Salary Trends by Job Title in {industry_name_orig} (Quarterly)',
         xaxis_title='Quarter Year',
         yaxis_title='Average Salary (K)',
         height=600,
         margin=dict(l=20, r=20, t=40, b=80),
         xaxis=dict(
             tickmode='array',
-            tickvals=sorted(salary_trend['Year-Quarter'].unique()),
-            ticktext=sorted(salary_trend['Year-Quarter'].unique()),
-            type='category'
+            tickvals=sorted_quarters,
+            ticktext=sorted_quarters,
+            type='category'  # Keep quarters in order as categories
         ),
         yaxis=dict(showgrid=True),
-        plot_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background
-        paper_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for outside the chart area
-        template='plotly_white',  # Adjusts default colors for better contrast
+        template='plotly_white',
+        plot_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for plot area
+        paper_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for surrounding area
         legend=dict(
             bgcolor='rgba(255, 255, 255, 0.5)'  # Transparent white legend background
         )
     )
 
-    # Convert the figure to HTML for embedding or return the figure object
+    # Convert the figure to HTML
     html_code = fig.to_html(full_html=False)
     return html_code
 
-#  ------------ End of Salary Trend Line Graph  -------------------
 
 
 #  ------------ Start of Salary Growth Line Graph  -------------------
 
 def create_salary_growth_chart(data, industry_name_orig):
+
+    # -- ANALYSIS --
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name_orig]
     
@@ -421,7 +265,8 @@ def create_salary_growth_chart(data, industry_name_orig):
     # Sort job titles by maximum salary and pick top 5
     job_titles_sorted = experience_salary.groupby('Job Title')['Average Salary (K)'].max().sort_values(ascending=False).head(5).index
 
-    # Create a line chart for Salary Growth by Experience for each job title
+
+    # -- VISUALISATION -- Create a line chart for Salary Growth by Experience for each job title
     fig = go.Figure()
 
     # Define some colors for consistency
@@ -486,7 +331,6 @@ def create_salary_growth_chart(data, industry_name_orig):
     return html_code
 
 
-#  ------------ Start of Salary Growth Line Graph  -------------------
 
 
 def merge_sort(word_freq_list):
