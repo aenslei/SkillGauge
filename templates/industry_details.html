@@ -46,12 +46,17 @@
         {{ job_title_chart|safe }}
     </div>
     <br>
+    <br>
     <div id="salary-trend-chart">
         {{ salary_trend_chart|safe }}
     </div>
     <br>
     <div>
         {{ salary_chart|safe }}
+    </div>
+    <br>
+    <div id="salary-growth-chart">
+        {{ salary_growth_chart | safe }}
     </div>
     <br>
     <div>
@@ -65,6 +70,7 @@
     <div>
         {{ hiring_trend_fig | safe }}
     </div>
+
 </div>
 <br>
 </div>
@@ -96,13 +102,17 @@
             '#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
         const salaryTrendChartFrame = document.querySelector(
             '#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
+        // const salaryGrowthChartFrame = document.querySelector(
+        //     '#salary-growth-chart .plotly-graph-div'); // Selecting the salary growth chart div
+
         // Ensure the charts are loaded properly
-        if (bubbleChartFrame && salaryTrendChartFrame) {
+        if (bubbleChartFrame && salaryTrendChartFrame){ //&& salaryGrowthChartFrame) {
             // Listen for a click event on the bubble chart
             bubbleChartFrame.on('plotly_click', function (data) {
                 const clickedJobTitle = data.points[0].text; // Get the clicked job title
                 console.log("Clicked Job Title:", clickedJobTitle);
-                // Show the salary line and trendline for the clicked job title
+
+                // Show the salary line and trendline for the clicked job title in the salary trend chart
                 const salaryTrendTraces = salaryTrendChartFrame.data;
                 for (let i = 0; i < salaryTrendTraces.length; i++) {
                     // Show only the salary line and trendline for the clicked job title
@@ -116,13 +126,28 @@
                         }, [i]);
                     }
                 }
+
+                // Show the salary growth line and prediction for the clicked job title in the salary growth chart
+                // const salaryGrowthTraces = salaryGrowthChartFrame.data;
+                // for (let i = 0; i < salaryGrowthTraces.length; i++) {
+                //     // Show only the salary growth and prediction lines for the clicked job title
+                //     if (salaryGrowthTraces[i].name.includes(clickedJobTitle)) {
+                //         Plotly.restyle(salaryGrowthChartFrame, {
+                //             visible: true
+                //         }, [i]);
+                //     } else {
+                //         Plotly.restyle(salaryGrowthChartFrame, {
+                //             visible: 'legendonly'
+                //         }, [i]);
+                //     }
+                // }
             });
         } else {
-            console.error('Bubble chart or salary trend chart not found.');
+            console.error('Bubble chart, salary trend chart, or salary growth chart not found.');
         }
     });
 
-        // Show/Hide the button when scrolling
+    // Show/Hide the "scroll to top" button when scrolling
     window.onscroll = function() {scrollFunction()};
 
     function scrollFunction() {
@@ -139,6 +164,13 @@
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
     }
+
+    async function fetchChartData() {
+        const response = await fetch('/get-salary-growth-data');
+        const chartData = await response.json();
+        Plotly.newPlot('salary-growth-chart', chartData);
+    }
+    fetchChartData();  // Call this function to load chart asynchronously
 </script>
 
 

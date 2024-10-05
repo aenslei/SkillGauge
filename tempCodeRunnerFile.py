@@ -1,1 +1,1 @@
-print(all_skills)
+pr
