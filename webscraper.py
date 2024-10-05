@@ -215,13 +215,13 @@ def scrape_page(page):
                         "Job Id": job_id,
                         "Job URL": job_url,
                         "Job Salary Range": job_salary_range,
-                        "Work Type": job_employment_type,
+                        "Job Employment Type": job_employment_type,
                         "Job Posting Date": job_post_date,
                         "Job Title": job_title,
                         "Job Description": job_desc,
                         "skills": job_skills_needed,
                         "Company": job_company,
-                        "Broader Category": job_industry,
+                        "Job Industry": job_industry,
                         "Job Minimum Experience": job_min_exp,
                     }
     
