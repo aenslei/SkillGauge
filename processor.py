@@ -130,14 +130,14 @@ def remove_duplicates(input_csv_file, output_csv_file):
             writer.writeheader()
             writer.writerows(unique_rows)
 
-def SaveDataToNewCSV(outputfile,new_data): #outputfile: 
+def SaveDataToNewCSV(outputfile, new_data):
     # Read the existing file or create a new DataFrame if it doesn't exist
     if os.path.isfile(outputfile):
         existing_df = pd.read_csv(outputfile)
     else:
         existing_df = pd.DataFrame()
 
-    # Ensure all columns in new_data_dict exist in the DataFrame
+    # Ensure all columns in new_data exist in the DataFrame
     for column_name in new_data.keys():
         if column_name not in existing_df.columns:
             existing_df[column_name] = None  # Create the column if it doesn't exist
@@ -145,22 +145,18 @@ def SaveDataToNewCSV(outputfile,new_data): #outputfile:
     # Prepare a new DataFrame to hold the new data
     new_rows = pd.DataFrame(new_data)
 
-    # Append new data for each column
-    for column_name in new_data.keys():
-        # Find the last index of valid data in the column
-        last_index = existing_df[column_name].last_valid_index()
-        if last_index is None:
-            last_index = -1  # If no valid index exists, start from the first row
-        
-        # Assign new data to the corresponding rows in the existing DataFrame
-        for i in range(len(new_rows)):
-            existing_df.at[last_index + 1 + i, column_name] = new_rows.iloc[i][column_name]
+    # Find the last row index (max) across all columns
+    last_row_index = existing_df.index.max() if not existing_df.empty else -1
 
-    # Write the updated DataFrame back to the file without appending the header
+    # Append new rows starting from the last row index + 1
+    for i in range(len(new_rows)):
+        for column_name in new_data.keys():
+            # Ensure new data gets appended after the last row
+            existing_df.at[last_row_index + 1 + i, column_name] = new_rows.iloc[i][column_name]
+
+    # Write the updated DataFrame back to the file, overwriting the previous one
     existing_df.to_csv(outputfile, mode='w', index=False)
-    print(f"EXISTING DF: {existing_df}")
-    print("Data appended successfully.")
-
+    
 def ReformatSalary(input_csv_file):
     # Read the input CSV file into a DataFrame
     df = pd.read_csv(input_csv_file, index_col=False, on_bad_lines='skip')
