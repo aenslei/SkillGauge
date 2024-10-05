@@ -1,16 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for,session
-
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud, GeographicalMap,create_salary_growth_chart,create_salary_trend_chart, industry_salary
-
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud, GeographicalMap,create_salary_growth_chart,create_salary_trend_chart
 from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap,skill_in_demand
-
 import resume_skills_extractor
 import os
 from flask import Flask, jsonify, request, session
 import pandas as pd
 import course_url_crawler
 from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job
-import time
 
 
 app = Flask(__name__)
@@ -20,11 +16,9 @@ app.secret_key = os.urandom(24)
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Path to dataset
+
 file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
 
-# Ensure the upload folder exists
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 class Industry:
     def __init__(self, title):
@@ -45,14 +39,14 @@ class JobRole:
 
 @app.route('/')
 def Home():
-
     data = load_data(file_path)  # Load the data
     industry_job(data)
 
     return render_template('home.html')
 
-industry_list = []
 
+
+industry_list = []
 @app.route('/industries')
 def Industries():
     # Load CSV file
@@ -88,55 +82,22 @@ def analyse_industry_distribution(data):
     total_jobs = len(data)
     return industry_distribution, total_jobs
 
+
 # POST request
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
     industry_name_orig = request.form.get('industry_name')
-    print(f"Received industry_name: {industry_name_orig}")
-    # add current industry to session
     session["industry"] = industry_name_orig
-
 
     industry = next((ind for ind in industry_list if ind.title == industry_name_orig), None)
     data = load_data(file_path)
 
-
-    # ------------------ Start of job titel bubble chart --------------------
-
-    # Generate the bubble chart for job titles in the selected industry 
-    job_title_chart = create_job_title_bubble_chart(data, industry_name_orig) # Call the bubble chart function
-    
-    # ------------------- End of job titel bubble chart -----------------------
-
-
-
-    # ------------------ Start of salary variation boxplot chart -------------------- 
-   
-    # Generate the salary variation bar chart for the selected industry
-    salary_chart = create_salary_variation_chart(data, industry_name_orig)  # Call the salary chart function
-    
-    # ------------------ End of salary variation boxplot chart --------------------
-
-
-
-    # ------------------ Start of salary trend chart --------------------
-
-    # Generate the salary trend chart (line chart) for the selected industry
-    # salary_trend_chart = create_salary_trend_chart(data, industry_name_orig)  # Call the salary trend chart function
-    
-    industry_salary(data, industry_name_orig) 
-    json_file_path = os.path.join('static/json', f"{industry_name_orig.replace(' ', '_')}_salary_data.json")
-
-    salary_trend_chart = create_salary_trend_chart(json_file_path)
-    # ------------------- End of salary trend chart -----------------------
-
-
-    # ------------------ Start of salary growth chart --------------------
-
-    # Generate the salary growth chart (line chart) for the selected industry
-    salary_growth_chart = create_salary_growth_chart(data, industry_name_orig)
-
-    # ------------------ End of salary growth chart --------------------
+    #  --- Calling of Analysis and Visualisation Functions ---
+    job_title_chart = create_job_title_bubble_chart(data, industry_name_orig) # Call the Bubble chart function
+    salary_chart = create_salary_variation_chart(data, industry_name_orig)  # Call the Salary Box chart function
+    salary_trend_chart = create_salary_trend_chart(data, industry_name_orig)  # Call the Salary trend Line chart function
+    salary_growth_chart = create_salary_growth_chart(data, industry_name_orig) # Call the the salary growth chart
+    # --------------------------------------------------------
 
     # find industry general skills
     industry_name = industry_name_orig.replace(" ", "_")
@@ -154,7 +115,6 @@ def industry_details():
         industry_skills_pd = pd.read_json(file)
 
     skill_list = pull_industry_skills(industry_skills_pd)
-
 
     # end of find industry general skills
 
@@ -183,37 +143,13 @@ def industry_details():
                            job_trend_fig=job_trend_code,
                            skill_list = skill_list,
                            wordCloud = wordCloud,
-
                            hiring_trend_fig = hiring_trend_code,
-                        salary_growth_chart = salary_growth_chart,
+                           salary_growth_chart = salary_growth_chart,
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
-                           
-                           salary_trend_chart = salary_trend_chart)
+                           salary_trend_chart = salary_trend_chart)    
 
-# @app.route('/get-job-salary-data', methods=['POST'])
-# def get_job_salary_data():
-#     job_title = request.json.get('job_title')  # Receive the job title from the frontend
 
-#     # Filter the data for the selected job title
-#     industry_name_orig = session.get("industry")
-#     data = load_data(file_path)  # Ensure load_data is defined elsewhere in your code
-#     job_data = data[data['Job Title'] == job_title]
-
-#     # Create the charts based on the filtered job data
-#     salary_trend_chart = create_salary_trend_chart(job_data, industry_name_orig)
-#     salary_growth_chart = create_salary_growth_chart(job_data, industry_name_orig)
-
-#     # Convert the Plotly figures to JSON format
-#     salary_trend_chart_json = salary_trend_chart.to_json()
-#     salary_growth_chart_json = salary_growth_chart.to_json()
-
-#     # Return the charts as JSON
-#     return jsonify({
-#         'salary_trend_chart': salary_trend_chart_json,
-#         'salary_growth_chart': salary_growth_chart_json
-#     })
-    
 
 
 @app.route('/job_roles')
@@ -252,7 +188,6 @@ def Job_roles():
             job_object = JobRole(job[0], job[1],0)
             job_role_list.append(job_object)
 
-
     else:
 
         for job, percent in match_dict.items():
@@ -267,7 +202,6 @@ def Job_roles():
 
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
-
 
     if 'userSkills' in session:
         userSkills = session['userSkills'] 

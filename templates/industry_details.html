@@ -20,12 +20,12 @@
         {% endif %}
     {% endfor %}
 </div>
+<!-- ------------// End //--------------- -->
 
 <div class="container mt-4">
     <p>More information about the {{ industry }} industry.</p>
 </div>
 
-<!-- Data Visualisation -->
 
 <div class="jumbotron" style="height: fit-content;">
     <h1 class="display-1">{{ industry }}</h1>
@@ -40,17 +40,20 @@
         {% endfor %}
     </div>
     <br>
+
     <hr class="my-4">
     <br>
     <div id="bubble-chart" style="flex-grow: 1; height:600px;">
         {{ job_title_chart|safe }}
     </div>
     <br>
+
     <br>
     <div id="salary-trend-chart">
         {{ salary_trend_chart|safe }}
     </div>
     <br>
+
     <div>
         {{ salary_chart|safe }}
     </div>
@@ -59,14 +62,17 @@
         {{ salary_growth_chart | safe }}
     </div>
     <br>
+
     <div>
         {{ job_trend_fig | safe }}
     </div>
     <br>
+
     <div>
         {{wordCloud | safe}}
     </div>
     <br>
+
     <div>
         {{ hiring_trend_fig | safe }}
     </div>
@@ -102,11 +108,10 @@
             '#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
         const salaryTrendChartFrame = document.querySelector(
             '#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
-        // const salaryGrowthChartFrame = document.querySelector(
-        //     '#salary-growth-chart .plotly-graph-div'); // Selecting the salary growth chart div
-
+        
         // Ensure the charts are loaded properly
-        if (bubbleChartFrame && salaryTrendChartFrame){ //&& salaryGrowthChartFrame) {
+        if (bubbleChartFrame && salaryTrendChartFrame){ 
+
             // Listen for a click event on the bubble chart
             bubbleChartFrame.on('plotly_click', function (data) {
                 const clickedJobTitle = data.points[0].text; // Get the clicked job title
@@ -114,33 +119,20 @@
 
                 // Show the salary line and trendline for the clicked job title in the salary trend chart
                 const salaryTrendTraces = salaryTrendChartFrame.data;
+
                 for (let i = 0; i < salaryTrendTraces.length; i++) {
                     // Show only the salary line and trendline for the clicked job title
                     if (salaryTrendTraces[i].name.includes(clickedJobTitle)) {
                         Plotly.restyle(salaryTrendChartFrame, {
                             visible: true
                         }, [i]);
+                        
                     } else {
                         Plotly.restyle(salaryTrendChartFrame, {
                             visible: 'legendonly'
                         }, [i]);
                     }
                 }
-
-                // Show the salary growth line and prediction for the clicked job title in the salary growth chart
-                // const salaryGrowthTraces = salaryGrowthChartFrame.data;
-                // for (let i = 0; i < salaryGrowthTraces.length; i++) {
-                //     // Show only the salary growth and prediction lines for the clicked job title
-                //     if (salaryGrowthTraces[i].name.includes(clickedJobTitle)) {
-                //         Plotly.restyle(salaryGrowthChartFrame, {
-                //             visible: true
-                //         }, [i]);
-                //     } else {
-                //         Plotly.restyle(salaryGrowthChartFrame, {
-                //             visible: 'legendonly'
-                //         }, [i]);
-                //     }
-                // }
             });
         } else {
             console.error('Bubble chart, salary trend chart, or salary growth chart not found.');

@@ -4,7 +4,7 @@ import os
 import ast
 
 
-# Define a mapping between the 30 clusters and the new categories
+# ---------  Define a mapping between the 30 clusters and the new categories ----------------------------
 cluster_mapping = {
     0: "Human Resources & Customer Support",
     1: "Supply Chain & Operations",
@@ -72,40 +72,40 @@ broader_categories_mapping = {
     "Construction & Civil Engineering": "Engineering"
 }
 
+# -----------------------------------------------------------------------------------------
 
+# Mapping of Job titles to the Industries 
 
-
-# Load your dataset (assuming the dataset contains a 'Cluster' column)
-data = pd.read_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv')
-
-# Apply the cluster mapping
-data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
-
-# Apply the broader category mapping
-data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
-
-# Save the new dataset with the cluster names and broader categories
-data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False)
-
+data = pd.read_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv') # Load dataset 
+data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping) # Apply the cluster mapping
+data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping) # Apply the broader category mapping
+data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False) # Save the new dataset with the cluster names and broader categories
 print("Cluster names and broader categories added and saved successfully!")
 
-# Load the CSV file
-csv_file_path = 'Datasets/sg_job_data-Cleaned-With Industry1.csv'
+# ---------------------------------------------------------------------------------------
+
+
+
+
+# Manual mapping of Anomalous Job Role mapped incorrectly by Text Classification Model
+
+csv_file_path = 'Datasets/sg_job_data-Cleaned-With Industry1.csv' #Load the CSV file
 data = pd.read_csv(csv_file_path)
 
-# Jobs to remove from Cluster 24
-remove_from_cluster_24 = ["Art Teacher", "Art Director", "Teacher"]
-# Job to move from Cluster 24 to Cluster 11
-move_to_cluster_11 = "Public Relations Specialist","Substance Abuse Counselor"
 
-
+remove_from_cluster_24 = ["Art Teacher", "Art Director", "Teacher"] # Jobs to remove from Cluster 24
+move_to_cluster_11 = "Public Relations Specialist","Substance Abuse Counselor" # Job to move from Cluster 24 to Cluster 11
 data.loc[(data['Job Title'] == 'SEO Specialist') & (data['Predicted Industry'] == 3), 'Predicted Industry'] = 2
 
+
+
 # Move legal-related job titles from Predicted Industry 14 to 9
-legal_jobs = ['Legal Advisor', 'Paralegal', 'Legal Secretary', 'Legal Counsel', 'Legal Assistant', 'Litigation Attorney']
+legal_jobs = ['Legal Advisor', 'Paralegal', 'Legal Secretary', 'Legal Counsel', 'Legal Assistant', 'Litigation Attorney'] 
 data.loc[(data['Job Title'].isin(legal_jobs)) & (data['Predicted Industry'] == 14), 'Predicted Industry'] = 9
 
-# Move the specified job titles to cluster 2 based on their current clusters
+
+
+# Move the specified IT job titles to cluster 2 based on their current clusters
 move_to_cluster_2 = {
     'Data Entry Clerk': 0,
     'IT Manager': 20,
@@ -117,6 +117,20 @@ move_to_cluster_2 = {
 }
 for job, industry in move_to_cluster_2.items():
     data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 2
+
+# Move the specified job titles to cluster 2 based on their current clusters
+move_to_cluster_2 = {
+    'Network Administrator': 22,
+    'Systems Administrator': 22,
+    'IT Support Specialist': 22,
+    'Systems Engineer': 4,
+    'IT Manager': 22,
+    'Software Architect': 4
+}
+for job, industry in move_to_cluster_2.items():
+    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 2
+
+
 
 # Move the specified engineering-related job titles to cluster 4
 move_to_cluster_4 = {
@@ -133,49 +147,6 @@ for job, industry in move_to_cluster_4.items():
         data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 4
 
 
-data.loc[(data['Job Title'] == 'Architect') & (data['Predicted Industry'] == 15), 'Predicted Industry'] = 4
-
-
-# Move "Substance Abuse Counselor" from cluster 19 to cluster 11
-data.loc[(data['Job Title'] == 'Substance Abuse Counselor') & (data['Predicted Industry'] == 19), 'Predicted Industry'] = 11
-
-# Move the specified job titles to cluster 2 based on their current clusters
-move_to_cluster_2 = {
-    'Network Administrator': 22,
-    'Systems Administrator': 22,
-    'IT Support Specialist': 22,
-    'Systems Engineer': 4,
-    'IT Manager': 22,
-    'Software Architect': 4
-}
-for job, industry in move_to_cluster_2.items():
-    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 2
-
-# Move specified job titles to cluster 13 based on their current clusters
-move_to_cluster_13 = {
-    'Research Analyst': 29,
-    'Marketing Manager': 29,
-    'Research Scientist': 29,
-    'Market Research Analyst': 29,
-    'Market Analyst': 29
-}
-for job, industry in move_to_cluster_13.items():
-    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 13
-
-# Move "Psychologist" from cluster 29 to cluster 11
-data.loc[(data['Job Title'] == 'Psychologist') & (data['Predicted Industry'] == 29), 'Predicted Industry'] = 11
-
-
-# Move the specified job titles to cluster 13 based on their current clusters
-move_to_cluster_13 = {
-    'Marketing Analyst': 6,
-    'Business Analyst': 6,
-    'Personal Assistant': 6
-}
-for job, industry in move_to_cluster_13.items():
-    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 13
-
-# Move the specified job titles to cluster 4 based on their current clusters
 move_to_cluster_4 = {
     'Landscape Architect': 25,
     'Technical Writer': 25,
@@ -190,15 +161,7 @@ move_to_cluster_4 = {
 for job, industry in move_to_cluster_4.items():
     data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 4
 
-move_to_cluster_6 = {
-    'Interior Designer': 25,
-    'Executive Assistant': 27,
-    'Personal Assistant': 27
-}
-for job, industry in move_to_cluster_6.items():
-    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 6
 
-# Move the specified job titles to cluster 4 based on their current clusters
 move_to_cluster_4 = {
     'Environmental Consultant': 25,
     'Electrical Designer': 25,
@@ -207,13 +170,48 @@ move_to_cluster_4 = {
 for job, industry in move_to_cluster_4.items():
     data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 4
 
-# Move "Business Analyst" from cluster 11 to cluster 6
+data.loc[(data['Job Title'] == 'Architect') & (data['Predicted Industry'] == 15), 'Predicted Industry'] = 4
+
+
+# Move specified job titles to cluster 13 based on their current clusters
+move_to_cluster_13 = {
+    'Research Analyst': 29,
+    'Marketing Manager': 29,
+    'Research Scientist': 29,
+    'Market Research Analyst': 29,
+    'Market Analyst': 29
+}
+for job, industry in move_to_cluster_13.items():
+    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 13
+
+
+
+move_to_cluster_13 = {
+    'Marketing Analyst': 6,
+    'Business Analyst': 6,
+    'Personal Assistant': 6
+}
+for job, industry in move_to_cluster_13.items():
+    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 13
+
+
+
+move_to_cluster_6 = {
+    'Interior Designer': 25,
+    'Executive Assistant': 27,
+    'Personal Assistant': 27
+}
+for job, industry in move_to_cluster_6.items():
+    data.loc[(data['Job Title'] == job) & (data['Predicted Industry'] == industry), 'Predicted Industry'] = 6
+
 data.loc[(data['Job Title'] == 'Business Analyst') & (data['Predicted Industry'] == 11), 'Predicted Industry'] = 6
 data.loc[(data['Job Title'] == 'Personal Assistant') & (data['Predicted Industry'] == 25), 'Predicted Industry'] = 6
 data.loc[(data['Job Title'] == 'Executive Assistant') & (data['Predicted Industry'] == 27), 'Predicted Industry'] = 6
 data.loc[(data['Job Title'] == 'Interior Designer') & (data['Predicted Industry'] == 25), 'Predicted Industry'] = 4
 data.loc[(data['Job Title'] == 'Product Designer') & (data['Predicted Industry'] == 25), 'Predicted Industry'] = 4
 
+data.loc[(data['Job Title'] == 'Substance Abuse Counselor') & (data['Predicted Industry'] == 19), 'Predicted Industry'] = 11
+data.loc[(data['Job Title'] == 'Psychologist') & (data['Predicted Industry'] == 29), 'Predicted Industry'] = 11
 
 # Delete all rows where the Job Title is "Teacher" and Predicted Industry is 11
 data = data[~((data['Job Title'] == 'Teacher') & (data['Predicted Industry'] == 11))]
@@ -239,6 +237,9 @@ if 'Predicted Industry.1' in data.columns:
 else:
     print("'Predicted Industry.1' column does not exist.")
 
+
+
+#  Apply Cluster Mapping again after manual changes to mapping ---------------------------------
     cluster_mapping = {
     0: "Human Resources & Customer Support",
     1: "Supply Chain & Operations",
@@ -305,65 +306,71 @@ broader_categories_mapping = {
     "Product Management & Development": "Business",
     "Construction & Civil Engineering": "Engineering"
 }
+# ----------------------------------------------------------------------------------
 
-# Convert salary columns to numeric (handling invalid data)
-data['Min Salary (K)'] = pd.to_numeric(data['Min Salary (K)'], errors='coerce')
-data['Max Salary (K)'] = pd.to_numeric(data['Max Salary (K)'], errors='coerce')
+
+
+# Extracting Min Max Salary, Average Salary and Average Salary Range--
+data['Min Salary (K)'] = pd.to_numeric(data['Min Salary (K)'], errors='coerce') # Convert salary columns to numeric (handling invalid data)
+data['Max Salary (K)'] = pd.to_numeric(data['Max Salary (K)'], errors='coerce') # ""
 
 # Check for missing values in salary columns
 print("Missing values in Min Salary (K):", data['Min Salary (K)'].isnull().sum())
 print("Missing values in Max Salary (K):", data['Max Salary (K)'].isnull().sum())
 
-# Drop rows with missing salary data
-data = data.dropna(subset=['Min Salary (K)', 'Max Salary (K)'])
+data = data.dropna(subset=['Min Salary (K)', 'Max Salary (K)']) # Drop rows with missing salary data
 
-# Calculate Salary Range and Average Salary
-data['Salary Range (K)'] = data['Max Salary (K)'] - data['Min Salary (K)']
+data['Salary Range (K)'] = data['Max Salary (K)'] - data['Min Salary (K)'] # Calculate Salary Range and Average Salary
 data['Average Salary (K)'] = (data['Min Salary (K)'] + data['Max Salary (K)']) / 2
+#  --------------------------------------------------------------------------------
 
-# Convert 'Job Posting Date' to datetime
-data['Job Posting Date'] = pd.to_datetime(data['Job Posting Date'], errors='coerce')
 
-    # Check for invalid or missing dates after conversion
+
+# Extracting Year in Quarters -----------------------------------------------------
+data['Job Posting Date'] = pd.to_datetime(data['Job Posting Date'], errors='coerce') # Convert 'Job Posting Date' to datetime
 if data['Job Posting Date'].isnull().any():
-        print("Invalid or missing 'Job Posting Date' entries found.")
+        print("Invalid or missing 'Job Posting Date' entries found.") # Check for invalid or missing dates after conversion
+data['Year-Quarter'] = data['Job Posting Date'].dt.to_period('Q').astype(str)  # Create 'Year-Quarter' column & Convert to string for better x-axis labels
 
-    # Create 'Year-Quarter' column
-data['Year-Quarter'] = data['Job Posting Date'].dt.to_period('Q').astype(str)  # Convert to string for better x-axis labels
 
+
+
+# Extracting Min Max Job Experience   ---------------------------------------------
 # Split the 'Experience' column into two new columns: 'Job Minimum Experience' and 'Job Maximum Experience'
 data[['Job Minimum Experience', 'Job Maximum Experience']] = data['Experience'].str.extract(r'(\d+)\s+to\s+(\d+)')
+data['Job Minimum Experience'] = data['Job Minimum Experience'].astype(int) # Convert the extracted values to integers
+data['Job Maximum Experience'] = data['Job Maximum Experience'].astype(int) # ""
+# --------------------------------------------------------------------------------
 
-# Convert the extracted values to integers
-data['Job Minimum Experience'] = data['Job Minimum Experience'].astype(int)
-data['Job Maximum Experience'] = data['Job Maximum Experience'].astype(int)
 
 
 # Apply the cluster mapping
 data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
-
-# Apply the broader category mapping
 data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
 
 # Save the updated dataset with new columns
 data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False)
 
-print("Cluster names, broader categories, salary range, and average salary added and saved successfully!")
-# Apply the cluster mapping
-data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 
-# Apply the broader category mapping
-data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
+# # Apply the cluster mapping
+# data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
+
+# # Apply the broader category mapping
+# data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
+# ----------------------------------------------------------------------------------------
 
 
-# Step 1: Load abbreviations from the text file
+
+#  Joining of Abbreviated Skills --------------------------------------------------------
+
+# Load abbreviations from the text file
 with open('Datasets/unique_abbreviations.txt', 'r') as f:
     abbreviations = [line.strip() for line in f.readlines()]
 
 # Add the list of abbreviations that should be kept together
 preserve_abbreviations = ['XML', 'LEED', 'HTML', 'CSS', 'AJAX', 'UI UX', 'CI,', 'ETL', 'GIS', 'ROI', 'ISO9001' 'CD', 'CAD Software', 'SQL', 'API', 'SEO', 'SEM', 'QC', 'OS', 'CAD', 'CAM']
 
-# Step 2: List of skills you want to token together (including multi-word abbreviations)
+# List of skills to token together (including multi-word abbreviations)
 skills_to_token_together = [
     ['Java', 'Script'],
     ['Mongo', 'D B'],
@@ -389,16 +396,16 @@ skills_dict = {"".join(key) for key in skills_to_token_together}
 print(skills_dict)
 
 
-# Step 3: Define the tokenization function with abbreviations and merging logic
+# Define the tokenization function with abbreviations and merging logic
 def tokenize_and_find_combined_skills(skills_str):
     if pd.isna(skills_str):  # Handle missing skills
         return []
     
+
     # Replace different delimiters (commas, semicolons) with a uniform delimiter (comma)
-    skills_str = skills_str.replace(';', ',').replace('/', ',').replace('\\', '')  # Added this line to handle slashes
-    
-    # Split the string by commas
-    tokens = ast.literal_eval(skills_str)
+    skills_str = skills_str.replace(';', ',').replace('/', ',').replace('\\', '')  
+    tokens = ast.literal_eval(skills_str) # Split the string by commas
+
 
     # Preserve abbreviations and multi-word combinations
     refined_tokens = []
@@ -409,9 +416,10 @@ def tokenize_and_find_combined_skills(skills_str):
         if token in preserve_abbreviations or token in abbreviations:
             refined_tokens.append(token)
         else:
-            # Split by capital letters and rejoin with spaces for phrases like 'ArchitecturalDesign'
+            # Split by capital letters and rejoin with spaces 
             refined_tokens.extend(re.findall(r'[A-Z][^A-Z]*', token))
     
+
     # Handle cases where single letters need to be merged with the next token
     merged_tokens = []
     i = 0
@@ -434,24 +442,20 @@ def tokenize_and_find_combined_skills(skills_str):
     return [skill.strip() for skill in merged_tokens if skill.strip()]
 
 
-
 # Apply the tokenization to each row of the "skills" column
 data['Tokenized Skills'] = data['skills'].apply(tokenize_and_find_combined_skills)
 
-# remove single letter skills
 
+# remove single letter skills ------------------------------------------------
 def filter_skills(skills_list):
 
     skills_list = list(skills_list)
     new_skill_list = []
     for skill in skills_list:
-
         if len(skill) > 1:
-
             new_skill_list.append(skill)
 
     return new_skill_list
-
 
 data["Tokenized Skills"] = data["Tokenized Skills"].apply(filter_skills)
 
@@ -464,18 +468,18 @@ with open(skills_text_file_path, 'w') as f:
     for skill in all_skills:
         f.write(f"{skill}\n")
 
-
 # Check the output of tokenized skills
 print(data['Tokenized Skills'].head())
 
-# Step 4: Drop the 'Abbreviations' column
+
+
+# Dropping unused columns ------------------------------------------
 if 'Abbreviations' in data.columns:
     data.drop(columns=['Abbreviations'], inplace=True)
-    
+
 if 'Tokenized Skills' in data.columns:
     data['skills'] = data['Tokenized Skills']
     data.drop(columns=['Tokenized Skills'], inplace=True)
-
 
 columns_to_drop = [
     'Experience', 'Country', 'Role', 'Cluster Name', 'Text', 
@@ -483,17 +487,19 @@ columns_to_drop = [
     'Company Size', 'Qualifications'
 ]
 
-# Drop the columns if they exist in the DataFrame
 data.drop(columns=columns_to_drop, inplace=True, errors='ignore')
 
 if 'Predicted Industry' in data.columns:
     data.drop(columns=['Predicted Industry'], inplace=True)
 
-# Step 5: Save the changes back to the same file
-data.to_csv(csv_file_path, index=False)
 # Save the changes back to the same file
+data.to_csv(csv_file_path, index=False)
+
+# -------------------------------------------------------------------
 
 
+
+# Function to get individual industry CSVs---------------------------
 def convert_df_list_to_csv(df_list, folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -519,6 +525,7 @@ flask_dataset_folder = r"Datasets"
 
 convert_df_list_to_csv(df_list, flask_dataset_folder)
 print("Individual industry csv files created!")
+# -----------------------------------------------------------------------------
 
 
 
