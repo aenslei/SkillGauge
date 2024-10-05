@@ -293,7 +293,7 @@ def create_salary_growth_chart(data, industry_name_orig):
         # Train the model and make predictions
         model = LinearRegression().fit(X, y)
         max_experience = job_data['Job Minimum Experience'].max()
-        future_experience = np.array(range(max_experience, max_experience + 6)).reshape(-1, 1)
+        future_experience = np.array(range(int(max_experience), int(max_experience) + 6)).reshape(-1, 1)
         predicted_salaries = model.predict(future_experience)
 
         # Add the predicted salary line (dashed) for the next 5 years

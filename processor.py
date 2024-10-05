@@ -211,7 +211,7 @@ def ProcessWorkType(input_csv_file):
     #SaveDataToNewCSV(outputfile,new_data)
     return new_data
 
-def RemoveExtraHeaderRows():
+def RemoveExtraHeaderRows(csv_file):
     # Load the CSV file
     df = pd.read_csv(csv_file)
 
@@ -427,7 +427,7 @@ def main(input_csv_file, output_csv_file):
             #PruneExtraCols(input_csv_file)
             df = pd.read_csv(input_csv_file, on_bad_lines='skip')
 
-            RemoveExtraHeaderRows()
+            RemoveExtraHeaderRows(input_csv_file)
 
             # Fill NaN values in relevant columns
             df['Job Industry'] = df['Job Industry'].fillna('')
@@ -470,7 +470,7 @@ def main(input_csv_file, output_csv_file):
             PruneExtraCols(output_csv_file)
 
             #remove duplicate rows
-            RemoveExtraHeaderRows()
+            RemoveExtraHeaderRows(output_csv_file)
             
             print("Extra Data Columns Pruned. Data successfully appended. EXITING...")
     except Exception as e:
