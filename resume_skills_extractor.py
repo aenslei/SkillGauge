@@ -1,16 +1,7 @@
 import os
 import json
-import spacy
 import re
 from pdfminer.high_level import extract_text
-from pdfminer.layout import LTFigure, LTTextBox
-from pdfminer.pdfdocument import PDFDocument
-from pdfminer.pdfpage import PDFPage
-from pdfminer.pdfparser import PDFParser
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-
-# Load the spaCy model for English
-nlp = spacy.load("en_core_web_sm")
 
 # Define the list of industry JSON files
 industry_files = [
@@ -25,7 +16,7 @@ industry_files = [
 general_skills_file = "Skills/general_skills.json"
 file_path = os.path.join('uploads', 'results.txt')
 
-#extract text from pdf and output as txt file
+# Extract text from PDF and output as TXT file
 def extract_text_from_pdf(pdf_file, output_file=file_path):
     try:
         with open(pdf_file, 'rb') as f:
@@ -48,10 +39,9 @@ def extract_skills_from_text(text, industry_file, general_skills_file):
         general_skills = json.load(f)
 
     combined_skills = {**industry_skills, **general_skills}
-
     words = re.findall(r'\b\w+\b', text.lower())
-
     extracted_skills = set()
+
     for word in words:
         for skill, aliases in combined_skills.items():
             if word in [skill.lower()] + [alias.lower() for alias in aliases]:
@@ -61,7 +51,6 @@ def extract_skills_from_text(text, industry_file, general_skills_file):
     return list(extracted_skills)
 
 def outputSkillsExtracted(industry_choice):
-    # Define the text file path
     text_file = file_path
 
     if not os.path.exists(text_file):
@@ -70,8 +59,7 @@ def outputSkillsExtracted(industry_choice):
         with open(text_file, "r") as f:
             text = f.read()
 
-        industry_file = industry_files[industry_choice - 1 ]
-
+        industry_file = industry_files[industry_choice - 1]
         extracted_skills = extract_skills_from_text(text, industry_file, general_skills_file)
 
         industry_skills = []
@@ -84,5 +72,4 @@ def outputSkillsExtracted(industry_choice):
                 general_skills.append(skill)
 
     final_skills = [skills.lower() for skills in industry_skills + general_skills]
-
     return final_skills
