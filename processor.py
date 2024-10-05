@@ -248,9 +248,11 @@ def RemoveExtraHeaderRows():
     # Save the cleaned DataFrame back to the CSV file
     df_cleaned.to_csv(csv_file, index=False)
 
+
 def ProcessPostingDate(input_csv_file):
+
     # Load the CSV file
-    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+    df = pd.read_csv(input_csv_file)
 
     # Extract the entire posting date column and fill NaN values with an empty string
     posting_dates = df['Job Posting Date'].fillna('')
@@ -260,10 +262,19 @@ def ProcessPostingDate(input_csv_file):
 
     # Iterate through each row in posting dates
     for date in posting_dates:
-        # Split the date by a specific delimiter (e.g., '-')
-        date_list = date.split('-')
-        # Process the date as needed (e.g., reformatting)
-        processed_date = "/".join(date_list)
+        try:
+            # Remove the "Posted " prefix if it exists
+            if date.startswith("Posted "):
+                date = date.replace("Posted ", "")
+            # Split the date into day, month, and year
+            day, month_str, year = date.split()
+            # Translate the month to its numerical value
+            month = monthTranslation[month_str]
+            # Reformat the date to the desired format
+            processed_date = f"{year}-{month}-{day}"
+        except Exception as e:
+            # If any error occurs, keep the original date string
+            processed_date = date
         processed_dates.append(processed_date)
 
     # Add the new column to the DataFrame
@@ -271,6 +282,7 @@ def ProcessPostingDate(input_csv_file):
 
     # Return the updated DataFrame
     return df[['Job Posting Date']].copy()
+
 
 def ProcessQuarter(input_csv_file):
     # Load the CSV file
