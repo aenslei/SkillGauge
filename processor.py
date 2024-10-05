@@ -32,13 +32,11 @@ industryTranslation = {
 import pandas as pd
 import csv
 import os
-#import nltk
 
 # Variables
 
 csv_file = "job_listings_scraped.csv"
-NewIndustries_csv_file = "job_listingsNewIndustries.csv"
-NoDupes_csv_file = "job_listingsNoDupes.csv"
+new_csv_file = "job_listingsNEW.csv"
 
 file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
 
@@ -48,6 +46,18 @@ industryTranslation = {
     "Engineering" : ["Engineering", "Telecommunications"],
     "Legal Services" : "Legal",
     "Healthcare" : ["Environment / Health", "Healthcare / Pharmaceutical", "Medical / Therapy Services"]
+}
+
+monthTranslation = {
+    "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4,
+    "May": 5, "Jun": 6, "Jul": 7, "Aug": 8,
+    "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+}
+
+quarterTranslation = {
+    "Jan": "Q1", "Feb": "Q1", "Mar": "Q1", "Apr": "Q2",
+    "May": "Q2", "Jun": "Q2", "Jul": "Q3", "Aug": "Q3",
+    "Sep": "Q3", "Oct": "Q4", "Nov": "Q4", "Dec": "Q4"
 }
 
 # Functions
@@ -69,23 +79,37 @@ def tokenize_and_translate(industry, industryTranslation):
     # Remove duplicates and return the translated tokens
     return list(set(translated_tokens))
 
-def industryTranslate(csv_file, output_csv_file, industryTranslation):
-    if os.path.exists(csv_file):
-        with open(csv_file, 'r', encoding='utf-8') as csvfile:  # Specify encoding
-            reader = csv.DictReader(csvfile)
-            fieldnames = reader.fieldnames + ['Translated Industries']  # Add new column header
-            rows = []
-            for row in reader:
-                industry = row['Job Industry']  # Replace 'Job Industry' with the actual header name
-                translated_industries = tokenize_and_translate(industry, industryTranslation)
-                row['Translated Industries'] = ', '.join(translated_industries)  # Join translated industries into a string
-                rows.append(row)
+def DuplicateRowsByCategory(df):
+    # Read the input CSV file into a DataFrame
+    print(df)
+
+    # Check if 'Broader Category' column exists
+    if 'Broader Category' not in df.columns:
+        print("Error: 'Broader Category' column not found in the input CSV file.")
+        return
+
+    # Create a list to hold the new rows
+    new_rows = []
+
+    # Iterate through each row in the DataFrame
+    for index, row in df.iterrows():
+        # Split the Broader Category column by comma
+        categories = row['Broader Category'].split(', ') if pd.notna(row['Broader Category']) else []
         
-        # Write the updated rows to a new CSV file
-        with open(output_csv_file, 'w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(rows)
+        # If there are multiple categories, create duplicates of the row
+        if len(categories) > 1:
+            for i, category in enumerate(categories):
+                new_row = row.copy()
+                new_row['Broader Category'] = category
+                new_row['Job Id'] = f"{row['Job Id']}-{i+1}"
+                new_rows.append(new_row)
+        else:
+            new_rows.append(row)
+
+    # Create a new DataFrame from the new rows
+    new_data = pd.DataFrame(new_rows)
+
+    return new_data
 
 def remove_duplicates(input_csv_file, output_csv_file):
     if os.path.exists(input_csv_file):
@@ -106,7 +130,7 @@ def remove_duplicates(input_csv_file, output_csv_file):
             writer.writeheader()
             writer.writerows(unique_rows)
 
-def SaveDataToNewCSV(outputfile,new_data):
+def SaveDataToNewCSV(outputfile,new_data): #outputfile: 
     # Read the existing file or create a new DataFrame if it doesn't exist
     if os.path.isfile(outputfile):
         existing_df = pd.read_csv(outputfile)
@@ -134,11 +158,12 @@ def SaveDataToNewCSV(outputfile,new_data):
 
     # Write the updated DataFrame back to the file without appending the header
     existing_df.to_csv(outputfile, mode='w', index=False)
+    print(f"EXISTING DF: {existing_df}")
     print("Data appended successfully.")
 
-def ReformatSalary(input_csv_file,outputfile):
+def ReformatSalary(input_csv_file):
     # Read the input CSV file into a DataFrame
-    df = pd.read_csv(input_csv_file, index_col=False)
+    df = pd.read_csv(input_csv_file, index_col=False, on_bad_lines='skip')
 
     # Ensure the 'Job Salary Range' column exists
     if 'Job Salary Range' in df.columns:
@@ -165,14 +190,15 @@ def ReformatSalary(input_csv_file,outputfile):
         # Prepare a new DataFrame with just the columns to append
         new_data = df[['Min Salary (K)', 'Max Salary (K)', 'Average Salary (K)','Salary Range (K)']].copy()  
 
-        SaveDataToNewCSV(outputfile,new_data)
+        #SaveDataToNewCSV(outputfile,new_data)
+        return new_data
 
     else:
         print("The 'Job Salary Range' column does not exist in the provided CSV file.")
 
-def ProcessWorkType(input_csv_file,outputfile):
+def ProcessWorkType(input_csv_file):
     # Read the input CSV file into a DataFrame
-    df = pd.read_csv(input_csv_file, index_col=False)
+    df = pd.read_csv(input_csv_file, index_col=False, on_bad_lines='skip')
     df.rename(columns={'Job Employment Type': 'Work Type'}, inplace=True)
     df['Work Type'] = df['Work Type'].str.split(',').str[0].str.split('/').str[0]
     replacements = {
@@ -186,7 +212,8 @@ def ProcessWorkType(input_csv_file,outputfile):
 
     new_data = df[['Work Type']].copy()     
 
-    SaveDataToNewCSV(outputfile,new_data)
+    #SaveDataToNewCSV(outputfile,new_data)
+    return new_data
 
 def RemoveExtraHeaderRows():
     # Load the CSV file
@@ -221,13 +248,222 @@ def RemoveExtraHeaderRows():
     # Save the cleaned DataFrame back to the CSV file
     df_cleaned.to_csv(csv_file, index=False)
 
-def main():
-    # industryTranslate(csv_file, NewIndustries_csv_file, industryTranslation)
-    # remove_duplicates(NewIndustries_csv_file, NoDupes_csv_file)
-    RemoveExtraHeaderRows()
-    # ReformatSalary(csv_file,file_path)
-    # ProcessWorkType(csv_file,file_path)
-    
+def ProcessPostingDate(input_csv_file):
+    # Load the CSV file
+    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+
+    # Extract the entire posting date column and fill NaN values with an empty string
+    posting_dates = df['Job Posting Date'].fillna('')
+
+    # Create a new column for processed posting dates
+    processed_dates = []
+
+    # Iterate through each row in posting dates
+    for date in posting_dates:
+        # Split the date by a specific delimiter (e.g., '-')
+        date_list = date.split('-')
+        # Process the date as needed (e.g., reformatting)
+        processed_date = "/".join(date_list)
+        processed_dates.append(processed_date)
+
+    # Add the new column to the DataFrame
+    df['Job Posting Date'] = processed_dates
+
+    # Return the updated DataFrame
+    return df[['Job Posting Date']].copy()
+
+def ProcessQuarter(input_csv_file):
+    # Load the CSV file
+    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+
+    # Extract the entire Job Posting Date column
+    posting_dates = df['Job Posting Date'].fillna('')
+
+    # Create a new column for Year-Quarter
+    year_quarter = []
+
+    # Iterate through each row in Job Posting Date
+    for date in posting_dates:
+        # Extract the posting date and split it into components
+        date_parts = date.split(' ')
+        if len(date_parts) == 4:
+            day = int(date_parts[1])
+            month = date_parts[2]
+            year = int(date_parts[3])
+
+            # Determine the quarter
+            quarter = quarterTranslation[month]
+
+            # Format the Year-Quarter
+            year_quarter.append(f"{year}{quarter}")
+        else:
+            year_quarter.append(None)  # Handle unexpected date format
+
+    # Add the new column to the DataFrame
+    df['Year-Quarter'] = year_quarter
+
+    # Return the updated DataFrame
+    return df[['Year-Quarter']].copy()
+
+def TransformByIndustry(input_csv_file, industryTranslation):
+    if os.path.exists(input_csv_file):
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+        # Translate industries and add a new column
+        df['Broader Category'] = df['Job Industry'].apply(lambda x: ', '.join(tokenize_and_translate(x, industryTranslation)) if pd.notna(x) else '')
+        print(df['Broader Category'])
+
+        return df[['Broader Category']].copy()
+
+def ProcessMinExp(input_csv_file):
+    # Load the CSV file
+    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+
+    # Extract the entire Job Minimum Experience column
+    min_exp = df['Job Minimum Experience']
+
+    # Create a new column for processed minimum experience
+    processed_min_exp = []
+
+    # Iterate through each row in Job Minimum Experience
+    for exp in min_exp:
+        # Extract numeric value from the experience string
+        exp_value = ''.join(filter(str.isdigit, str(exp)))
+        if exp_value:
+            processed_min_exp.append(int(exp_value))
+        else:
+            processed_min_exp.append(0)
+
+    # Add the new column to the DataFrame
+    df['Job Minimum Experience'] = processed_min_exp
+
+    # Return the updated DataFrame
+    return df[['Job Minimum Experience']].copy()
+
+def ProcessSkills(input_csv_file):
+    # Load the CSV file
+    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+
+    # Extract the entire skills column
+    skills = df['skills'].fillna('')
+
+    # Create a new column for processed skills
+    processed_skills = []
+
+    # Iterate through each row in skills
+    for skill in skills:
+        # Split the skills by newline characters
+        skill_list = skill.split('\n')
+        # Encapsulate each skill with single quotes and join them with commas
+        processed_skill = "[" + ", ".join(f"'{s}'" for s in skill_list) + "]"
+        processed_skills.append(processed_skill)
+
+    # Add the new column to the DataFrame
+    df['skills'] = processed_skills
+    print("SKILLS DONE")
+
+    # Return the updated DataFrame
+    return df[['skills']].copy()
+
+def TransformCompany(input_csv_file):
+    # Load the CSV file
+    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+
+    # Extract the entire Company column
+    companies = df['Company'].fillna('')
+
+    # Create a new column for transformed company names
+    transformed_companies = []
+
+    # Iterate through each row in Company
+    for company in companies:
+        # Convert the company name to title case (camel case)
+        transformed_company = company.title()
+        transformed_companies.append(transformed_company)
+
+    # Add the new column to the DataFrame
+    df['Company'] = transformed_companies
+
+    # Return the updated DataFrame
+    return df[['Company']].copy()
+
+def PruneNullIndustryRows(new_data):
+    # Remove rows where the 'Broader Category' column is empty
+    pruned_data = new_data[new_data['Broader Category'].notna() & (new_data['Broader Category'] != '')]
+    return pruned_data
+
+def FillMaxExp(input_csv_file):
+    # Load the CSV file
+    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+
+    # Set the 'Job Maximum Experience' column to 0 for every row
+    df['Job Maximum Experience'] = 0
+
+    # Return the updated DataFrame
+    return df[['Job Maximum Experience']].copy()
+
+def PruneExtraCols(csv_file):
+    # Check if the output CSV file exists
+    if os.path.isfile(csv_file):
+        output_df = pd.read_csv(csv_file)
+        # Check if the DataFrame has more than 18 columns
+        if len(output_df.columns) > 18:
+            output_df = output_df.iloc[:, :18]
+            output_df.to_csv(csv_file, index=False)
+
+def main(input_csv_file, output_csv_file):
+    try:
+        if os.path.exists(input_csv_file):
+            # Load the CSV file into a DataFrame
+
+            #PruneExtraCols(input_csv_file)
+            df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+
+            RemoveExtraHeaderRows()
+
+            # Fill NaN values in relevant columns
+            df['Job Industry'] = df['Job Industry'].fillna('')
+
+            #Process the worktype, postdate, and salary columns
+            worktype = ProcessWorkType(input_csv_file)
+            postdate = ProcessPostingDate(input_csv_file)
+            salary = ReformatSalary(input_csv_file)
+            yearquarter = ProcessQuarter(input_csv_file)
+            broaderCat = TransformByIndustry(input_csv_file, industryTranslation)
+            minExp = ProcessMinExp(input_csv_file)
+            skills = ProcessSkills(input_csv_file)
+            company = TransformCompany(input_csv_file)
+            maxExp = FillMaxExp(input_csv_file)
+
+            # Merge the processed columns back into the main DataFrame
+            df['Work Type'] = worktype['Work Type']
+            df['Job Posting Date'] = postdate['Job Posting Date']
+            df['Min Salary (K)'] = salary['Min Salary (K)']
+            df['Max Salary (K)'] = salary['Max Salary (K)']
+            df['Average Salary (K)'] = salary['Average Salary (K)']
+            df['Salary Range (K)'] = salary['Salary Range (K)']
+            df['Year-Quarter'] = yearquarter['Year-Quarter']
+            df['Broader Category'] = broaderCat['Broader Category']
+            df['Job Minimum Experience'] = minExp['Job Minimum Experience']
+            df['skills'] = skills['skills']
+            df['Company'] = company['Company']
+            df['Job Maximum Experience'] = maxExp['Job Maximum Experience']
+
+            # Transform the Broader Category column
+            new_data = DuplicateRowsByCategory(df)
+
+            # Prune rows with null Broader Category
+            pruned_data = PruneNullIndustryRows(new_data)
+
+            # Save the updated DataFrame to a new CSV file
+            SaveDataToNewCSV(output_csv_file, pruned_data)
+
+            # Remove extra colummns at the end.
+            PruneExtraCols(output_csv_file)
+            print("Extra Data Columns Pruned. Data successfully appended. EXITING...")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 
 if __name__ == "__main__":
-    main()
+    main(csv_file, file_path)
