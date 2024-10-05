@@ -1,40 +1,22 @@
 
 from flask import Flask, render_template, request, redirect, url_for,session
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud, GeographicalMap,create_salary_growth_chart,create_salary_trend_chart
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap,skill_in_demand
-
-import json
-
-from flask import Flask, render_template, request, redirect, url_for,session
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud,create_salary_growth_chart,create_salary_trend_chart, industry_salary,skill_in_demand
-
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud,create_salary_growth_chart,create_salary_trend_chart,skill_in_demand
 import resume_skills_extractor
 import os
-from flask import Flask, jsonify, request, session
 import pandas as pd
 import course_url_crawler
-
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job
-
-
-from data_analysis import  pull_in_job_trend,  pull_in_hiring_trend
- 
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,pull_in_job_trend,  pull_in_hiring_trend
 import time
 import threading
 import copy
 
-
-
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-
 
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-
 file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
-
 
 class Industry:
     def __init__(self, title):
@@ -64,15 +46,6 @@ def Home():
     data2 = copy.deepcopy(data)
     data3 = copy.deepcopy(data)
     
-    
-    #industry_general_skills(data)
-    #industry_job_trend(data1)
-    #industry_hiring_trend(data2)
-    #industry_job(data3)
-
-
-    
-        
     # Start the jobs in separate threads
     thread1 = threading.Thread(target=industry_job, args=(data3,))
     thread2 = threading.Thread(target=industry_job_trend, args=(data1,))
@@ -198,11 +171,6 @@ def industry_details():
                            hiring_trend_fig = hiring_trend_code,
 
                            salary_growth_chart = salary_growth_chart,
-
-
-                        salary_growth_chart = salary_growth_chart,
-
-
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
                            salary_trend_chart = salary_trend_chart)    
