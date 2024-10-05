@@ -17,7 +17,6 @@ import threading
 import os
 import csv
 
-
 '''
 - Author: Ainsley Cabading
 What's changed with Version 2?
@@ -320,50 +319,67 @@ def main():
                 all_jobs.extend(future.result())  # Collect results from each thread
 
         # Define the header row of the CSV File.
-        header = ["Job Id", "Job URL", "Job Salary Range", "Work Type", "Job Posting Date", "Job Title", "Job Description", "skills", "Company", "Broader Category", "Job Minimum Experience"]
+        header = ["Job Id", "Job URL", "Job Salary Range", "Job Employment Type", "Job Posting Date", "Job Title", "Job Description", "skills", "Company", "Job Industry", "Job Minimum Experience"]
 
         # Check if the CSV file already exists
         file_exists = os.path.isfile('job_listings_scraped.csv')
 
         # Convert all_jobs to a DataFrame
-        df = pd.DataFrame(all_jobs)
+        # df = pd.DataFrame(all_jobs)
         
         # Write the DataFrame to a CSV file
         #df.to_csv('job_listings_scraped.csv', mode='a' if file_exists else 'w', header=not file_exists, index=False, encoding='utf-8')
-        df.to_csv('job_listings_TEST.csv', mode='w', header=True, index=False, encoding='utf-8')
+        # df.to_csv('job_listings_TEST.csv', mode='w', header=True, index=False, encoding='utf-8')
 
-        # Check if the CSV file already exists
-        #file_exists = os.path.isfile('job_listings_scraped.csv')
-
-        # Open the CSV file in append mode if it exists, otherwise in write mode
-        # with open('job_listings_scraped.csv', 'a' if file_exists else 'w', newline='', encoding='utf-8') as csvfile:
-        #     writer = csv.DictWriter(csvfile, fieldnames=header)
-        #     # Write the header row only if the file is being created
-        #     if not file_exists:
-        #         writer.writeheader()
-
-        #     # Write accumulated job data to CSV
-        #     write_jobs_to_csv(all_jobs, 'job_listings_scraped.csv')
-    
-    except TimeoutException:
         # Check if the CSV file already exists
         file_exists = os.path.isfile('job_listings_scraped.csv')
 
-        # Convert all_jobs to a DataFrame
-        df = pd.DataFrame(all_jobs)
+        # Open the CSV file in append mode if it exists, otherwise in write mode
+        with open('job_listings_scraped.csv', 'a' if file_exists else 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=header)
+            # Write the header row only if the file is being created
+            if not file_exists:
+                writer.writeheader()
+
+            # Write accumulated job data to CSV
+            write_jobs_to_csv(all_jobs, 'job_listings_scraped.csv')
+    
+    except TimeoutException:
+        # # Check if the CSV file already exists
+        # file_exists = os.path.isfile('job_listings_scraped.csv')
+
+        # # Convert all_jobs to a DataFrame
+        # df = pd.DataFrame(all_jobs)
         
-        # Write the DataFrame to a CSV file
-        df.to_csv('job_listings_scraped.csv', mode='a' if file_exists else 'w', header=not file_exists, index=False, encoding='utf-8')
+        # # Write the DataFrame to a CSV file
+        # df.to_csv('job_listings_scraped.csv', mode='a' if file_exists else 'w', header=not file_exists, index=False, encoding='utf-8')
+
+        # Check if the CSV file already exists
+        file_exists = os.path.isfile('job_listings_scraped.csv')
+
+        # Open the CSV file in append mode if it exists, otherwise in write mode
+        with open('job_listings_scraped.csv', 'a' if file_exists else 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=header)
+            # Write the header row only if the file is being created
+            if not file_exists:
+                writer.writeheader()
+
+            # Write accumulated job data to CSV
+            write_jobs_to_csv(all_jobs, 'job_listings_scraped.csv')
 
     finally:
         # Check if the CSV file already exists
         file_exists = os.path.isfile('job_listings_scraped.csv')
 
-        # Convert all_jobs to a DataFrame
-        df = pd.DataFrame(all_jobs)
-        
-        # Write the DataFrame to a CSV file
-        df.to_csv('job_listings_scraped.csv', mode='a' if file_exists else 'w', header=not file_exists, index=False, encoding='utf-8')
+        # Open the CSV file in append mode if it exists, otherwise in write mode
+        with open('job_listings_scraped.csv', 'a' if file_exists else 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=header)
+            # Write the header row only if the file is being created
+            if not file_exists:
+                writer.writeheader()
+
+            # Write accumulated job data to CSV
+            write_jobs_to_csv(all_jobs, 'job_listings_scraped.csv')
 
     #Save end time
     end_time = time.time()
