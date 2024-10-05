@@ -125,7 +125,7 @@ def industry_details():
     industry_name = industry_name_orig.replace(" ", "_")
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
 
-    with open(industry_path) as csvfile:
+    with open(industry_path , encoding='utf-8') as csvfile:
         df = pd.read_csv(csvfile, index_col=False)
 
 
