@@ -1,6 +1,11 @@
 {
+
     "title":"Business",
     "data":{
+
+
+    "Business":{
+
         "Communication skills":701,
         "Data analysis":388,
         "Problem":377,
@@ -21,5 +26,95 @@
         "Client relationship management":113,
         "Inventory management":113,
         "Supplier relationship management":111
+
+    },
+    "Engineering":{
+        "Problem":187,
+        "Auto":166,
+        "Attention to detail":107,
+        "Project management":84,
+        "D modeling":71,
+        "D proficiency":68,
+        "Technical knowledge":65,
+        "Environmental impact assessment":58,
+        "Troubleshooting":52,
+        "Environmental regulations":49,
+        "Six":48,
+        "Quality control":46,
+        "Energy efficiency":44,
+        "Client communication":43,
+        "D software":40,
+        "Data analysis":38,
+        "Electrical engineering":37,
+        "Zoning regulations":36,
+        "Communication skills":35,
+        "Environmental impact assessments":35
+    },
+    "Healthcare":{
+        "Communication skills":138,
+        "Patient education":71,
+        "Problem":55,
+        "Patient care":47,
+        "Pediatric treatment":42,
+        "Client communication":40,
+        "Compassion and empathy":40,
+        "Attention to detail":40,
+        "Patient assessment":37,
+        "Elderly patient care":36,
+        "Operating room protocols":36,
+        "Pediatric care":35,
+        "Treatment planning":34,
+        "Cultural competence":28,
+        "Crisis intervention":28,
+        "Empathy and compassion":27,
+        "Pediatric specialization":26,
+        "Curriculum development":26,
+        "Pediatric diagnostics":26,
+        "Pediatric subspecialty":26
+    },
+    "Information_Technology":{
+        "Problem":282,
+        "Java":274,
+        "Python":270,
+        "Attention to detail":237,
+        "Adobe":191,
+        "Troubleshooting":165,
+        "Communication skills":156,
+        "UI":144,
+        "Responsive design":142,
+        "User interface":130,
+        "Azure":129,
+        "AWS":129,
+        "Wireframing and prototyping tools":123,
+        "Backup and recovery":119,
+        "Wireframing and prototyping":113,
+        "Sketch":111,
+        "Database management":108,
+        "Usability testing":104,
+        "UX":103,
+        "Network security":103
+    },
+    "Legal_Services":{
+        "Attention to detail":167,
+        "Legal research":135,
+        "Legal software proficiency":114,
+        "Communication skills":113,
+        "Document drafting":76,
+        "Case management":73,
+        "Trial support":62,
+        "Client communication":62,
+        "Case preparation":54,
+        "Technology proficiency":53,
+        "Negotiation":52,
+        "Legal research skills":50,
+        "Mediation":48,
+        "Client counseling":48,
+        "Family law":47,
+        "Court representation":47,
+        "Legal strategy":45,
+        "Corporate law":45,
+        "Lexis":40,
+        "Legal databases":40
+
     }
 }
