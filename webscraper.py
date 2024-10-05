@@ -309,7 +309,7 @@ def main():
     start_time = time.time()
     print(start_time)
 
-    page_count = 1  # MUST be same number to avoid the website crashing. All 20 per page need to be done in 1 sessions
+    page_count = 10  # MUST be same number to avoid the website crashing. All 20 per page need to be done in 1 sessions
     all_jobs = []  # List to store all job listings
 
     try:
