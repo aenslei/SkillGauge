@@ -49,7 +49,8 @@ def Home():
     # Start the jobs in separate threads
     thread1 = threading.Thread(target=industry_job, args=(data3,))
     thread2 = threading.Thread(target=industry_job_trend, args=(data1,))
-    
+
+
     thread3 = threading.Thread(target=industry_hiring_trend, args=(data2,))
     thread4 = threading.Thread(target=industry_general_skills, args=(data,))
     
