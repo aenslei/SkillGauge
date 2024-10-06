@@ -43,6 +43,18 @@ def industry_job_trend(df):
     json_dict = {}
     for df in df_list:
 
+        current_date = pd.Timestamp.now()
+
+        current_year_quarter = f"{current_date.year}Q{current_date.quarter}"
+
+        exclude_current_q = df[~(df["Year-Quarter"] == current_year_quarter)]
+
+        #print(exclude_current_q["Year-Quarter"].unique())
+        job_count = exclude_current_q["Job Title"].value_counts()
+        job_to_keep = job_count[job_count > 9].index
+
+        df = df[df['Job Title'].isin(job_to_keep)]
+
         # change date to pd datetime format
         df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
 
