@@ -429,7 +429,7 @@ def CleanJobTitle(input_csv_file):
     # Clean the 'Job Title' column using regex
     
     df['Job Title'] = df['Job Title'].apply(lambda text: re.sub(
-        r'[\(\[\{].*?[\)\]\}]|\*\*.*?\*\*|\*.*?\*|//.*?//|/.*?/|\\.*?\\|\|.*?\||[^\x00-\x7F]+|[,\(\)\-\/|]|\$\d+(\.\d+)?[kKmM]?|(?i)up to|(?i)\d+\s*(years?|yrs?|months?|mths?)|(?i)contract|#\w*',
+        r'[\(\[\{].*?[\)\]\}]|\*\*.*?\*\*|\*.*?\*|//.*?//|/.*?/|\\.*?\\|\|.*?\||[^\x00-\x7F]+|[,\(\)\-\/|]|\$\d+(\.\d+)?[kKmM]?|(?i)up to|(?i)\d+\s*(years?|yrs?|months?|mths?)|(?i)contract|#\w*|\s+\+\s+',
         '', 
         text, flags=re.IGNORECASE).strip() if isinstance(text, str) else text
     )
