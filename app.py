@@ -5,7 +5,7 @@ import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,pull_in_job_trend,  pull_in_hiring_trend
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,pull_in_job_trend,  pull_in_hiring_trend , get_job_detail_url
 import time
 import threading
 import copy
@@ -125,7 +125,7 @@ def industry_details():
     industry_name = industry_name_orig.replace(" ", "_")
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
 
-    with open(industry_path) as csvfile:
+    with open(industry_path , encoding='utf-8') as csvfile:
         df = pd.read_csv(csvfile, index_col=False)
 
 
@@ -243,7 +243,7 @@ def expanded_job_roles(job_title):
 
 
 
-    with open("Datasets/(Final)_past_"+ industry_name +".csv") as file:
+    with open("Datasets/(Final)_past_"+ industry_name +".csv" , encoding="utf-8") as file:
         df = pd.read_csv(file, index_col=False)
         job_df = filter_df_by_job_role(df, job_title)
 
@@ -256,7 +256,15 @@ def expanded_job_roles(job_title):
     skillsDemandChart = skill_in_demand(job_df)
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = job, courses = urlCourses, chart=skillComparisonChart, skillsDemand_Chart = skillsDemandChart )
+    job_detail_data = get_job_detail_url(job_df)
+
+    return render_template("expanded_job_roles.html" ,
+                           job_title = job_title,
+                           job_role = job,
+                           courses = urlCourses,
+                           chart=skillComparisonChart,
+                            skillsDemand_Chart = skillsDemandChart,
+                           job_detail_data = job_detail_data)
 
 @app.route('/resume')
 def Resume():
