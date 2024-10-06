@@ -1,17 +1,11 @@
 {
-
-    "title":"Business",
-    "data":{
-
-
     "Business":{
-
         "Communication skills":701,
         "Data analysis":388,
-        "Problem":377,
+        "Problem":376,
         "Attention to detail":303,
+        "Analytics":194,
         "Google":193,
-        "Analytics":193,
         "Product knowledge":155,
         "Relationship building":152,
         "Financial analysis":137,
@@ -20,35 +14,34 @@
         "Account management":128,
         "Analytics and reporting":125,
         "Budget management":125,
+        "Facebook":121,
         "O optimization":120,
-        "Facebook":117,
         "Supply chain management":114,
         "Client relationship management":113,
         "Inventory management":113,
         "Supplier relationship management":111
-
     },
     "Engineering":{
         "Problem":187,
         "Auto":166,
         "Attention to detail":107,
         "Project management":84,
+        "Troubleshooting":83,
         "D modeling":71,
         "D proficiency":68,
         "Technical knowledge":65,
         "Environmental impact assessment":58,
-        "Troubleshooting":52,
+        "Electrical":55,
         "Environmental regulations":49,
         "Six":48,
         "Quality control":46,
+        "Electronics":46,
         "Energy efficiency":44,
         "Client communication":43,
         "D software":40,
         "Data analysis":38,
         "Electrical engineering":37,
-        "Zoning regulations":36,
-        "Communication skills":35,
-        "Environmental impact assessments":35
+        "Zoning regulations":36
     },
     "Healthcare":{
         "Communication skills":138,
@@ -64,34 +57,34 @@
         "Operating room protocols":36,
         "Pediatric care":35,
         "Treatment planning":34,
-        "Cultural competence":28,
         "Crisis intervention":28,
+        "Cultural competence":28,
         "Empathy and compassion":27,
-        "Pediatric specialization":26,
+        "Pediatric subspecialty":26,
         "Curriculum development":26,
         "Pediatric diagnostics":26,
-        "Pediatric subspecialty":26
+        "Pediatric specialization":26
     },
     "Information_Technology":{
+        "Python":289,
+        "Java":288,
         "Problem":282,
-        "Java":274,
-        "Python":270,
         "Attention to detail":237,
-        "Adobe":191,
-        "Troubleshooting":165,
+        "Troubleshooting":192,
+        "Adobe":190,
         "Communication skills":156,
-        "UI":144,
+        "UI":146,
+        "Azure":144,
         "Responsive design":142,
+        "AWS":133,
         "User interface":130,
-        "Azure":129,
-        "AWS":129,
         "Wireframing and prototyping tools":123,
         "Backup and recovery":119,
-        "Wireframing and prototyping":113,
-        "Sketch":111,
+        "Wireframing and prototyping":112,
+        "Sketch":110,
         "Database management":108,
         "Usability testing":104,
-        "UX":103,
+        "UX":104,
         "Network security":103
     },
     "Legal_Services":{
@@ -104,17 +97,16 @@
         "Trial support":62,
         "Client communication":62,
         "Case preparation":54,
+        "Negotiation":53,
         "Technology proficiency":53,
-        "Negotiation":52,
         "Legal research skills":50,
-        "Mediation":48,
         "Client counseling":48,
+        "Mediation":48,
         "Family law":47,
         "Court representation":47,
         "Legal strategy":45,
         "Corporate law":45,
-        "Lexis":40,
+        "Compliance":42,
         "Legal databases":40
-
     }
 }
