@@ -12,6 +12,7 @@ import json
 import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
 import numpy
+from scipy import stats
 
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
@@ -285,6 +286,15 @@ def create_salary_growth_chart(data, industry_name_orig):
 
     # Filter the data to include only those job titles
     experience_salary_filtered = experience_salary[experience_salary['Job Title'].isin(job_titles_with_more_than_one)]
+
+    # Add anomaly detection using Z-score
+    def remove_anomalies(df):
+        df['z_score'] = stats.zscore(df['Average Salary (K)'])
+        # Filter out anomalies (Z-score greater than 3)
+        filtered_df = df[df['z_score'].abs() <= 2]
+        return filtered_df
+    
+    experience_salary_filtered = experience_salary_filtered.groupby('Job Title').apply(remove_anomalies).reset_index(drop=True)
 
     # Sort job titles by maximum salary and include all job titles that meet the criteria
     job_titles_sorted = experience_salary_filtered.groupby('Job Title')['Average Salary (K)'].max().sort_values(ascending=False).index
