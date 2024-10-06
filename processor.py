@@ -33,6 +33,7 @@ import pandas as pd
 import csv
 import os
 import re
+import cleaning3
 
 # Variables
 
@@ -426,17 +427,19 @@ def PruneExtraCols(csv_file):
 def CleanJobTitle(input_csv_file):
     df = pd.read_csv(input_csv_file, on_bad_lines='skip')
     # Clean the 'Job Title' column using regex
+    
     df['Job Title'] = df['Job Title'].apply(lambda text: re.sub(
-        r'[\(\[\{].*?[\)\]\}]|\*\*.*?\*\*|//.*?//|\\.*?\\|\|\|.*?\|\|[^\x00-\x7F]+', 
+        r'[\(\[\{].*?[\)\]\}]|\*\*.*?\*\*|\*.*?\*|//.*?//|/.*?/|\\.*?\\|\|.*?\||[^\x00-\x7F]+|[,\(\)\-\/|]|\$\d+(\.\d+)?[kKmM]?|(?i)up to|(?i)\d+\s*(years?|yrs?|months?|mths?)|(?i)contract|#\w*',
         '', 
-        text) if isinstance(text, str) else text
+        text, flags=re.IGNORECASE).strip() if isinstance(text, str) else text
     )
+
+    # Convert 'Job Title' to title case
+    df['Job Title'] = df['Job Title'].str.title()
 
     # Return the cleaned DataFrame with the 'Job Title' column
     return df[['Job Title']].copy()
     
-
-
 
 def main(input_csv_file, output_csv_file):
     try:
@@ -493,6 +496,8 @@ def main(input_csv_file, output_csv_file):
             #remove duplicate rows
             RemoveExtraHeaderRows(output_csv_file)
             
+            cleaning3.main()
+
             print("Extra Data Columns Pruned. Data successfully appended. EXITING...")
     except Exception as e:
         print(f"An error occurred: {e}")
