@@ -246,6 +246,9 @@ def RemoveExtraHeaderRows(csv_file):
     # Remove header rows
     df_cleaned = df_cleaned[~df_cleaned.isin(values_to_remove).any(axis=1)]
 
+    # Remove rows that have fewer than 10 non-empty columns~
+    df_cleaned = df_cleaned[df_cleaned.count(axis=1) >= 10]
+
     # Save the cleaned DataFrame back to the CSV file
     df_cleaned.to_csv(csv_file, index=False)
 
@@ -440,8 +443,39 @@ def CleanJobTitle(input_csv_file):
     # Return the cleaned DataFrame with the 'Job Title' column
     return df[['Job Title']].copy()
     
+def RemoveUnwantedColumns(input_csv_file):
+    # Read the CSV file with necessary options to handle bad lines, quotes, and missing values
+    df = pd.read_csv(
+        input_csv_file, 
+        sep=',', 
+        quoting=csv.QUOTE_MINIMAL, 
+        on_bad_lines='skip',  # Skip lines that cause issues
+        na_values=['']        # Handle empty values
+    )
 
+    # Display the number of columns in the CSV file
+    num_columns = df.shape[1]
+    print(f"Number of columns: {num_columns}")
+    print(f"Columns in the DataFrame: {df.columns.tolist()}")
+
+    # Define the starting index (column L corresponds to index 11)
+    start_index = 11
+
+    # Check if there are enough columns to clear starting from index 11 (L)
+    if num_columns > start_index:
+        # Clear all columns starting from index 11 (L) to the end
+        df.iloc[:, start_index:] = ""
+        print(f"Cleared columns from index {start_index} to the end.")
+    else:
+        print(f"Not enough columns to clear from index {start_index}. The file only has {num_columns} columns.")
+
+    # Save the modified DataFrame back to a CSV file
+    df.to_csv(input_csv_file, index=False)
+    
 def main(input_csv_file, output_csv_file):
+
+    RemoveUnwantedColumns(input_csv_file)
+
     try:
         if os.path.exists(input_csv_file):
             # Load the CSV file into a DataFrame
