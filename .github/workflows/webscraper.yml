@@ -64,12 +64,12 @@ jobs:
       # Commit and push the new data
       - name: Commit and push changes
         run: |
-          git add Datasets/sg_job_data_cleaned.csv
-          git add "Datasets/(Final)_past_Business.csv"
-          git add "Datasets/(Final)_past_Engineering.csv"
-          git add "Datasets/(Final)_past_Healthcare.csv"
-          git add "Datasets/(Final)_past_Information_Technology.csv"
-          git add "Datasets/(Final)_past_Legal_Services.csv"
+          git add 'Datasets/sg_job_data_cleaned.csv'
+          git add 'Datasets/(Final)_past_Business.csv'
+          git add 'Datasets/(Final)_past_Engineering.csv'
+          git add 'Datasets/(Final)_past_Healthcare.csv'
+          git add 'Datasets/(Final)_past_Information_Technology.csv'
+          git add 'Datasets/(Final)_past_Legal_Services.csv'
           git commit -m "Update scraped data [skip ci]" || echo "No changes to commit"
           git push origin main
         env:
