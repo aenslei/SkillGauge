@@ -24,7 +24,7 @@ def convert_df_list_to_csv(df_list, folder_path):
         print(f"File saved: {csv_file_path}")
 
 def main():
-    with open("Datasets/sg_job_data-Cleaned-With Industry1.csv", encoding='utf-8') as csvfile:
+    with open("Datasets/sg_job_data_cleaned.csv", encoding='utf-8') as csvfile:
         df = pd.read_csv(csvfile, index_col=False)
     df = df.groupby("Broader Category")
     df_list = [df.get_group(x) for x in df.groups]

@@ -16,7 +16,7 @@ app.secret_key = os.urandom(24)
 UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-file_path = r'Datasets\\sg_job_data-Cleaned-With Industry1.csv'
+file_path = r'Datasets\\sg_job_data_cleaned.csv'
 
 class Industry:
     def __init__(self, title):

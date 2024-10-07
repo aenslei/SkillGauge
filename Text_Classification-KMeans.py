@@ -81,4 +81,4 @@ new_columns = columns[:job_title_index] + ['Predicted Industry'] + columns[job_t
 data = data[new_columns]
 
 # Save to file
-data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False)
+data.to_csv('Datasets/sg_job_data_cleaned.csv', index=False)

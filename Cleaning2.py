@@ -76,10 +76,10 @@ broader_categories_mapping = {
 
 # Mapping of Job titles to the Industries 
 
-data = pd.read_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv') # Load dataset 
+data = pd.read_csv('Datasets/sg_job_data_cleaned.csv') # Load dataset 
 data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping) # Apply the cluster mapping
 data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping) # Apply the broader category mapping
-data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False) # Save the new dataset with the cluster names and broader categories
+data.to_csv('Datasets/sg_job_data_cleaned.csv', index=False) # Save the new dataset with the cluster names and broader categories
 print("Cluster names and broader categories added and saved successfully!")
 
 # ---------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ print("Cluster names and broader categories added and saved successfully!")
 
 # Manual mapping of Anomalous Job Role mapped incorrectly by Text Classification Model
 
-csv_file_path = 'Datasets/sg_job_data-Cleaned-With Industry1.csv' #Load the CSV file
+csv_file_path = 'Datasets/sg_job_data_cleaned.csv' #Load the CSV file
 data = pd.read_csv(csv_file_path)
 
 
@@ -349,7 +349,7 @@ data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
 data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
 
 # Save the updated dataset with new columns
-data.to_csv('Datasets/sg_job_data-Cleaned-With Industry1.csv', index=False)
+data.to_csv('Datasets/sg_job_data_cleaned.csv', index=False)
 
 
 # # Apply the cluster mapping
@@ -516,7 +516,7 @@ def convert_df_list_to_csv(df_list, folder_path):
         print(f"File saved: {csv_file_path}")
 
 
-with open("Datasets/sg_job_data-Cleaned-With Industry1.csv") as csvfile:
+with open("Datasets/sg_job_data_cleaned.csv") as csvfile:
     df = pd.read_csv(csvfile, index_col=False)
 df = df.groupby("Broader Category")
 df_list = [df.get_group(x) for x in df.groups]
