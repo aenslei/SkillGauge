@@ -182,13 +182,6 @@ def pull_industry_skills(industry_name):
     return skill_list
 
 
-def divide_count_by_year(row,total_years, current_month):
-
-    if row["Month"].month <= current_month:
-
-        return round(row["Count of job per month"] / len(total_years))
-    else:
-        return round(row["Count of job per month"] / (len(total_years) - 1))
 
 
 def industry_hiring_trend(df):
@@ -196,26 +189,21 @@ def industry_hiring_trend(df):
     # setting type to date time format
     df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
 
-    current_year = pd.Timestamp.now().year
-    current_month = pd.Timestamp.now().month
-    total_years = df["Job Posting Date"].dt.strftime('%Y').unique()
-
-    df["Job Posting Date"] = df["Job Posting Date"].apply(lambda x: x.replace(year=current_year))
-
     # extract month from data
-    df["Month"] = df["Job Posting Date"].dt.to_period("M")
+    df["Month"] = df["Job Posting Date"].dt.month
+    df["Year"] = df["Job Posting Date"].dt.year
 
     df = df.groupby("Broader Category")
     df_list = [df.get_group(x) for x in df.groups]
     json_dict ={}
     for df in df_list:
         industry_name = get_industry_name(df)
-        # group by month and get count of job
-        df3 = df.groupby(["Month"]).size().to_frame("Count of job per month").reset_index()
-        print(df3)
-        # divide by len of years when month smaller or equal to current month
-        df3["Count of job per month"] = df3.apply(divide_count_by_year,axis=1, args =(total_years, current_month))
+        # group by month and year and get count of job
 
+        monthly_counts = df.groupby(['Year', 'Month']).size().reset_index(name='Count of job')
+
+        # further group all years by month before getting median
+        median_counts = monthly_counts.groupby('Month')['Count of job'].median().reset_index()
 
 
         month_names = [
@@ -223,13 +211,13 @@ def industry_hiring_trend(df):
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ]
 
-        fig = px.area(df3, x=month_names, y="Count of job per month")
-        fig.update_yaxes(range=[df3["Count of job per month"].min() * 0.75, df3["Count of job per month"].max() + 25])
+        fig = px.area(median_counts, x=month_names, y="Count of job")
+        fig.update_yaxes(range=[median_counts["Count of job"].min() * 0.75, median_counts["Count of job"].max() + 25])
 
         fig.update_layout(
             title = "Industry Hiring Trends",
             xaxis_title="Period",
-            yaxis_title="No. of Job per Month",
+            yaxis_title="Median No. of Job per Month",
         )
 
         html_code = fig.to_html(full_html=False)
@@ -240,6 +228,8 @@ def industry_hiring_trend(df):
     with open("analysis/in_hiring_trend.json" , "w") as file:
 
         json.dump(json_dict, file, indent=4)
+
+
 
 
 
