@@ -32,6 +32,8 @@ industryTranslation = {
 import pandas as pd
 import csv
 import os
+import re
+import cleaning3
 
 # Variables
 
@@ -175,13 +177,16 @@ def ReformatSalary(input_csv_file):
             print("There are NaN values in 'Min Salary' or 'Max Salary' after conversion.")
             print(df[df['Min Salary'].isnull() | df['Max Salary'].isnull()])  # Print problematic rows
 
-        # Divide the salary by 1000 to get the pay in thousands
-        df['Min Salary (K)'] = df['Min Salary'] / 1000
-        df['Max Salary (K)'] = df['Max Salary'] / 1000
-        # calculate the salary range between maximum and minimum
-        df['Salary Range (K)'] = (df['Max Salary'] - df['Min Salary'])/1000
-        # Calculate the average salary
-        df['Average Salary (K)'] = (df['Min Salary (K)'] + df['Max Salary (K)']) / 2
+        # Convert monthly salaries to annual salaries in thousands
+        df['Min Salary (K)'] = ((df['Min Salary'] / 1000) * 12)   # Annual Min Salary in K
+        df['Max Salary (K)'] = ((df['Max Salary'] / 1000) * 12)   # Annual Max Salary in K
+        
+
+        # Calculate the salary range between maximum and minimum
+        df['Salary Range (K)'] = (df['Max Salary (K)'] - df['Min Salary (K)']) # Annual Salary Range in K
+
+        # Calculate the average salary in thousands
+        df['Average Salary (K)'] = (df['Min Salary (K)'] + df['Max Salary (K)']) / 2 
 
         # Prepare a new DataFrame with just the columns to append
         new_data = df[['Min Salary (K)', 'Max Salary (K)', 'Average Salary (K)','Salary Range (K)']].copy()  
@@ -211,7 +216,7 @@ def ProcessWorkType(input_csv_file):
     #SaveDataToNewCSV(outputfile,new_data)
     return new_data
 
-def RemoveExtraHeaderRows():
+def RemoveExtraHeaderRows(csv_file):
     # Load the CSV file
     df = pd.read_csv(csv_file)
 
@@ -419,6 +424,23 @@ def PruneExtraCols(csv_file):
             output_df = output_df.iloc[:, :18]
             output_df.to_csv(csv_file, index=False)
 
+def CleanJobTitle(input_csv_file):
+    df = pd.read_csv(input_csv_file, on_bad_lines='skip')
+    # Clean the 'Job Title' column using regex
+    
+    df['Job Title'] = df['Job Title'].apply(lambda text: re.sub(
+        r'[\(\[\{].*?[\)\]\}]|\*\*.*?\*\*|\*.*?\*|//.*?//|/.*?/|\\.*?\\|\|.*?\||[^\x00-\x7F]+|[,\(\)\-\/|]|\$\d+(\.\d+)?[kKmM]?|(?i)up to|(?i)\d+\s*(years?|yrs?|months?|mths?)|(?i)contract|#\w*|\s+\+\s+',
+        '', 
+        text, flags=re.IGNORECASE).strip() if isinstance(text, str) else text
+    )
+
+    # Convert 'Job Title' to title case
+    df['Job Title'] = df['Job Title'].str.title()
+
+    # Return the cleaned DataFrame with the 'Job Title' column
+    return df[['Job Title']].copy()
+    
+
 def main(input_csv_file, output_csv_file):
     try:
         if os.path.exists(input_csv_file):
@@ -427,7 +449,7 @@ def main(input_csv_file, output_csv_file):
             #PruneExtraCols(input_csv_file)
             df = pd.read_csv(input_csv_file, on_bad_lines='skip')
 
-            RemoveExtraHeaderRows()
+            RemoveExtraHeaderRows(input_csv_file)
 
             # Fill NaN values in relevant columns
             df['Job Industry'] = df['Job Industry'].fillna('')
@@ -442,6 +464,7 @@ def main(input_csv_file, output_csv_file):
             skills = ProcessSkills(input_csv_file)
             company = TransformCompany(input_csv_file)
             maxExp = FillMaxExp(input_csv_file)
+            jobTitle = CleanJobTitle(input_csv_file)
 
             # Merge the processed columns back into the main DataFrame
             df['Work Type'] = worktype['Work Type']
@@ -456,6 +479,7 @@ def main(input_csv_file, output_csv_file):
             df['skills'] = skills['skills']
             df['Company'] = company['Company']
             df['Job Maximum Experience'] = maxExp['Job Maximum Experience']
+            df['Job Title'] = jobTitle['Job Title'] 
 
             # Transform the Broader Category column
             new_data = DuplicateRowsByCategory(df)
@@ -470,8 +494,10 @@ def main(input_csv_file, output_csv_file):
             PruneExtraCols(output_csv_file)
 
             #remove duplicate rows
-            RemoveExtraHeaderRows()
+            RemoveExtraHeaderRows(output_csv_file)
             
+            cleaning3.main()
+
             print("Extra Data Columns Pruned. Data successfully appended. EXITING...")
     except Exception as e:
         print(f"An error occurred: {e}")

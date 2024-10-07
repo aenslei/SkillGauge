@@ -43,6 +43,18 @@ def industry_job_trend(df):
     json_dict = {}
     for df in df_list:
 
+        current_date = pd.Timestamp.now()
+
+        current_year_quarter = f"{current_date.year}Q{current_date.quarter}"
+
+        exclude_current_q = df[~(df["Year-Quarter"] == current_year_quarter)]
+
+        #print(exclude_current_q["Year-Quarter"].unique())
+        job_count = exclude_current_q["Job Title"].value_counts()
+        job_to_keep = job_count[job_count > 9].index
+
+        df = df[df['Job Title'].isin(job_to_keep)]
+
         # change date to pd datetime format
         df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
 
@@ -286,4 +298,27 @@ def match_user_to_job_role(job_role_skills_series, user_skill_list):
     return match_dict, job_role_skill_dict
 
 
+
+
+def get_job_detail_url(job_df):
+
+    #print(job_df)
+    curr_date = pd.to_datetime('today').date()
+    print(curr_date)
+    job_df['Job Posting Date'] = pd.to_datetime(job_df['Job Posting Date'], format='%Y-%m-%d')
+    last_14_days = curr_date - pd.offsets.Day(14)
+    print(last_14_days)
+    filtered_df = job_df.query("`Job Posting Date` >= @last_14_days")
+    print(filtered_df)
+
+    if len(filtered_df.index) == 0:
+        return None
+    elif len(filtered_df.index) > 5:
+        job_detail_data = filtered_df.head(5).to_dict(orient="records")
+        return job_detail_data
+
+
+    else:
+        job_detail_data = filtered_df.to_dict(orient= "records")
+        return job_detail_data
 

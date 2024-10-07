@@ -12,6 +12,7 @@ import json
 import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
 import numpy
+from scipy import stats
 
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
@@ -72,6 +73,8 @@ def create_job_title_bubble_chart(data, industry_name_orig):
     # Count the frequency of each job title in the selected industry
     job_title_counts = industry_data['Job Title'].value_counts().reset_index()
     job_title_counts.columns = ['Job Title', 'Job Count']
+
+    job_title_counts = job_title_counts[job_title_counts['Job Count'] > 1]
 
     # Create a DataFrame for the bubble chart
     job_title_df = pd.DataFrame({
@@ -182,7 +185,7 @@ def create_salary_trend_chart(data, industry_name_orig):
     # Sort the data by 'Year' and 'Quarter'
     salary_trend = salary_trend.sort_values(by=['Year', 'Quarter'])
 
-
+        # -- VISUALISATION -- Create a line chart for salary trends by job title
     # -- VISUALISATION -- Create a line chart for salary trends by job title
     fig = go.Figure()
 
@@ -223,33 +226,48 @@ def create_salary_trend_chart(data, industry_name_orig):
     # Sort 'Year-Quarter' for fixed and evenly spaced x-axis
     sorted_quarters = salary_trend['Year-Quarter'].unique()
 
-    # Update layout with fixed x-axis
+    # Update layout with expanded x-axis scale and wider figure
     fig.update_layout(
         title=f'Average Salary Trends by Job Title in {industry_name_orig} (Quarterly)',
         xaxis_title='Quarter Year',
         yaxis_title='Average Salary (K)',
         height=600,
+        # width=1000,  # Increase the width to give more room for x-axis
         margin=dict(l=20, r=20, t=40, b=80),
         xaxis=dict(
             tickmode='array',
             tickvals=sorted_quarters,
             ticktext=sorted_quarters,
-            type='category'  # Keep quarters in order as categories
+            type='category',  # Keep quarters in order as categories
+            dtick=1,  # Show every quarter, increasing room between labels
+            tickangle=45,  # Rotate tick labels to prevent overlapping
+            range=[-0.5, len(sorted_quarters) + 0.5],  # Add padding at the start and end for spacing
         ),
         yaxis=dict(showgrid=True),
         template='plotly_white',
         plot_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for plot area
         paper_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for surrounding area
         legend=dict(
-            bgcolor='rgba(255, 255, 255, 0.5)'  # Transparent white legend background
+            bgcolor='rgba(255, 255, 255, 0.5)',  # Transparent white legend background
+            x=1.2,  # Position legend to the right of the chart
+            y=1,
+            xanchor='left',
+            yanchor='top',
+            orientation="v",  # Keep the legend vertical
+            font=dict(
+                size=10  # Reduce font size for legend entries
+            ),
+            itemclick='toggle',  # Click to toggle visibility of the selected trace
+            itemdoubleclick='toggleothers',  # Double click to show only the selected trace
+            itemwidth=30,
+            title_text='Legend',  # Optional: Add title for the legend
+            traceorder="normal"
         )
     )
 
     # Convert the figure to HTML
     html_code = fig.to_html(full_html=False)
     return html_code
-
-
 
 #  ------------ Start of Salary Growth Line Graph  -------------------
 
@@ -258,13 +276,28 @@ def create_salary_growth_chart(data, industry_name_orig):
     # -- ANALYSIS --
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name_orig]
-    
+
     # Group data by both Job Title and Job Minimum Experience and calculate the average salary
-    experience_salary = data.groupby(['Job Title', 'Job Minimum Experience'])['Average Salary (K)'].mean().reset_index()
+    experience_salary = industry_data.groupby(['Job Title', 'Job Minimum Experience'])['Average Salary (K)'].mean().reset_index()
 
-    # Sort job titles by maximum salary and pick top 5
-    job_titles_sorted = experience_salary.groupby('Job Title')['Average Salary (K)'].max().sort_values(ascending=False).head(5).index
+    # Filter out job titles that have only one entry
+    job_title_counts = experience_salary.groupby('Job Title').size().reset_index(name='counts')
+    job_titles_with_more_than_one = job_title_counts[job_title_counts['counts'] > 1]['Job Title']
 
+    # Filter the data to include only those job titles
+    experience_salary_filtered = experience_salary[experience_salary['Job Title'].isin(job_titles_with_more_than_one)]
+
+    # Add anomaly detection using Z-score
+    def remove_anomalies(df):
+        df['z_score'] = stats.zscore(df['Average Salary (K)'])
+        # Filter out anomalies (Z-score greater than 3)
+        filtered_df = df[df['z_score'].abs() <= 2]
+        return filtered_df
+    
+    experience_salary_filtered = experience_salary_filtered.groupby('Job Title').apply(remove_anomalies).reset_index(drop=True)
+
+    # Sort job titles by maximum salary and include all job titles that meet the criteria
+    job_titles_sorted = experience_salary_filtered.groupby('Job Title')['Average Salary (K)'].max().sort_values(ascending=False).index
 
     # -- VISUALISATION -- Create a line chart for Salary Growth by Experience for each job title
     fig = go.Figure()
@@ -273,7 +306,7 @@ def create_salary_growth_chart(data, industry_name_orig):
     colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A']
 
     for i, job_title in enumerate(job_titles_sorted):
-        job_data = experience_salary[experience_salary['Job Title'] == job_title]
+        job_data = experience_salary_filtered[experience_salary_filtered['Job Title'] == job_title]
         color = colors[i % len(colors)]  # Color for both growth and prediction lines
 
         # Add the actual salary line for the job title
@@ -283,7 +316,8 @@ def create_salary_growth_chart(data, industry_name_orig):
             mode='lines+markers',
             name=f'{job_title} Salary Growth',
             line=dict(color=color, width=2),
-            showlegend=True
+            showlegend=True,
+            visible=True if i < 5 else 'legendonly'  # Show the first 5 job titles, hide the rest in the legend
         ))
 
         # Salary prediction for the next 5 years
@@ -293,7 +327,7 @@ def create_salary_growth_chart(data, industry_name_orig):
         # Train the model and make predictions
         model = LinearRegression().fit(X, y)
         max_experience = job_data['Job Minimum Experience'].max()
-        future_experience = np.array(range(max_experience, max_experience + 6)).reshape(-1, 1)
+        future_experience = np.array(range(int(max_experience), int(max_experience) + 6)).reshape(-1, 1)
         predicted_salaries = model.predict(future_experience)
 
         # Add the predicted salary line (dashed) for the next 5 years
@@ -303,16 +337,17 @@ def create_salary_growth_chart(data, industry_name_orig):
             mode='lines',
             name=f'{job_title} Salary Prediction (Next 5 Years)',
             line=dict(dash='dash', color=color, width=2),
-            showlegend=True
+            showlegend=True,
+            visible=True if i < 5 else 'legendonly'  # Show the first 5 job titles, hide the rest in the legend
         ))
 
     # Determine the min and max experience for the x-axis range
-    min_experience = experience_salary['Job Minimum Experience'].min()
+    min_experience = experience_salary_filtered['Job Minimum Experience'].min()
     max_experience += 5  # Extend by 5 years to cover predictions
 
     # Update layout with fixed range
     fig.update_layout(
-        title='Top 5 Salary Growth by Experience and Prediction (Next 5 Years)',
+        title='Salary Growth by Experience and Prediction (Next 5 Years)',
         xaxis_title='Years of Experience',
         yaxis_title='Average Salary (K)',
         height=600,
@@ -323,7 +358,15 @@ def create_salary_growth_chart(data, industry_name_orig):
             dtick=1  # Interval between ticks set to 1 year
         ),
         yaxis=dict(showgrid=True),
-        template='plotly_white'
+        template='plotly_white',
+        plot_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for plot area
+        paper_bgcolor='rgba(223, 232, 243, 1)',  # White background for surrounding area to create the border
+        legend=dict(
+            bgcolor='rgba(255, 255, 255, 0.5)',  # Transparent white legend background
+            xanchor="left",  # Position the legend to the right
+            x=1.02,  # Shift the legend horizontally to the right outside the plot
+            y=1,  # Position the legend at the top
+        )
     )
 
     # Convert the figure to HTML and return
