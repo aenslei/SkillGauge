@@ -57,7 +57,10 @@ jobs:
       - name: Apply stashed changes
         run: |
           git stash pop || echo "No changes to apply"
-
+      # Unstage a specific file before committing
+      - name: Remove Scraped data
+        run: |
+          git checkout -- job_listings_scraped.csv
       # Commit and push the new data
       - name: Commit and push changes
         run: |
