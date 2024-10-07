@@ -64,9 +64,9 @@ def analyse_industry_distribution(data):
 
 
 
-def create_job_title_bubble_chart(data, industry_name_orig):
+def create_job_title_bubble_chart(data, industry_name_orig, json_file="analysis/job_title_bubble_chart.json"):
 
-    #  -- ANALYSIS -- 
+    # -- ANALYSIS -- 
     # Filter data for the selected 'Broader Category'
     industry_data = data[data['Broader Category'] == industry_name_orig]
 
@@ -84,7 +84,6 @@ def create_job_title_bubble_chart(data, industry_name_orig):
         'y': np.random.rand(len(job_title_counts)) * 100   # Spread out y values more widely
     })
     
-
     # -- VISUALISATION -- Create a bubble chart 
     fig = px.scatter(job_title_df, 
                      x='x', 
@@ -111,10 +110,17 @@ def create_job_title_bubble_chart(data, industry_name_orig):
                       margin=dict(l=20, r=20, t=40, b=80),
                       clickmode='event+select')  # Enable click events
 
-    # Return the chart as HTML
+    # Convert the chart to HTML
     html_code = fig.to_html(full_html=False)
-    return html_code
 
+    # Save the chart to a JSON file
+    json_dict = {}
+    json_dict[industry_name_orig] = html_code
+
+    with open(json_file, "w") as file:
+        json.dump(json_dict, file)
+
+    return html_code
 #  ------------ Start of Salary Variation Boxplot  -------------------
 
 def create_salary_variation_chart(data, industry_name_orig):
