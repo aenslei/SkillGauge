@@ -48,6 +48,7 @@ def industry_job_trend(df):
         current_year_quarter = f"{current_date.year}Q{current_date.quarter}"
 
         exclude_current_q = df[~(df["Year-Quarter"] == current_year_quarter)]
+        df = exclude_current_q.copy(deep=True)
 
         #print(exclude_current_q["Year-Quarter"].unique())
         job_count = exclude_current_q["Job Title"].value_counts()
@@ -181,6 +182,13 @@ def pull_industry_skills(industry_name):
     return skill_list
 
 
+def divide_count_by_year(row,total_years, current_month):
+
+    if row["Month"].month <= current_month:
+
+        return round(row["Count of job per month"] / len(total_years))
+    else:
+        return round(row["Count of job per month"] / (len(total_years) - 1))
 
 
 def industry_hiring_trend(df):
@@ -189,6 +197,9 @@ def industry_hiring_trend(df):
     df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
 
     current_year = pd.Timestamp.now().year
+    current_month = pd.Timestamp.now().month
+    total_years = df["Job Posting Date"].dt.strftime('%Y').unique()
+
     df["Job Posting Date"] = df["Job Posting Date"].apply(lambda x: x.replace(year=current_year))
 
     # extract month from data
@@ -199,8 +210,13 @@ def industry_hiring_trend(df):
     json_dict ={}
     for df in df_list:
         industry_name = get_industry_name(df)
-        # group by month and get count of drop
+        # group by month and get count of job
         df3 = df.groupby(["Month"]).size().to_frame("Count of job per month").reset_index()
+        print(df3)
+        # divide by len of years when month smaller or equal to current month
+        df3["Count of job per month"] = df3.apply(divide_count_by_year,axis=1, args =(total_years, current_month))
+
+
 
         month_names = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
