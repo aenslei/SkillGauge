@@ -60,7 +60,7 @@ jobs:
       # Unstage a specific file before committing
       - name: Remove Scraped data
         run: |
-          git checkout -- job_listings_scraped.csv
+          git reset job_listings_scraped.csv
       # Commit and push the new data
       - name: Commit and push changes
         run: |
