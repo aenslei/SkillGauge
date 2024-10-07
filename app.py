@@ -1,11 +1,19 @@
 
 from flask import Flask, render_template, request, redirect, url_for,session
-from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud,create_salary_growth_chart,create_salary_trend_chart,skill_in_demand
+
+# from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud, GeographicalMap,create_salary_growth_chart,create_salary_trend_chart
+from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, create_salary_trend_chart,skills_comparison,generate_wordcloud, GeographicalMap,skill_in_demand,create_salary_growth_chart
+import json
+
+# from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud,create_salary_growth_chart,create_salary_trend_chart,skill_in_demand
+
 import resume_skills_extractor
 import os
 import pandas as pd
 import course_url_crawler
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,pull_in_job_trend,  pull_in_hiring_trend , get_job_detail_url
+
+from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,pull_in_job_trend,  pull_in_hiring_trend
+
 import time
 import threading
 import copy
@@ -49,8 +57,7 @@ def Home():
     # Start the jobs in separate threads
     thread1 = threading.Thread(target=industry_job, args=(data3,))
     thread2 = threading.Thread(target=industry_job_trend, args=(data1,))
-
-
+    
     thread3 = threading.Thread(target=industry_hiring_trend, args=(data2,))
     thread4 = threading.Thread(target=industry_general_skills, args=(data,))
     
@@ -126,7 +133,7 @@ def industry_details():
     industry_name = industry_name_orig.replace(" ", "_")
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
 
-    with open(industry_path , encoding='utf-8') as csvfile:
+    with open(industry_path) as csvfile:
         df = pd.read_csv(csvfile, index_col=False)
 
 
@@ -170,7 +177,6 @@ def industry_details():
                            skill_list = skill_list,
                            wordCloud = wordCloud,
                            hiring_trend_fig = hiring_trend_code,
-
                            salary_growth_chart = salary_growth_chart,
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
@@ -244,7 +250,7 @@ def expanded_job_roles(job_title):
 
 
 
-    with open("Datasets/(Final)_past_"+ industry_name +".csv" , encoding="utf-8") as file:
+    with open("Datasets/(Final)_past_"+ industry_name +".csv") as file:
         df = pd.read_csv(file, index_col=False)
         job_df = filter_df_by_job_role(df, job_title)
 
@@ -257,15 +263,7 @@ def expanded_job_roles(job_title):
     skillsDemandChart = skill_in_demand(job_df)
     urlCourses = course_url_crawler.search_courses(skillsLacking)
 
-    job_detail_data = get_job_detail_url(job_df)
-
-    return render_template("expanded_job_roles.html" ,
-                           job_title = job_title,
-                           job_role = job,
-                           courses = urlCourses,
-                           chart=skillComparisonChart,
-                            skillsDemand_Chart = skillsDemandChart,
-                           job_detail_data = job_detail_data)
+    return render_template("expanded_job_roles.html" , job_title = job_title , job_role = job, courses = urlCourses, chart=skillComparisonChart, skillsDemand_Chart = skillsDemandChart )
 
 @app.route('/resume')
 def Resume():
