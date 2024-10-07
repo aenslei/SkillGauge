@@ -61,8 +61,7 @@ jobs:
       # Commit and push the new data
       - name: Commit and push changes
         run: |
-          git add job_listings_scraped.csv 
-          git add Datasets\sg_job_data-Cleaned-With Industry1.csv 
+          git add Datasets/sg_job_data-Cleaned-With Industry1.csv 
           git commit -m "Update scraped data [skip ci]" || echo "No changes to commit"
           git push origin main
         env:
