@@ -74,7 +74,7 @@ def create_job_title_bubble_chart(data, industry_name_orig):
     job_title_counts = industry_data['Job Title'].value_counts().reset_index()
     job_title_counts.columns = ['Job Title', 'Job Count']
 
-    job_title_counts = job_title_counts[job_title_counts['Job Count'] > 1]
+    job_title_counts = job_title_counts[job_title_counts['Job Count'] > 10]
 
     # Create a DataFrame for the bubble chart
     job_title_df = pd.DataFrame({
