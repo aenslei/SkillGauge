@@ -40,7 +40,7 @@ import cleaning3
 csv_file = "job_listings_scraped.csv"
 new_csv_file = "job_listingsNEW.csv"
 
-file_path = r'Datasets\\sg_job_data_cleaned.csv'
+file_path = r'Datasets/sg_job_data_cleaned.csv'
 
 industryTranslation = {
     "Information Technology" : "Information Technology",
