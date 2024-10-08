@@ -265,8 +265,19 @@ def pull_in_hiring_trend(industry):
 def skill_match_analysis(df, industry_name):
     try:
 
+        # remove all the job less than 10 rows
+        df["Job Title"] = df["Job Title"].str.upper()
+        job_count = df["Job Title"].value_counts()
+        roles_to_keep  = job_count[job_count.values >= 10].index
+
+
+        df = df[df["Job Title"].isin(roles_to_keep)].copy()
+        df["Job Title"] = df["Job Title"].str.title()
+
         # get list of unique job title
         unique_job_list = df["Job Title"].unique()
+
+
         # set skill list value to list type
         try:
             df["skills"] = df["skills"].apply(ast.literal_eval)
