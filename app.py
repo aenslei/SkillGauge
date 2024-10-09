@@ -222,9 +222,15 @@ def Job_roles():
             job_object = JobRole(job, skill_list,int(percent))
             job_role_list.append(job_object)
 
-
     # Sort by best matching percentage
     job_role_list.sort(key=lambda x: x.match_percent, reverse=True)
+
+    if len(job_role_list) > 15:
+        job_role_list = job_role_list[:15]
+
+
+
+
     return render_template('job_roles.html', job_role=job_role_list)
 
 @app.route("/job_roles/<job_title>")
