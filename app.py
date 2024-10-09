@@ -18,6 +18,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 file_path = r'Datasets\\sg_job_data_cleaned.csv'
 
+industry_list = []
+
 class Industry:
     def __init__(self, title):
         self.title = title
@@ -37,10 +39,6 @@ class JobRole:
 
 @app.route('/')
 def Home():
-
-
-    start_time = time.time()
-
     data = load_data(file_path)  # Load the data
     data1 = copy.deepcopy(data)
     data2 = copy.deepcopy(data)
@@ -49,8 +47,6 @@ def Home():
     # Start the jobs in separate threads
     thread1 = threading.Thread(target=industry_job, args=(data3,))
     thread2 = threading.Thread(target=industry_job_trend, args=(data1,))
-
-
     thread3 = threading.Thread(target=industry_hiring_trend, args=(data2,))
     thread4 = threading.Thread(target=industry_general_skills, args=(data,))
     
@@ -59,16 +55,8 @@ def Home():
     thread3.start()
     thread4.start()
     
-    end_time  = time.time()
-    
-    print(f"Execution Time Home: {end_time - start_time} seconds")
-
-
     return render_template('home.html')
 
-
-
-industry_list = []
 @app.route('/industries')
 def Industries():
     # Load CSV file
@@ -104,7 +92,6 @@ def analyse_industry_distribution(data):
     total_jobs = len(data)
     return industry_distribution, total_jobs
 
-
 # POST request
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
@@ -129,17 +116,10 @@ def industry_details():
     with open(industry_path , encoding='utf-8') as csvfile:
         df = pd.read_csv(csvfile, index_col=False)
 
-
-
     # analysis for job role skills
     skill_match_analysis(df,industry_name)
 
-
-
-
-
     skill_list = pull_industry_skills( industry_name)
-
 
     # end of find industry general skills
 
@@ -150,9 +130,6 @@ def industry_details():
 
     # start of hiring trend code
     hiring_trend_code = pull_in_hiring_trend(industry_name)
-
-
-
 
     other_industries = [ind.title for ind in industry_list if ind.title != industry_name_orig][:4]  # Limit to 4 buttons
     other_industries = other_industries[:4] 
@@ -175,9 +152,6 @@ def industry_details():
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
                            salary_trend_chart = salary_trend_chart)    
-
-
-
 
 @app.route('/job_roles')
 def Job_roles():
@@ -228,9 +202,6 @@ def Job_roles():
     if len(job_role_list) > 15:
         job_role_list = job_role_list[:15]
 
-
-
-
     return render_template('job_roles.html', job_role=job_role_list)
 
 @app.route("/job_roles/<job_title>")
@@ -248,12 +219,9 @@ def expanded_job_roles(job_title):
     else:
         return redirect(url_for("Industries"))
 
-
-
     with open("Datasets/(Final)_past_"+ industry_name +".csv" , encoding="utf-8") as file:
         df = pd.read_csv(file, index_col=False)
         job_df = filter_df_by_job_role(df, job_title)
-
 
     skillComparisonChart,skillsLacking , match_skills = skills_comparison(userSkills,job_title, industry_name)
     total_skill = skillsLacking + match_skills
@@ -291,7 +259,6 @@ def upload_resume():
     pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(pdf_path)
     
-
     #get skills 
     resume_skills_extractor.extract_text_from_pdf(pdf_path)
     skills_found = resume_skills_extractor.outputSkillsExtracted(5)

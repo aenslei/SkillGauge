@@ -217,7 +217,7 @@ data.loc[(data['Job Title'] == 'Psychologist') & (data['Predicted Industry'] == 
 data = data[~((data['Job Title'] == 'Teacher') & (data['Predicted Industry'] == 11))]
 
 # Save the updated CSV file
-output_file_path = 'path_to_save_updated_file.csv'  # Replace with your desired output file path
+output_file_path = ''  # Replace with your desired output file path
 data.to_csv(output_file_path, index=False)
 
 # Update Cluster 24 by removing specified job titles

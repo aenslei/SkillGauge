@@ -33,13 +33,12 @@ import pandas as pd
 import csv
 import os
 import re
-import cleaning3
+import SplitCSV
 
 # Variables
 
 csv_file = "job_listings_scraped.csv"
 new_csv_file = "job_listingsNEW.csv"
-
 file_path = r'Datasets/sg_job_data_cleaned.csv'
 
 industryTranslation = {
@@ -530,7 +529,7 @@ def main(input_csv_file, output_csv_file):
             #remove duplicate rows
             RemoveExtraHeaderRows(output_csv_file)
             
-            cleaning3.main()
+            SplitCSV.main()
 
             print("Extra Data Columns Pruned. Data successfully appended. EXITING...")
     except Exception as e:

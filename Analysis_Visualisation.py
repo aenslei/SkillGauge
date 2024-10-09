@@ -11,8 +11,8 @@ from sklearn.linear_model import LinearRegression
 import json
 import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
-import numpy
 from scipy import stats
+import warnings
 
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
@@ -52,8 +52,6 @@ def load_data(file_path):
 
     return data
 
-
-
 def analyse_industry_distribution(data):
     # Group the data by 'Broader Category' to get job distribution
     industry_distribution = data['Broader Category'].value_counts()
@@ -61,8 +59,6 @@ def analyse_industry_distribution(data):
     total_jobs = len(data)
     
     return industry_distribution, total_jobs
-
-
 
 def create_job_title_bubble_chart(data, industry_name_orig, json_file="analysis/job_title_bubble_chart.json"):
 
@@ -121,6 +117,7 @@ def create_job_title_bubble_chart(data, industry_name_orig, json_file="analysis/
         json.dump(json_dict, file)
 
     return html_code
+
 #  ------------ Start of Salary Variation Boxplot  -------------------
 
 def create_salary_variation_chart(data, industry_name_orig):
@@ -171,13 +168,10 @@ def create_salary_variation_chart(data, industry_name_orig):
     html_code = fig.to_html(full_html=False)
     return html_code
 
-
-
 #  ------------ Start of Salary Trend Line Graph  -------------------
 
 def create_salary_trend_chart(data, industry_name_orig):
-
-    # -- ANALYSIS --
+      # -- ANALYSIS --
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name_orig]
 
@@ -191,11 +185,9 @@ def create_salary_trend_chart(data, industry_name_orig):
     # Sort the data by 'Year' and 'Quarter'
     salary_trend = salary_trend.sort_values(by=['Year', 'Quarter'])
 
-        # -- VISUALISATION -- Create a line chart for salary trends by job title
-    # -- VISUALISATION -- Create a line chart for salary trends by job title
+    # -- VISUALISATION --
     fig = go.Figure()
 
-    # Get unique job titles and use a color palette for consistency
     job_titles = salary_trend['Job Title'].unique()
     colors = px.colors.qualitative.Plotly
 
@@ -203,21 +195,25 @@ def create_salary_trend_chart(data, industry_name_orig):
         job_data = salary_trend[salary_trend['Job Title'] == job_title]
         color = colors[i % len(colors)]  # Use a consistent color for both lines
 
-        # Add the actual salary line
+        # Add actual salary line
         fig.add_trace(go.Scattergl(
             x=job_data['Year-Quarter'],
             y=job_data['Average Salary (K)'],
             mode='lines+markers',
             name=f'{job_title} Salary',
-            line=dict(color=color, width=2),  # Use the same color for the salary line
+            line=dict(color=color, width=2),
             showlegend=True,
-            visible='legendonly'  # Initially hidden
+            visible='legendonly'
         ))
 
         # Calculate and add the trendline
         numeric_quarter = job_data['Year'] * 10 + job_data['Quarter']
-        z = np.polyfit(numeric_quarter, job_data['Average Salary (K)'], 1)
-        p = np.poly1d(z)
+
+        # Suppress the RankWarning
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=np.RankWarning)  # Ignore RankWarnings
+            z = np.polyfit(numeric_quarter, job_data['Average Salary (K)'], 1)
+            p = np.poly1d(z)
 
         fig.add_trace(go.Scattergl(
             x=job_data['Year-Quarter'],
@@ -232,41 +228,38 @@ def create_salary_trend_chart(data, industry_name_orig):
     # Sort 'Year-Quarter' for fixed and evenly spaced x-axis
     sorted_quarters = salary_trend['Year-Quarter'].unique()
 
-    # Update layout with expanded x-axis scale and wider figure
+    # Update layout
     fig.update_layout(
         title=f'Average Salary Trends by Job Title in {industry_name_orig} (Quarterly)',
         xaxis_title='Quarter Year',
         yaxis_title='Average Salary (K)',
         height=600,
-        # width=1000,  # Increase the width to give more room for x-axis
         margin=dict(l=20, r=20, t=40, b=80),
         xaxis=dict(
             tickmode='array',
             tickvals=sorted_quarters,
             ticktext=sorted_quarters,
-            type='category',  # Keep quarters in order as categories
-            dtick=1,  # Show every quarter, increasing room between labels
-            tickangle=45,  # Rotate tick labels to prevent overlapping
-            range=[-0.5, len(sorted_quarters) + 0.5],  # Add padding at the start and end for spacing
+            type='category',
+            dtick=1,
+            tickangle=45,
+            range=[-0.5, len(sorted_quarters) + 0.5],
         ),
         yaxis=dict(showgrid=True),
         template='plotly_white',
-        plot_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for plot area
-        paper_bgcolor='rgba(223, 232, 243, 1)',  # Light blue background for surrounding area
+        plot_bgcolor='rgba(223, 232, 243, 1)',
+        paper_bgcolor='rgba(223, 232, 243, 1)',
         legend=dict(
-            bgcolor='rgba(255, 255, 255, 0.5)',  # Transparent white legend background
-            x=1.2,  # Position legend to the right of the chart
+            bgcolor='rgba(255, 255, 255, 0.5)',
+            x=1.2,
             y=1,
             xanchor='left',
             yanchor='top',
-            orientation="v",  # Keep the legend vertical
-            font=dict(
-                size=10  # Reduce font size for legend entries
-            ),
-            itemclick='toggle',  # Click to toggle visibility of the selected trace
-            itemdoubleclick='toggleothers',  # Double click to show only the selected trace
+            orientation="v",
+            font=dict(size=10),
+            itemclick='toggle',
+            itemdoubleclick='toggleothers',
             itemwidth=30,
-            title_text='Legend',  # Optional: Add title for the legend
+            title_text='Legend',
             traceorder="normal"
         )
     )
@@ -379,49 +372,6 @@ def create_salary_growth_chart(data, industry_name_orig):
     html_code = fig.to_html(full_html=False)
     return html_code
 
-
-
-
-def merge_sort(word_freq_list):
-    if len(word_freq_list) <= 1:
-        return word_freq_list
-    
-    mid = len(word_freq_list) // 2
-    left_half = merge_sort(word_freq_list[:mid])
-    right_half = merge_sort(word_freq_list[mid:])
-    
-    sorted_list = []
-    i = j = 0
-    
-    while i < len(left_half) and j < len(right_half):
-        if left_half[i][1] >= right_half[j][1]:  # Sort in descending order
-            sorted_list.append(left_half[i])
-            i += 1
-        else:
-            sorted_list.append(right_half[j])
-            j += 1
-            
-    sorted_list.extend(left_half[i:])
-    sorted_list.extend(right_half[j:])
-    
-    return sorted_list
-
-def CountWords(jobTitles,topNumOfItem):
-
-    word_list=[]
-
-    for jobs in jobTitles:
-        try:
-            # Convert string representation of list to actual list
-            evaluated_jobs = ast.literal_eval(jobs)
-            # Extend the final list with the skills
-            word_list.extend([job.strip() for job in evaluated_jobs])
-        except (ValueError, SyntaxError):
-            # If the string isn't a list, split it by commas and process it
-            clean_data = jobs.replace("'", "").split(',')
-            word_list.extend([job.strip() for job in clean_data])
-
-
 def skills_comparison(userSkills, job_type, industry, top_searches=10):
     # Load the JSON data
     with open(f'analysis/job_role_skill_{industry}.json', 'r') as f:
@@ -470,7 +420,6 @@ def skills_comparison(userSkills, job_type, industry, top_searches=10):
     # Return the HTML representation of the chart along with matched and missing skills
     return fig.to_html(), missing_skills, matched_skills
 
-
 def generate_wordcloud(industry):
     # Load data from JSON file
     with open('analysis/industry_Jobs.json', 'r') as f:
@@ -507,58 +456,6 @@ def generate_wordcloud(industry):
     )
     
     return pio.to_html(fig, full_html=False)
-
-def load_and_geocode_data(industry):
-    # Load your CSV data into a pandas DataFrame
-    df = pd.read_csv(f"Datasets/(Final)_past_{industry}.csv")
-
-    if 'Location' not in df.columns:
-        raise ValueError("CSV must contain a 'Location' column.")
-    
-    # Group by location, count occurrences
-    df_grouped = df.groupby('Location').size().reset_index()
-    
-    # Rename the columns
-    df_grouped.columns = ['Location', 'Value']
-    print("Grouped DataFrame:")
-    print(df_grouped)
-
-    # Geocode location names to get latitude and longitude
-    geolocator = Nominatim(user_agent="geoapi")
-    
-    # Add new columns for latitude and longitude
-    df_grouped['Latitude'] = None
-    df_grouped['Longitude'] = None
-    
-    for index, row in df_grouped.iterrows():
-        location = geolocator.geocode(row['Location'])
-        if location:
-            df_grouped.at[index, 'Latitude'] = location.latitude
-            df_grouped.at[index, 'Longitude'] = location.longitude
-
-    return df_grouped
-
-def GeographicalMap(industry):
-    # Convert location names to lat/lon
-    df = load_and_geocode_data(industry)
-    
-    # Filter out rows where geocoding failed
-    df = df.dropna(subset=['Latitude', 'Longitude'])
-    singapore_center = dict(lat=1.3521, lon=103.8198)
-
-    # Create a density heatmap using the converted lat/lon
-    fig = px.density_mapbox(df, lat='Latitude', lon='Longitude', z='Value', radius=10,
-                            center=singapore_center,
-                            mapbox_style="open-street-map", zoom=10)
-    
-    fig.update_layout(
-        title="job locations",
-        width=800,  # Adjust width
-        height=600  # Adjust height
-    )
-    # Convert the plotly figure to HTML
-    return fig.to_html()
-
 
 def skill_in_demand(job_role_df):
     # Convert date and eval skills
