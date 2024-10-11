@@ -1,12 +1,11 @@
 
 from flask import Flask, render_template, request, redirect, url_for,session
 from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud,create_salary_growth_chart,create_salary_trend_chart,skill_in_demand
-import resume_skills_extractor
+import Resume_Skills_Extractor
 import os
 import pandas as pd
-import course_url_crawler
-from data_analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,pull_in_job_trend,  pull_in_hiring_trend , get_job_detail_url
-import time
+import Course_Url_Coursera 
+from Data_Analysis import industry_job_trend , industry_general_skills, pull_industry_skills , industry_hiring_trend , skill_match_analysis , match_user_to_job_role, filter_df_by_job_role,industry_job,pull_in_job_trend,  pull_in_hiring_trend , get_job_detail_url
 import threading
 import copy
 
@@ -245,7 +244,7 @@ def expanded_job_roles(job_title):
     # Generate a chart that shows the demand for skills in the industry using the job data (job_df)
     skillsDemandChart = skill_in_demand(job_df)
     # Show the courses link from coursera API
-    urlCourses = course_url_crawler.search_courses(skillsLacking)
+    urlCourses = Course_Url_Coursera.search_courses(skillsLacking)
     # Retrieve detailed job data (e.g., job descriptions, requirements, etc.) from the job data (job_df)
     job_detail_data = get_job_detail_url(job_df)
 
@@ -281,8 +280,8 @@ def upload_resume():
     file.save(pdf_path)
     
     #get skills 
-    resume_skills_extractor.extract_text_from_pdf(pdf_path)
-    skills_found = resume_skills_extractor.outputSkillsExtracted(5)
+    Resume_Skills_Extractor.extract_text_from_pdf(pdf_path)
+    skills_found = Resume_Skills_Extractor.outputSkillsExtracted(5)
 
     return render_template('edit_resume.html', skills=skills_found)
 
