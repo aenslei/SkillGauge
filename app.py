@@ -39,7 +39,8 @@ class JobRole:
 
 @app.route('/')
 def Home():
-    data = load_data(file_path)  # Load the data
+    # Load the data and make copy of data
+    data = load_data(file_path)
     data1 = copy.deepcopy(data)
     data2 = copy.deepcopy(data)
     data3 = copy.deepcopy(data)
@@ -95,7 +96,7 @@ def analyse_industry_distribution(data):
 # POST request
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
-    start_time = time.time()
+
     industry_name_orig = request.form.get('industry_name')
     session["industry"] = industry_name_orig
 
@@ -119,16 +120,9 @@ def industry_details():
     # analysis for job role skills
     skill_match_analysis(df,industry_name)
 
+    # pulling of all json data
     skill_list = pull_industry_skills( industry_name)
-
-    # end of find industry general skills
-
-    # start of job trends
-
     job_trend_code = pull_in_job_trend(industry_name)
-    # end of job trends
-
-    # start of hiring trend code
     hiring_trend_code = pull_in_hiring_trend(industry_name)
 
     other_industries = [ind.title for ind in industry_list if ind.title != industry_name_orig][:4]  # Limit to 4 buttons
@@ -136,18 +130,15 @@ def industry_details():
     
     wordCloud = generate_wordcloud(industry_name)
 
-    end_time  = time.time()
-    print(f"Execution Time: {end_time - start_time} seconds")
+
 
     return render_template('industry_details.html',  
                            industry=industry, 
                            other_industries=other_industries, 
                            job_trend_fig=job_trend_code,
-
                            skill_list = skill_list,
                            wordCloud = wordCloud,
                            hiring_trend_fig = hiring_trend_code,
-
                            salary_growth_chart = salary_growth_chart,
                            job_title_chart=job_title_chart,
                            salary_chart=salary_chart,
@@ -179,7 +170,7 @@ def Job_roles():
 
     job_role_list = []
     print(job_role_skill_dict)
-    # if not match job take the first 6 job roles
+    # if no match job take the first 6 job roles
     if len(match_dict) == 0:
         no_match_list  = list(job_role_skill_dict.items())[:6]
 
