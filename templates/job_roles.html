@@ -5,41 +5,39 @@
 {% block content %}
 
 <div>
-
-
     <div class="container">
-
-
-
-
         <div class="container-fluid ">
             {% set counter = namespace(value=0) %}
+            <!-- Display the total number of matching job roles -->
             <h2 class="text-secondary">Matching Job roles ({{ job_role | length }})</h2>
             <div class="row justify-content-center">
 
+                <!-- Loop through each job role in the job_role list -->
                 {% for x in job_role %}
 
+                <!-- If counter is less than 3, continue adding job cards to the same row -->
                 {% if counter.value < 3 %}
+                <!-- Increment the counter -->
                 {% set counter.value = counter.value + 1 %}
 
-
+                <!-- Job role card -->
                 <div class="col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
 
-
+                    <!-- Link to the expanded job role details page, passing the job title -->
                     <a href="{{ url_for('expanded_job_roles', job_title=x.title) }}" class="text-decoration-none"
                         style="color: inherit;">
                         <h4> {{x.title}} </h4>
                     </a>
 
+                    <!-- Display the list of skills required for this job -->
                     <b>Skills:</b>
                     <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
 
+                    <!-- Display match percentage with different color indicators based on the value -->
                     {% if x.match_percent >= 70 %}
                     <div class="text-success" style="position: absolute; bottom:5; right:5; font-size:2em;">
                         {{ x.match_percent }}%
                     </div>
-
-
 
                     {% elif x.match_percent >= 50 and x.match_percent < 70 %}
                     <div class="text-warning" style="position: absolute; bottom:5; right:5; font-size:2em;">
@@ -54,20 +52,26 @@
                     {% endif %}
                 </div>
 
+                <!-- If 3 job cards are added to the row, reset the counter and start a new row -->
                 {% else %}
                 {% set counter.value = 1 %}
             </div>
+
+            <!-- Job role cards -->
             <div class="row justify-content-center">
                 <div class="col-sm-3 border-b p-3 m-3 shadow-sm bg-white rounded">
 
+                    <!-- Link to the expanded job role details page -->
                     <a href="{{ url_for('expanded_job_roles', job_title=x.title) }}" class="text-decoration-none"
                         style="color: inherit;">
                         <h4> {{x.title}} </h4>
                     </a>
 
+                    <!-- Display the list of skills required for this job -->
                     <b>Skills:</b>
                     <p> {% for skill in x.skill %} {{skill}}, {% endfor %}</p>
 
+                    <!-- Display match percentage with different color indicators based on the value -->
                     {% if x.match_percent >= 70 %}
                     <div class="text-success" style="position: absolute; bottom:5; right:5; font-size:2em;">
                         {{ x.match_percent }}%
@@ -84,31 +88,11 @@
                     </div>
 
                     {% endif %}
-
-
                 </div>
-
-
-
                 {% endif %}
-
-
                 {% endfor %}
             </div>
-
-
         </div>
-
-
-
     </div>
-
-
-
 </div>
-
-
-
-
-
 {% endblock %}

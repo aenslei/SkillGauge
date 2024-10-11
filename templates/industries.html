@@ -1,49 +1,61 @@
 {% set total_items = industry | length %}
-{% set columns_count = (3 if total_items >= 3 else (total_items if total_items > 0 else 1)) %}<!-- Set to 3 or fewer columns based on list size -->
+{% set columns_count = (3 if total_items >= 3 else (total_items if total_items > 0 else 1)) %}
 
 {% extends "index.html" %}
 
 {% block content %}
 
-
-
 <div class="container full-height-container">
     <div>
-        <a href="/" class="back-link">← Back to Home</a> <!-- Updated link to point to the home route -->
-        <p class="text-center" style="font-size: 1.2rem; margin-bottom: 10px; padding-top: 20px;">Choose Your Industry. <br> Explore trending industries and find your passion</p>
+        <a href="/" class="back-link">← Back to Home</a>
+        <p class="text-center" style="font-size: 1.2rem; margin-bottom: 10px; padding-top: 20px;">Choose Your Industry.
+
+            <br>
+
+            Explore trending industries and find your passion
+
+        </p>
+
         <br>
+
+        <!-- Industry buttons -->
         <div class="row justify-content-center">
             {% for industry, count in industry_distribution.items() %}
-                {% set bg_color = '' %}
-                {% if industry == 'Business' %}
-                    {% set bg_color = '#FFDDC1' %}  <!-- Light Peach Color -->
-                {% elif industry == 'Information Technology' %}
-                    {% set bg_color = '#C1E1C1' %}  <!-- Light Green Color -->
-                {% elif industry == 'Engineering' %}
-                    {% set bg_color = '#C1C1E1' %}  <!-- Light Purple Color -->
-                {% elif industry == 'Healthcare' %}
-                    {% set bg_color = '#FFD1DC' %}  <!-- Light Pink Color -->
-                {% elif industry == 'Legal Services' %}
-                    {% set bg_color = '#C1D7E1' %}  <!-- Light Blue Color -->
-                {% else %}
-                    {% set bg_color = '#F7F7F7' %}  <!-- Default Light Gray Color -->
-                {% endif %}
-    
-                <div class="col-md-4 col-sm-12 mb-3">
-                    <form action="/industry_details" method="POST">
-                        <input type="hidden" name="industry_name" value="{{ industry }}">
-                        <div class="card shadow-sm" style="cursor: pointer; background-color: {{ bg_color }};" onclick="this.parentNode.submit();">
-                            <h4>{{ industry }}</h4>
-                        </div>
-                    </form>
-                </div>
+            {% set bg_color = '' %}
+            {% if industry == 'Business' %}
+            {% set bg_color = '#FFDDC1' %}
+            <!-- Light Peach Color IT button -->
+            {% elif industry == 'Information Technology' %}
+            {% set bg_color = '#C1E1C1' %}
+            <!-- Light Green Color Engineering button -->
+            {% elif industry == 'Engineering' %}
+            {% set bg_color = '#C1C1E1' %}
+            <!-- Light Purple Color Healthcare button -->
+            {% elif industry == 'Healthcare' %}
+            {% set bg_color = '#FFD1DC' %}
+            <!-- Light Pink Color Legal Services button -->
+            {% elif industry == 'Legal Services' %}
+            {% set bg_color = '#C1D7E1' %}
+            <!-- Light Blue Color -->
+            {% else %}
+            {% set bg_color = '#F7F7F7' %}
+            <!-- Default Light Gray Color -->
+            {% endif %}
+            
+            <!-- Link to the respective individual industry page -->
+            <div class="col-md-4 col-sm-12 mb-3">
+                <form action="/industry_details" method="POST">
+                    <input type="hidden" name="industry_name" value="{{ industry }}">
+                    <div class="card shadow-sm" style="cursor: pointer; background-color: {{ bg_color }};"
+                        onclick="this.parentNode.submit();">
+                        <h4>{{ industry }}</h4>
+                    </div>
+                </form>
+            </div>
             {% endfor %}
         </div>
-    
-    
     </div>
 
-    <!-- Second Half (with background image) -->
     <div class="second-half" style="background-image: url('/static/Images/People.png');">
     </div>
 </div>

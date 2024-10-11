@@ -4,53 +4,67 @@
 
 {% block content %}
 
+<!-- Heading for the skill editing section -->
 <h2>Edit Your Skills</h2>
 
+<!-- Form to submit updated skills -->
 <form method="POST" action="/update_skills">
     <div class="skill-list">
+        <!-- Loop through the existing skills and render them in input fields -->
         {% for skill in skills %}
         <div class="skill-item">
+            <!-- Each skill is represented by a text input field -->
             <input type="text" name="skills" value="{{ skill }}" class="form-control" />
+            <!-- Button to remove the corresponding skill -->
             <button type="button" class="btn btn-danger remove-skill">X</button>
         </div>
         {% endfor %}
     </div>
+    <!-- Button to add a new skill input field -->
     <button type="button" id="add-skill" class="btn btn-primary">Add Skill</button>
+    <!-- Submit button to find jobs -->
     <button type="submit" class="btn btn-primary">Find Job Now</button>
 </form>
 
 <script>
-    //remove skills
+    // Handle skill removal
     document.querySelectorAll('.remove-skill').forEach(button => {
         button.addEventListener('click', (event) => {
+            // Find the closest skill-item div and remove it when the button is clicked
             const skillItem = event.target.closest('.skill-item');
             skillItem.remove();
         });
     });
 
-    //add new skills
+    // Add New skill 
     document.getElementById('add-skill').addEventListener('click', () => {
         const skillList = document.querySelector('.skill-list');
 
         const skillItem = document.createElement('div');
         skillItem.classList.add('skill-item');
 
+        // Create a new input field for the new skill
         const skillInput = document.createElement('input');
         skillInput.type = 'text';
         skillInput.name = 'skills';
         skillInput.className = 'form-control';
 
+        // Skill removal button
         const removeButton = document.createElement('button');
         removeButton.type = 'button';
         removeButton.className = 'btn btn-danger remove-skill';
         removeButton.textContent = 'X';
 
         removeButton.addEventListener('click', () => {
+            // Remove the skill item when 'X' is clicked
             skillItem.remove();
         });
 
+        // Append the input field and remove button to the skill item div
         skillItem.appendChild(skillInput);
         skillItem.appendChild(removeButton);
+
+        // Add the new skill item to the skill list
         skillList.appendChild(skillItem);
     });
 </script>
