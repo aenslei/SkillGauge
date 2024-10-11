@@ -11,7 +11,15 @@ Skill Gap Identifier<br/>
 Web-Based User Interface<br/>
 
 ## Technology Stack:
-*Data Collection*: Selenium, BeautifulSoup [python-docx, pypdf2 TBC]<br/>
-*Data Processing and Cleaning*: NLTK, Pandas<br/>
-*Data Analysis*: NLTK/Textblob, Python Collections Module, Sorting Algo
-*Web Interface*: Flask, Pandas, Matplotlib
+*Frontend*: HTML, CSS, Bootstrap, Jinja, JavaScript<br/>
+*Backend*: Flask<br/>
+*Web scraper*: Selenium, ThreadPoolExecutor<br/>
+*Data processing/analysis*: Pandas, scikit learn, NumPy<br/> 
+*Data Visualization*: Plotly<br/> 
+*Dataset/ Database*: CSV files, Json files<br/> 
+*Resume extraction*: PDFMiner<br/> 
+*GitHub Actions*: YAML<br/>
+
+## How to run:
+pip install -r requirements.txt<br/>
+python app.py

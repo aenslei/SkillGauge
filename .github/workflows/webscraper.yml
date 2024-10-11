@@ -1,6 +1,8 @@
 name: Selenium Web Scraper Automation
 
 on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every 30 minutes
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
@@ -30,11 +32,11 @@ jobs:
 
       - name: Run Selenium Script
         run: |
-          python webscraper.py 
+          python Webscraper.py 
 
       - name: Run Processor Script
         run: |
-          python processor.py
+          python Processor.py
 
       - name: Configure git
         run: |
