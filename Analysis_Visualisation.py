@@ -474,6 +474,7 @@ def skill_in_demand(job_role_df):
         year_df = job_role_df[job_role_df["Job Posting Date"].dt.to_period("Y") == year]
         skill_per_year = year_df["skills"].explode().value_counts()
 
+        # calculate percentage of skill count of over total skill count of the year
         total_count = skill_per_year.values.sum()
         skill_per_year = skill_per_year.reset_index()
         skill_per_year.columns = ["skill", "count"]
@@ -481,7 +482,7 @@ def skill_in_demand(job_role_df):
         skill_per_year["year"] = str(year)  # Convert year to string for easier labeling
 
         leftover = 100 - skill_per_year["percent"].sum()
-        # Allocate leftover percentage
+        # Allocate leftover percentage based on remainder method
         if leftover > 0:
             leftover_row = skill_per_year["percent"].nlargest(int(leftover)).index
             for x in leftover_row:

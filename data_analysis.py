@@ -37,26 +37,23 @@ def get_industry_name(df):
 
 def industry_job_trend(df):
     try:
-        df2 = df.groupby("Broader Category")
-
-        df_list = [df2.get_group(x) for x in df2.groups]
+        # group each industry data by industry and separate to individual industry df
+        industry_df = df.groupby("Broader Category")
+        df_list = [industry_df.get_group(x) for x in industry_df.groups]
 
         json_dict = {}
         for df in df_list:
-
+            # get the current date year and quarter and exclude from analysis
             current_date = pd.Timestamp.now()
-
             current_year_quarter = f"{current_date.year}Q{current_date.quarter}"
-
             exclude_current_q = df[~(df["Year-Quarter"] == current_year_quarter)]
             df = exclude_current_q.copy(deep=True)
 
-            #print(exclude_current_q["Year-Quarter"].unique())
+            # exclude job roles data with less than 10 rows
             job_count = exclude_current_q["Job Title"].value_counts()
-
             job_to_keep = job_count[job_count > 9].index
-
             df = df[df['Job Title'].isin(job_to_keep)]
+
 
             # change date to pd datetime format
             df['Job Posting Date'] = pd.to_datetime(df['Job Posting Date'], format="%Y-%m-%d")
@@ -66,38 +63,36 @@ def industry_job_trend(df):
 
             industry_name = get_industry_name(df)
 
+            # count number of job per quarter
+            job_per_quarter_count = df.groupby(["Job Title", "Quarter"]).size().to_frame("Count of job per quarter").reset_index()
+            job_per_quarter_count = job_per_quarter_count.sort_values(by="Quarter")
+            job_per_quarter_count = job_per_quarter_count.pivot_table(index="Quarter", columns="Job Title", values="Count of job per quarter", fill_value=0)
+            job_per_quarter_count.reset_index(inplace=True)
 
-            df3 = df.groupby(["Job Title", "Quarter"]).size().to_frame("Count of job per quarter").reset_index()
-
-            df3 = df3.sort_values(by="Quarter")
-
-            df3 = df3.pivot_table(index="Quarter", columns="Job Title", values="Count of job per quarter", fill_value=0)
-            df3.reset_index(inplace=True)
-
-            last_6_quarter = df3.tail(6)
+            # calculate the last 6 quarter difference
+            last_6_quarter = job_per_quarter_count.tail(6)
             diff_df = last_6_quarter.diff()
-
             sum_diff = diff_df.iloc[:,1:].sum()
-
             sort_df = sum_diff.sort_values()
+
+            # get the top 5 trending job actual data point
             trending_up_job = sort_df.tail(5).index.tolist()
             trending_up_job = ["Quarter"] + trending_up_job
-
-            df4 = df3[trending_up_job]
-
+            result = job_per_quarter_count[trending_up_job]
 
 
-            # add a line for every job role
+
+            # add a line for every job role in graph
             fig = go.Figure()
-            for job in df4.columns[1:]:
+            for job in result.columns[1:]:
                 fig.add_trace(go.Scatter(
-                    x=df4['Quarter'].astype(str),
-                    y=df4[job],
+                    x=result['Quarter'].astype(str),
+                    y=result[job],
                     mode='lines+markers',
                     name=job
                 ))
 
-
+            # update titles
             fig.update_layout(
                 title = "Industry Job Trends",
                 xaxis_title="Period",
@@ -106,7 +101,7 @@ def industry_job_trend(df):
 
             )
 
-
+            # get HTML code and save to JSON
             html_code = fig.to_html(full_html=False)
             json_dict[industry_name] = html_code
 
@@ -119,7 +114,7 @@ def industry_job_trend(df):
 
 def pull_in_job_trend(industry):
     with open("analysis/in_job_trend.json") as file:
-        job_trend  = json.load(file)
+        job_trend = json.load(file)
 
     html_code = job_trend[industry]
 
@@ -130,22 +125,25 @@ def pull_in_job_trend(industry):
 
 def industry_general_skills(df):
     try:
-        # apply cause input value to be str ast literal eval to change it to list type before apply again to clean out single letter skills
+        # change str type list to actual list
         df["skills"] = df["skills"].apply(ast.literal_eval)
 
+        # group each industry data by industry and separate to individual industry df
         df = df.groupby("Broader Category")
         df_list = [df.get_group(x) for x in df.groups]
         json_dict = {}
+
+
         for df in df_list:
 
             industry_name = get_industry_name(df)
 
+            # get frequency count of skills
             all_skills = df['skills'].explode()
             total_skill_count = all_skills.value_counts()
 
-            #print(total_skill_count)
+            # extract the top 20 skills and save to JSON
             top20_skill_json = total_skill_count.head(20)
-            #print(top20_skill_json)
             json_dict[industry_name] = top20_skill_json.to_dict()
 
 
@@ -160,7 +158,7 @@ def industry_job(data):
         # Create a dictionary to hold the final result
         result = {}
 
-        # Group the data by 'Broader Category' (industry) and count job titles
+        # Group the data by industry and count job titles
         grouped_data = data.groupby('Broader Category')['Job Title'].value_counts()
 
         # Loop through each industry and its job titles
@@ -169,10 +167,8 @@ def industry_job(data):
                 result[industry] = {}
             result[industry][job_title] = count
 
-        # Specify the path for saving the JSON file
-        path = "analysis/industry_Jobs.json"
-
         # Save the result as a JSON file
+        path = "analysis/industry_Jobs.json"
         pd.Series(result).to_json(path, indent=4)
 
     except Exception as e:
@@ -185,7 +181,7 @@ def pull_industry_skills(industry_name):
 
     skill_list = []
     data = industry_skills[industry_name]
-
+    # fill up skills into a list format
     for k, v in data.items():
 
         skill_list.append(k)
@@ -205,6 +201,7 @@ def industry_hiring_trend(df):
         df["Month"] = df["Job Posting Date"].dt.month
         df["Year"] = df["Job Posting Date"].dt.year
 
+        # separate different industry to its own df
         df = df.groupby("Broader Category")
         df_list = [df.get_group(x) for x in df.groups]
         json_dict ={}
@@ -223,6 +220,7 @@ def industry_hiring_trend(df):
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ]
 
+            # enter data into plotly
             fig = px.area(median_counts, x=month_names, y="Count of job")
             fig.update_yaxes(range=[median_counts["Count of job"].min() * 0.75, median_counts["Count of job"].max() + 25])
 
@@ -268,7 +266,7 @@ def skill_match_analysis(df, industry_name):
         # remove all the job less than 10 rows
         df["Job Title"] = df["Job Title"].str.upper()
         job_count = df["Job Title"].value_counts()
-        roles_to_keep  = job_count[job_count.values >= 10].index
+        roles_to_keep = job_count[job_count.values >= 10].index
 
 
         df = df[df["Job Title"].isin(roles_to_keep)].copy()
@@ -286,13 +284,14 @@ def skill_match_analysis(df, industry_name):
 
         json_data = {}
         for job in unique_job_list:
-
+            # filter df to only include job with more than 10 rows
             filtered_df = df[df["Job Title"] == job]
+
+            # get top 10 skill per job role and save to JSON
             job_skill_series = filtered_df["skills"].explode().value_counts()
-            # get top 10 skill per job role
             json_dict = { job : job_skill_series.head(10).to_dict()}
             json_data.update(json_dict)
-        #print(json_data)
+
         file_path = "analysis/job_role_skill_" + industry_name + ".json"
         pd.Series(json_data).to_json(file_path, indent=4)
 
@@ -312,24 +311,18 @@ def match_user_to_job_role(job_role_skills_series, user_skill_list):
         job_role_skill_dict = {key: group.index.get_level_values(1).tolist() for key, group in grouped}
 
         match_dict = {}
+        # set list to upper to be able to compare
         user_skill_list = list(map(str.upper, user_skill_list))
 
-
-
         for key , value in job_role_skill_dict.items():
-            # find matching percent
+            # convert job role skills to upper and compare to find matching percent
             value = list(map(str.upper, value))
-
             matched_skill = set(value) & set(user_skill_list)
 
             if matched_skill:
                 # percentage calculated by length of match skills over len of job role skills * 100
                 percentage = (len(matched_skill) / len(set(value))) * 100
-
                 match_dict[key] = round(percentage)
-
-
-
 
         return match_dict, job_role_skill_dict
 
@@ -340,15 +333,13 @@ def match_user_to_job_role(job_role_skills_series, user_skill_list):
 
 def get_job_detail_url(job_df):
     try:
-
+        # find recent job in the past 14 days
         curr_date = pd.to_datetime('today').date()
-
         job_df['Job Posting Date'] = pd.to_datetime(job_df['Job Posting Date'], format='%Y-%m-%d')
         last_14_days = curr_date - pd.offsets.Day(14)
-
         filtered_df = job_df.query("`Job Posting Date` >= @last_14_days")
 
-
+        # if more than 5 only return 5 job post
         if len(filtered_df.index) == 0:
             return None
         elif len(filtered_df.index) > 5:
