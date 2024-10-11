@@ -8,11 +8,12 @@
 
     <h2>Use AI to extract skills</h2>
 
+    <!-- Form for uploading a resume -->
     <form id="uploadForm" action="{{ url_for('upload_resume') }}" method="POST" enctype="multipart/form-data">
-        <!-- Hidden file input -->
+        <!-- Hidden file input for resume upload -->
         <input type="file" name="resume" id="resumeInput" style="display: none;" required>
 
-        <!-- Custom button to trigger file input -->
+        <!-- Custom button to trigger the hidden file input -->
         <button type="button" class="btn btn-outline-primary w-100" onclick="UploadResume()">
             Upload Resume
         </button>
@@ -20,20 +21,24 @@
 
     <br>
 
+    <!-- Form for manually adding skills -->
     <form id="skillsForm" method="POST" action="/add_skills">
         <div class="skills-container">
             <h2>Add Skills Manually</h2>
             <div class="skill-list">
+                <!-- Button to add a new skill input -->
                 <button type="button" class="btn btn-primary add-skill">+</button>
             </div>
         </div>
 
+        <!-- Submit button for the skills form -->
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
 </div>
 
 <script>
+    // Function to trigger the hidden file input for resume upload
     function UploadResume() {
         const fileInput = document.getElementById('resumeInput');
         fileInput.click();
@@ -41,35 +46,52 @@
         // When a file is selected, automatically upload the file
         fileInput.onchange = function () {
             // Check if a file is selected
-            if (fileInput.files.length > 0) { 
-                document.getElementById('uploadForm').submit();
+            if (fileInput.files.length > 0) {
+                // Upload form
+                document.getElementById('uploadForm').submit(); 
             }
         };
     }
 
+    // Select the add skill button and the skill list container
     const addSkillButton = document.querySelector('.add-skill');
     const skillList = document.querySelector('.skill-list');
 
+    // Event listener for the add skill button
     addSkillButton.addEventListener('click', () => {
+        // Create a new input field for entering a skill
         const skillInput = document.createElement('input');
+        // Set input type to text
         skillInput.type = 'text';
+        // Set the name for the input (to be sent in the form data)
         skillInput.name = 'skills';
+        // Add Bootstrap class for styling
         skillInput.className = 'form-control';
+        // Placeholder text
         skillInput.placeholder = 'Enter skill';
 
+        // Create a button to remove the skill input
         const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.className = 'btn btn-danger';
-        removeButton.textContent = 'X';
+        // Set button type to prevent form submission
+        removeButton.type = 'button'; 
+        // Add Bootstrap class for styling
+        removeButton.className = 'btn btn-danger'; 
+        // Set button text to 'X'
+        removeButton.textContent = 'X'; 
 
+        // Event listener for the remove button
         removeButton.addEventListener('click', () => {
+            // Remove the skill input
             skillInput.remove();
+            // Remove the corresponding remove button
             removeButton.remove();
         });
 
+        // Append the new skill input and remove button to the skill list
         skillList.appendChild(skillInput);
         skillList.appendChild(removeButton);
     });
 </script>
+
 
 {% endblock %}

@@ -2,25 +2,27 @@
 
 {% block content %}
 
+<!-- Button to go back to general industries page -->
 <a href="{{ url_for('Industries') }}" class="btn mt-3"
     style="background-color: transparent; color: black; text-decoration: none; border: none; box-shadow: none;"
     onmouseover="this.style.color='gray'" onmouseout="this.style.color='black'">
     Back to Industries
 </a>
 
-<!-- Buttons for other industries -->
 <br>
+
+<!-- Buttons for other industries -->
 <div class="industry-buttons mb-4">
     {% for other_industry in other_industries %}
-        {% if other_industry != current_industry %}  <!-- Exclude the current industry -->
-        <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline;">
-            <input type="hidden" name="industry_name" value="{{ other_industry }}">
-            <button type="submit">{{ other_industry }}</button>
-        </form>
-        {% endif %}
+    {% if other_industry != current_industry %}
+    <!-- Exclude the current industry -->
+    <form action="{{ url_for('industry_details') }}" method="POST" style="display:inline;">
+        <input type="hidden" name="industry_name" value="{{ other_industry }}">
+        <button type="submit">{{ other_industry }}</button>
+    </form>
+    {% endif %}
     {% endfor %}
 </div>
-<!-- ------------// End //--------------- -->
 
 <div class="container mt-4">
     <p>More information about the {{ industry }} industry.</p>
@@ -28,145 +30,178 @@
 
 
 <div class="jumbotron" style="height: fit-content;">
+    <!-- Industry name -->
     <h1 class="display-1">{{ industry }}</h1>
     <h3>Skills:</h3>
+
     <br>
 
+    <!-- Display Skillsets of that industry -->
     <div class="d-flex flex-wrap">
         {% for skill in skill_list %}
-        <div class="border rounded-pill d-inline p-1 m-1" style="background-color: rgb(255, 255, 255); border-color: rgb(255, 168, 61);" >
+        <div class="border rounded-pill d-inline p-1 m-1"
+            style="background-color: rgb(255, 255, 255); border-color: rgb(255, 168, 61);">
             {{ skill }}
         </div>
         {% endfor %}
     </div>
+
     <br>
 
     <hr class="my-4">
-    <br>
-    <body>
+    <div>
         Click on a Job Title's Bubble to see the corresponding Salary trends below!
-    </body>
+    </div>
+
+    <!-- Bubble chart -->
     <div id="bubble-chart" style="flex-grow: 1; height:600px;">
         {{ job_title_chart|safe }}
     </div>
-    
-    <br>
 
     <br>
+
+    <!-- Salary trend chart -->
     <div id="salary-trend-chart">
         {{ salary_trend_chart|safe }}
     </div>
+
     <br>
 
+    <!-- Salary distribution chart -->
     <div>
         {{ salary_chart|safe }}
     </div>
+
     <br>
+
+    <!-- Salary growth chart -->
     <div id="salary-growth-chart">
         {{ salary_growth_chart | safe }}
     </div>
+
     <br>
 
+    <!-- Industry job trend chart -->
     <div>
         {{ job_trend_fig | safe }}
     </div>
+
     <br>
 
+    <!-- Word cloud chart -->
     <div>
         {{wordCloud | safe}}
     </div>
+
     <br>
 
+    <!-- Hiring trend chart -->
     <div>
         {{ hiring_trend_fig | safe }}
     </div>
 
 </div>
+
 <br>
-</div>
 
-
+<!-- Text box to let users go to resume input page -->
 <div class="container card text-black border-dark" style="background-color: rgb(255, 218, 53)">
-    <!--text boxes-->
     <div class="row card-body" style="background-color: rgb(255, 218, 53)">
         <div class="card-title col-sm-10">
             <h3>Discover your suitable role now!</h3>
             <p>Find out more about your career</p>
-
         </div>
-        <div class="col-sm-2 d-flex justify-content-center align-items-center" >
+        <div class="col-sm-2 d-flex justify-content-center align-items-center">
             <a class="btn btn-primary p-3" style="border-radius: 35px;" href="{{ url_for('Resume') }}">Find Now</a>
-
         </div>
     </div>
 </div>
+
 <button onclick="scrollToTop()" id="scrollTopBtn" title="Go to top">⬆️</button>
-
-
-
 
 <!-- JavaScript to Handle Click Events and Interaction Between Charts -->
 <script>
+    // Wait until the DOM is fully loaded before running the script
     document.addEventListener("DOMContentLoaded", function () {
-        const bubbleChartFrame = document.querySelector(
-            '#bubble-chart .plotly-graph-div'); // Selecting the bubble chart div
-        const salaryTrendChartFrame = document.querySelector(
-            '#salary-trend-chart .plotly-graph-div'); // Selecting the salary trend chart div
+
+        // Selecting the bubble chart div by its ID and the Plotly graph div inside it
+        const bubbleChartFrame = document.querySelector('#bubble-chart .plotly-graph-div'); 
         
-        // Ensure the charts are loaded properly
-        if (bubbleChartFrame && salaryTrendChartFrame){ 
+        // Selecting the salary trend chart div by its ID and the Plotly graph div inside it
+        const salaryTrendChartFrame = document.querySelector('#salary-trend-chart .plotly-graph-div'); 
 
-            // Listen for a click event on the bubble chart
+        // Check if both charts are loaded properly before adding event listeners
+        if (bubbleChartFrame && salaryTrendChartFrame) {
+
+            // Add an event listener for clicks on the bubble chart
             bubbleChartFrame.on('plotly_click', function (data) {
-                const clickedJobTitle = data.points[0].text; // Get the clicked job title
-                console.log("Clicked Job Title:", clickedJobTitle);
+                // Get the clicked job title from the clicked point
+                const clickedJobTitle = data.points[0].text; 
 
-                // Show the salary line and trendline for the clicked job title in the salary trend chart
+                // Get the traces (lines) of the salary trend chart
                 const salaryTrendTraces = salaryTrendChartFrame.data;
 
+                // Loop through each trace in the salary trend chart
                 for (let i = 0; i < salaryTrendTraces.length; i++) {
                     // Show only the salary line and trendline for the clicked job title
                     if (salaryTrendTraces[i].name.includes(clickedJobTitle)) {
                         Plotly.restyle(salaryTrendChartFrame, {
-                            visible: true
+                            // Make the trace visible
+                            visible: true 
                         }, [i]);
-                        
                     } else {
+                        // Hide other lines by setting them to 'legendonly'
                         Plotly.restyle(salaryTrendChartFrame, {
-                            visible: 'legendonly'
+                            // Only show them in the legend
+                            visible: 'legendonly' 
                         }, [i]);
                     }
                 }
             });
         } else {
+            // Log an error if the bubble chart or salary trend chart is not found
             console.error('Bubble chart, salary trend chart, or salary growth chart not found.');
         }
     });
 
-    // Show/Hide the "scroll to top" button when scrolling
-    window.onscroll = function() {scrollFunction()};
+    // Show or hide the "scroll to top" button when the page is scrolled
+    window.onscroll = function () {
+        scrollFunction(); // Call the scroll function on every scroll event
+    };
 
+    // Function to control the display of the "scroll to top" button
     function scrollFunction() {
-        const scrollTopBtn = document.getElementById("scrollTopBtn");
+        // Get the "scroll to top" button by its ID
+        const scrollTopBtn = document.getElementById("scrollTopBtn"); 
         if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            scrollTopBtn.style.display = "block"; // Show the button
+            // Show the button if scrolled down more than 20px
+            scrollTopBtn.style.display = "block"; 
         } else {
-            scrollTopBtn.style.display = "none"; // Hide the button
+            // Hide the button if scrolled up
+            scrollTopBtn.style.display = "none";
         }
     }
 
-    // Scroll to the top when the user clicks the button
+    // Function to scroll to the top of the page when the "scroll to top" button is clicked
     function scrollToTop() {
-        document.body.scrollTop = 0; // For Safari
-        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+        // Scroll to the top for Safari
+        document.body.scrollTop = 0; 
+        // Scroll to the top for Chrome, Firefox, IE, and Opera
+        document.documentElement.scrollTop = 0; 
     }
 
+    // Function to fetch salary growth chart data asynchronously from the server
     async function fetchChartData() {
-        const response = await fetch('/get-salary-growth-data');
+        // Fetch data from the specified route
+        const response = await fetch('/get-salary-growth-data'); 
+        // Parse the response as JSON
         const chartData = await response.json();
+        // Plot the salary growth chart using Plotly
         Plotly.newPlot('salary-growth-chart', chartData);
     }
-    fetchChartData();  // Call this function to load chart asynchronously
+
+    // Call the function to load the salary growth chart data asynchronously
+    fetchChartData();
 </script>
 
 

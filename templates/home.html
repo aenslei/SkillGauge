@@ -2,88 +2,106 @@
 
 {% block title %} Home page {% endblock %}
 
-
-
 {% block content %}
 
+<!-- Carousel Section -->
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="margin-bottom: 70px;">
-      <ol class="carousel-indicators">
-        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-      </ol>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img class="d-block w-100 mh-100"
-            src="/static/Images/carousel 1.png">
-        </div>
-        <div class="carousel-item">
-          <img class="d-block w-100 mh-100"
-            src="/static/Images/carousel 2.png">
-        </div>
-        <div class="carousel-item">
-          <img class="d-block w-100 mh-100"
-            src="/static/Images/carousel 3.png">
-        </div>
-      </div>
-      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
+
+  <!-- Indicators for the carousel -->
+  <ol class="carousel-indicators">
+    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Images for each carousel slide -->
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img class="d-block w-100 mh-100" src="/static/Images/carousel 1.png">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100 mh-100" src="/static/Images/carousel 2.png">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100 mh-100" src="/static/Images/carousel 3.png">
+    </div>
+  </div>
+
+  <!-- Buttons for carousel slides -->
+  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
 </div>
 
-  <div class="hero-section text-center" style="margin-bottom: 20px;">
-    <h1 style="font-weight: bold;">Find Your Passion. Find Your Career.</h1>
-    <p style="font-size: 1.2rem;">Match your skills with the latest job opportunities in top industries.</p>
-    <a href="{{ url_for('Industries') }}" class="btn btn-success">Get Started</a>
-  </div>
+<!-- Get started section -->
+<div class="hero-section text-center" style="margin-bottom: 20px;">
+  <h1 style="font-weight: bold;">Find Your Passion. Find Your Career.</h1>
+  <p style="font-size: 1.2rem;">Match your skills with the latest job opportunities in top industries.</p>
+  <a href="{{ url_for('Industries') }}" class="btn btn-success">Get Started</a>
+</div>
 
-  <br>
-  <br>
-  <div class="quote-container">
-    The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.
-    <div class="quote-author">– Steve Jobs</div>
-  </div>
-  <br>
-  <br>
-  <div>
+<br>
+
+<!-- Quotes Section -->
+<div class="quote-container">
+  The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.
+  <div class="quote-author">– Steve Jobs</div>
+</div>
+
+<br>
+
+<!-- Explore Section -->
+<div>
   <div class="container" style="background-color: #ffffff; padding: 30px; border-radius: 10px;">
     <div class="row">
       <div class="col-md-4 mb-4">
-        <div class="card" style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
-          <img src="static/Images/market-Trend-Analysis.jpg" class="card-img-top" alt="Card image" style="height: 250px; object-fit: cover;">
+        <div class="card"
+          style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
+          <img src="static/Images/market-Trend-Analysis.jpg" class="card-img-top" alt="Card image"
+            style="height: 250px; object-fit: cover;">
           <div class="card-body">
             <h3 class="card-title" style="color:#0767c7 ;">Explore Market Trends</h3>
             <hr>
-            <p class="card-text" style="padding-bottom:50px;">Stay ahead of the curve with real-time insights into the latest industry trends. Discover which sectors are growing and where the best opportunities for fresh graduates lie.</p>
+            <p class="card-text" style="padding-bottom:50px;">Stay ahead of the curve with real-time insights into the
+              latest industry trends. Discover which sectors are growing and where the best opportunities for fresh
+              graduates lie.</p>
             <a href="{{ url_for('Industries') }}" class="btn btn-primary">Find Out More</a>
           </div>
         </div>
       </div>
-  
+
       <div class="col-md-4 mb-4">
-        <div class="card" style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
-          <img src="static/Images/NewJobs.jpg" class="card-img-top" alt="Card image" style="height: 250px; object-fit: cover;">
+        <div class="card"
+          style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
+          <img src="static/Images/NewJobs.jpg" class="card-img-top" alt="Card image"
+            style="height: 250px; object-fit: cover;">
           <div class="card-body">
             <h3 class="card-title" style="color: #306088">Discover New Jobs</h3>
             <hr>
-            <p class="card-text" style="padding-bottom:50px;">Find your perfect role with our personalized job matching system. Explore a wide range of openings tailored to your qualifications, skills, and career interests.</p>
+            <p class="card-text" style="padding-bottom:50px;">Find your perfect role with our personalized job matching
+              system. Explore a wide range of openings tailored to your qualifications, skills, and career interests.
+            </p>
             <a href="{{ url_for('Industries') }}" class="btn btn-primary">Find Out More</a>
           </div>
         </div>
       </div>
-  
+
       <div class="col-md-4 mb-4">
-        <div class="card" style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
-          <img src="static/Images/Skills.jpg" class="card-img-top" alt="Card image" style="height: 250px; object-fit: cover;">
+        <div class="card"
+          style="width: 100%; height: 100%; min-height: 500px; border-color: rgb(190, 223, 212); border-width: 2px;">
+          <img src="static/Images/Skills.jpg" class="card-img-top" alt="Card image"
+            style="height: 250px; object-fit: cover;">
           <div class="card-body">
             <h3 class="card-title" style="color: #6495ED">Uncover New Skills</h3>
             <hr>
-            <p class="card-text" style="padding-bottom:50px;">Bridge the gap between your current expertise and industry demands. Learn which skills are most in demand and how you can acquire them to boost your employability.</p>
+            <p class="card-text" style="padding-bottom:50px;">Bridge the gap between your current expertise and industry
+              demands. Learn which skills are most in demand and how you can acquire them to boost your employability.
+            </p>
             <a href="{{ url_for('Industries') }}" class="btn btn-primary">Find Out More</a>
           </div>
         </div>
@@ -92,155 +110,167 @@
   </div>
 
   <br>
+
+  <!-- Process flow steps -->
   <h1 style="font-size: 3rem; text-align: center;">Find Your Job In 5 Easy Steps!</h1>
+
   <div class="two-rows-container">
-      <div class="step-wrapper">
-          <div class="step-circle">
-              <h2>1</h2>
-          </div>
-          <div class="step-card">
-              <p>Select Industry</p>
-          </div>
+    <div class="step-wrapper">
+      <div class="step-circle">
+        <h2>1</h2>
       </div>
-      
-      <div class="step-wrapper">
-          <div class="step-circle">
-              <h2>2</h2>
-          </div>
-          <div class="step-card">
-              <p>Submit Resume</p>
-          </div>
+      <div class="step-card">
+        <p>Select Industry</p>
       </div>
+    </div>
 
-      <div class="step-wrapper">
-          <div class="step-circle">
-              <h2>3</h2>
-          </div>
-          <div class="step-card">
-              <p>Identify Required Skills</p>
-          </div>
+    <div class="step-wrapper">
+      <div class="step-circle">
+        <h2>2</h2>
       </div>
+      <div class="step-card">
+        <p>Submit Resume</p>
+      </div>
+    </div>
 
-      <div class="step-wrapper">
-          <div class="step-circle">
-              <h2>4</h2>
-          </div>
-          <div class="step-card">
-              <p>Develop Your Skills</p>
-          </div>
+    <div class="step-wrapper">
+      <div class="step-circle">
+        <h2>3</h2>
       </div>
+      <div class="step-card">
+        <p>Identify Required Skills</p>
+      </div>
+    </div>
 
-      <div class="step-wrapper">
-          <div class="step-circle">
-              <h2>5</h2>
-          </div>
-          <div class="step-card">
-              <p>Advance Your Career</p>
-          </div>
+    <div class="step-wrapper">
+      <div class="step-circle">
+        <h2>4</h2>
       </div>
-  </div>
-  <div style="padding-bottom: 70px;"></div>
+      <div class="step-card">
+        <p>Develop Your Skills</p>
+      </div>
+    </div>
 
-
-  <div class="stats-section" style="background-color: rgb(224, 244, 255); border-radius: 15px;">
-    <h3 style = "font-size:35px ;font-weight: bold; font-family: 'Arial', sans-serif; align-items: center; text-align: center;padding-bottom: 20px; padding-top:10px">Performances & Results</h3>
-    <div class="row">
-      <div class="col stat-block">
-          <h2 class="stat-number stat-jobs" data-target="50000">0</h2>
-          <h3 class="stat-text">Jobs Posted</h3>
+    <div class="step-wrapper">
+      <div class="step-circle">
+        <h2>5</h2>
       </div>
-      <div class="col stat-block">
-          <h2 class="stat-number stat-users" data-target="10000">0</h2>
-          <h3 class="stat-text">Users Matched</h3>
-      </div>
-      <div class="col stat-block">
-          <h2 class="stat-number stat-companies" data-target="500">0</h2>
-          <h3 class="stat-text">Companies Hiring</h3>
+      <div class="step-card">
+        <p>Advance Your Career</p>
       </div>
     </div>
   </div>
+  <div style="padding-bottom: 70px;"></div>
+
+  <!-- Statistics section -->
+  <div class="stats-section" style="background-color: rgb(224, 244, 255); border-radius: 15px;">
+    <h3
+      style="font-size:35px ;font-weight: bold; font-family: 'Arial', sans-serif; align-items: center; text-align: center;padding-bottom: 20px; padding-top:10px">
+      Performances & Results</h3>
+    <div class="row">
+      <div class="col stat-block">
+        <h2 class="stat-number stat-jobs" data-target="50000">0</h2>
+        <h3 class="stat-text">Jobs Posted</h3>
+      </div>
+      <div class="col stat-block">
+        <h2 class="stat-number stat-users" data-target="10000">0</h2>
+        <h3 class="stat-text">Users Matched</h3>
+      </div>
+      <div class="col stat-block">
+        <h2 class="stat-number stat-companies" data-target="500">0</h2>
+        <h3 class="stat-text">Companies Hiring</h3>
+      </div>
+    </div>
+  </div>
+
   <br>
-  <br>
-  <h3 style = "padding-bottom:20px;font-size:35px ;font-weight: bold; font-family: 'Arial', sans-serif; align-items: center; text-align: center;padding-bottom: 20px; padding-top:10px">Testimonials</h3>
- 
+
+  <h3 style="padding-bottom:20px;font-size:35px ;font-weight: bold; font-family: 'Arial', sans-serif; align-items: center; text-align: center;padding-bottom: 20px; padding-top:10px"> Testimonials </h3>
+
+  <!-- Testimonial section -->
   <div class="testimonials-container" style="padding-bottom:70px;">
+
     <!-- First Testimonial -->
-    <div class="testimonial" style="background-color: none;" >
-        <div class="testimonial-image">
-            <img src="static/Images/man.jpeg" alt="Person Image"> <!-- Replace with actual image -->
-        </div>
-        <div class="testimonial-text">
-            <blockquote class="blockquote">
-                <p>"SkillGauge helped me find the perfect job in just a few weeks! Highly Recommend!"</p>
-                <footer class="blockquote-footer">John Doe, Software Developer</footer>
-            </blockquote>
-        </div>
+    <div class="testimonial" style="background-color: none;">
+      <div class="testimonial-image">
+        <img src="static/Images/man.jpeg" alt="Person Image">
+      </div>
+      <div class="testimonial-text">
+        <blockquote class="blockquote">
+          <p>"SkillGauge helped me find the perfect job in just a few weeks! Highly Recommend!"</p>
+          <footer class="blockquote-footer">John Doe, Software Developer</footer>
+        </blockquote>
+      </div>
     </div>
 
     <!-- Second Testimonial -->
     <div class="testimonial" style="background-color: none;">
-        <div class="testimonial-image">
-            <img src="static/Images/woman.jpg" alt="Person Image"> <!-- Replace with actual image -->
-        </div>
-        <div class="testimonial-text">
-            <blockquote class="blockquote">
-                <p>"Thanks to SkillGauge, I landed my dream job right out of college!"</p>
-                <footer class="blockquote-footer">Jane Smith, Graphic Designer</footer>
-            </blockquote>
-        </div>
+      <div class="testimonial-image">
+        <img src="static/Images/woman.jpg" alt="Person Image">
+      </div>
+      <div class="testimonial-text">
+        <blockquote class="blockquote">
+          <p>"Thanks to SkillGauge, I landed my dream job right out of college!"</p>
+          <footer class="blockquote-footer">Jane Smith, Graphic Designer</footer>
+        </blockquote>
+      </div>
     </div>
-  
-    
-</div>
-<br>
-<div class="process-section">
-  <img src="static/Images/Yellow Pic.png" alt="image" class="process-image">
+
+  </div>
+
+  <br>
+
+  <!-- Bottom Banner -->
+  <div class="process-section">
+    <img src="static/Images/Yellow Pic.png" alt="image" class="process-image">
+  </div>
 </div>
 
-<br>
-</div>  
-  
 
-    <script>
-      // Function to animate the numbers
-      function animateNumbers() {
-          const numbers = document.querySelectorAll('.stat-number');
-          numbers.forEach(number => {
-              const updateCount = () => {
-                  const target = +number.getAttribute('data-target');
-                  const count = +number.innerText;
-                  const speed = 200; // You can adjust the speed here
-                  const increment = target / speed;
-                  
-                  if (count < target) {
-                      number.innerText = Math.ceil(count + increment);
-                      setTimeout(updateCount, 10);
-                  } else {
-                      number.innerText = target;
-                  }
-              };
-              updateCount();
-          });
-      }
-      
-      // Function to check if element is in viewport
-      function isInViewport(element) {
-          const rect = element.getBoundingClientRect();
-          return (
-              rect.top >= 0 &&
-              rect.left >= 0 &&
-              rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-              rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-          );
-      }
-      
-      // Scroll event listener to trigger animation
-      document.addEventListener('scroll', function() {
-          const statsSection = document.querySelector('.stats-section');
-          if (isInViewport(statsSection)) {
-              animateNumbers();
-          }
-      });
-      </script>
+<script>
+  // Function to animate the numbers
+  function animateNumbers() {
+    const numbers = document.querySelectorAll('.stat-number');
+
+    // Loop through each selected number element to update the count number displayed
+    numbers.forEach(number => {
+      const updateCount = () => {
+        const target = +number.getAttribute('data-target');
+        const count = +number.innerText;
+        const speed = 200;
+        const increment = target / speed;
+
+        // If current count is less than the target then update the target number by incrementing the count, else set the final value
+        if (count < target) {
+          number.innerText = Math.ceil(count + increment);
+          setTimeout(updateCount, 10);
+        } else {
+          number.innerText = target;
+        }
+      };
+      updateCount();
+    });
+  }
+
+  // Function to check if element is in viewport
+  function isInViewport(element) {
+    // Get the element's position relative to the viewport
+    const rect = element.getBoundingClientRect();
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+
+  // Scroll event listener to trigger animation
+  document.addEventListener('scroll', function () {
+    const statsSection = document.querySelector('.stats-section');
+    if (isInViewport(statsSection)) {
+      animateNumbers();
+    }
+  });
+</script>
 
 {% endblock %}
