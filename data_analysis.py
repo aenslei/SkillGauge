@@ -1,5 +1,3 @@
-import struct
-
 import pandas as pd
 import plotly.graph_objects as go
 import ast
@@ -9,11 +7,13 @@ import json
 
 #============================================       helper code     =============================================
 
+# Filters the DataFrame to include only rows where the 'Job Title' matches the specified job role.
 def filter_df_by_job_role(df, job_role):
 
         job_role_df = df[df["Job Title"] == job_role].copy()
         return job_role_df
 
+# Filters a list of skills, removing any skill that is an empty string or contains only whitespace.
 def filter_skills(skills_list):
 
     skills_list = list(skills_list)
@@ -22,7 +22,7 @@ def filter_skills(skills_list):
         if len(skill) > 1:
             new_skill_list.append(skill)
 
-
+# Extracts the unique 'Broader Category' from the DataFrame, converts it to a string, and replaces spaces with underscores.
 def get_industry_name(df):
     industry_name = df["Broader Category"].unique()
     industry_name = str(industry_name)
@@ -31,9 +31,6 @@ def get_industry_name(df):
     return industry_name
 
 # ========================================    Industry Section      ========================================================
-
-
-
 
 def industry_job_trend(df):
     try:
@@ -80,8 +77,6 @@ def industry_job_trend(df):
             trending_up_job = ["Quarter"] + trending_up_job
             result = job_per_quarter_count[trending_up_job]
 
-
-
             # add a line for every job role in graph
             fig = go.Figure()
             for job in result.columns[1:]:
@@ -97,8 +92,6 @@ def industry_job_trend(df):
                 title = "Industry Job Trends",
                 xaxis_title="Period",
                 yaxis_title="No. of Job",
-
-
             )
 
             # get HTML code and save to JSON
@@ -120,9 +113,7 @@ def pull_in_job_trend(industry):
 
     return html_code
 
-
-
-
+# Analyzes the general skills required for each industry by counting the frequency of skills from the provided DataFrame.
 def industry_general_skills(df):
     try:
         # change str type list to actual list
@@ -132,7 +123,6 @@ def industry_general_skills(df):
         df = df.groupby("Broader Category")
         df_list = [df.get_group(x) for x in df.groups]
         json_dict = {}
-
 
         for df in df_list:
 
@@ -146,13 +136,13 @@ def industry_general_skills(df):
             top20_skill_json = total_skill_count.head(20)
             json_dict[industry_name] = top20_skill_json.to_dict()
 
-
         pd.Series(json_dict).to_json("analysis/industry_skills.json", indent=4)
 
     except Exception as e:
         print("something went wrong with industry general skills ")
         print(f"Details: {e}")
 
+# Analyzes the job titles within each industry by counting how frequently each job title appears
 def industry_job(data):
     try:
         # Create a dictionary to hold the final result
@@ -175,6 +165,7 @@ def industry_job(data):
         print("something went wrong in industry job function")
         print(f"Details: {e}")
 
+# Retrieves the top skills for a given industry from a pre-generated JSON file.
 def pull_industry_skills(industry_name):
     with open("analysis/industry_skills.json") as file:
         industry_skills = json.load(file)
@@ -188,9 +179,7 @@ def pull_industry_skills(industry_name):
 
     return skill_list
 
-
-
-
+# Analyzes hiring trends by industry based on job posting dates, generating a median job count for each month and saving the results as HTML for visualization.
 def industry_hiring_trend(df):
     try:
 
@@ -207,13 +196,12 @@ def industry_hiring_trend(df):
         json_dict ={}
         for df in df_list:
             industry_name = get_industry_name(df)
-            # group by month and year and get count of job
 
+            # group by month and year and get count of job
             monthly_counts = df.groupby(['Year', 'Month']).size().reset_index(name='Count of job')
 
             # further group all years by month before getting median
             median_counts = monthly_counts.groupby('Month')['Count of job'].median().reset_index()
-
 
             month_names = [
                 "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -234,17 +222,12 @@ def industry_hiring_trend(df):
 
             json_dict[industry_name] = html_code
 
-
         with open("analysis/in_hiring_trend.json" , "w") as file:
-
             json.dump(json_dict, file, indent=4)
+
     except Exception as e:
         print("something went wrong in industry hiring trend")
         print(f"Details: {e}")
-
-
-
-
 
 def pull_in_hiring_trend(industry):
     with open("analysis/in_hiring_trend.json" , "r") as file:
@@ -254,12 +237,9 @@ def pull_in_hiring_trend(industry):
 
     return html_code
 
-
-
-
 # ============================    Job Role Section      ===============================================================
 
-# get top 10 job roles skills and save to an analysis file
+# Get top 10 job roles skills and save to an analysis file
 def skill_match_analysis(df, industry_name):
     try:
 
@@ -267,14 +247,11 @@ def skill_match_analysis(df, industry_name):
         df["Job Title"] = df["Job Title"].str.upper()
         job_count = df["Job Title"].value_counts()
         roles_to_keep = job_count[job_count.values >= 10].index
-
-
         df = df[df["Job Title"].isin(roles_to_keep)].copy()
         df["Job Title"] = df["Job Title"].str.title()
 
         # get list of unique job title
         unique_job_list = df["Job Title"].unique()
-
 
         # set skill list value to list type
         try:
@@ -299,10 +276,7 @@ def skill_match_analysis(df, industry_name):
         print("something went wrong in skill match analysis")
         print(f"Details: {e}")
 
-
-
-
-
+# Matches user skills to job skills and calculates the matching percentage.
 def match_user_to_job_role(job_role_skills_series, user_skill_list):
     try:
 
@@ -330,7 +304,7 @@ def match_user_to_job_role(job_role_skills_series, user_skill_list):
         print("something went wrong in match user to job role")
         print(f"Details: {e}")
 
-
+# Get job urls of the specific job
 def get_job_detail_url(job_df):
     try:
         # find recent job in the past 14 days
@@ -345,7 +319,6 @@ def get_job_detail_url(job_df):
         elif len(filtered_df.index) > 5:
             job_detail_data = filtered_df.head(5).to_dict(orient="records")
             return job_detail_data
-
 
         else:
             job_detail_data = filtered_df.to_dict(orient= "records")

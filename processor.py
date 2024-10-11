@@ -473,6 +473,7 @@ def RemoveUnwantedColumns(input_csv_file):
     
 def main(input_csv_file, output_csv_file):
 
+    # Remove duplicate header columns
     RemoveUnwantedColumns(input_csv_file)
 
     try:

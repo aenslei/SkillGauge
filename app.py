@@ -13,13 +13,16 @@ import copy
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-UPLOAD_FOLDER = 'uploads'  # Define a folder to save uploaded files
+# Uploads folder name
+UPLOAD_FOLDER = 'uploads'  
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Data set file path
 file_path = r'Datasets\\sg_job_data_cleaned.csv'
 
 industry_list = []
 
+# Class representing an industry
 class Industry:
     def __init__(self, title):
         self.title = title
@@ -30,6 +33,7 @@ class Industry:
     def __str__(self):
         return self.title
 
+# Class representing a job role
 class JobRole:
     def __init__(self, title, skill, match_percent = 0):
 
@@ -93,14 +97,18 @@ def analyse_industry_distribution(data):
     total_jobs = len(data)
     return industry_distribution, total_jobs
 
-# POST request
+# Handle individual industry charts and web page
 @app.route('/industry_details', methods=['POST'])
 def industry_details():
 
+    # Get the industry name from the form submission and store it in the session
     industry_name_orig = request.form.get('industry_name')
     session["industry"] = industry_name_orig
 
+    # Find the industry object from industry_list that matches the given title, or return None if not found
     industry = next((ind for ind in industry_list if ind.title == industry_name_orig), None)
+
+    # Load the industry-related data from the specified file path
     data = load_data(file_path)
 
     #  --- Calling of Analysis and Visualisation Functions ---
@@ -112,6 +120,8 @@ def industry_details():
 
     # find industry general skills
     industry_name = industry_name_orig.replace(" ", "_")
+
+    # Path to the dataset for the specific industry 
     industry_path = "Datasets/(Final)_past_" + industry_name + ".csv"
 
     with open(industry_path , encoding='utf-8') as csvfile:
@@ -125,12 +135,12 @@ def industry_details():
     job_trend_code = pull_in_job_trend(industry_name)
     hiring_trend_code = pull_in_hiring_trend(industry_name)
 
-    other_industries = [ind.title for ind in industry_list if ind.title != industry_name_orig][:4]  # Limit to 4 buttons
+    # Generate a list of other industries for the sidebar, limited to 4 items
+    other_industries = [ind.title for ind in industry_list if ind.title != industry_name_orig][:4]
     other_industries = other_industries[:4] 
     
+    # Generate a word cloud visualization based on the industry's job titles
     wordCloud = generate_wordcloud(industry_name)
-
-
 
     return render_template('industry_details.html',  
                            industry=industry, 
@@ -147,25 +157,32 @@ def industry_details():
 @app.route('/job_roles')
 def Job_roles():
 
+    # Retrieve the user's skills from the session if available, else use an empty list
     if 'userSkills' in session:
         userSkills = session['userSkills']
     else:
         userSkills = []
 
+    # Check if the industry is available in the session
     if 'industry' in session:
         industry_name = session["industry"]
+        # Replace spaces with underscores in the industry name to match the JSON file path format
         industry_name = industry_name.replace(" ", "_")
+        # Construct the path to the job role skill analysis JSON file for the selected industry
         path = "analysis/job_role_skill_"+industry_name+".json"
 
     else:
+        # If no industry is found in session, redirect the user to the Industries page
         print("no industry")
         return redirect(url_for("Industries"))
 
-
+    # Open the JSON file that contains job role skill data
     with open(path) as file:
+        # Load the JSON data into a DataFrame and stack it to get job roles and their associated skills
         job_role_skill_df = pd.read_json(file, orient="index")
         job_role_skills_series = job_role_skill_df.stack()
 
+    # Match the user's skills to job roles based on the loaded data
     match_dict , job_role_skill_dict = match_user_to_job_role(job_role_skills_series, userSkills)
 
     job_role_list = []
@@ -173,15 +190,16 @@ def Job_roles():
     # if no match job take the first 6 job roles
     if len(match_dict) == 0:
         no_match_list  = list(job_role_skill_dict.items())[:6]
-
+        
+        # Loop through each job role and add it to the job_role_list with 0% match
         for job in no_match_list:
             print(job)
 
             job_object = JobRole(job[0], job[1],0)
             job_role_list.append(job_object)
 
-    else:
-
+    else:   
+        # If matches are found, add them to the list with the corresponding match percentage
         for job, percent in match_dict.items():
             skill_list = job_role_skill_dict[job]
             job_object = JobRole(job, skill_list,int(percent))
@@ -197,31 +215,38 @@ def Job_roles():
 
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
-
+    # Retrieve the user's skills from the session if available, else use an empty list
     if 'userSkills' in session:
         userSkills = session['userSkills'] 
     else:
         userSkills = []
-
+    
+    # Check if the industry is available in the session
     if 'industry' in session:
         industry_name = session["industry"]
+        # Replace spaces with underscores in the industry name to match the JSON file path format
         industry_name = industry_name.replace(" ", "_")
 
     else:
+        # If the industry is not found in the session, redirect the user to the "Industries" page to select an industry
         return redirect(url_for("Industries"))
 
     with open("Datasets/(Final)_past_"+ industry_name +".csv" , encoding="utf-8") as file:
         df = pd.read_csv(file, index_col=False)
         job_df = filter_df_by_job_role(df, job_title)
 
+    # Compare the user's skills with the skills required for a specific job title in the selected industry
     skillComparisonChart,skillsLacking , match_skills = skills_comparison(userSkills,job_title, industry_name)
+    # Combine the skills lacking and the matching skills into a total skill set
     total_skill = skillsLacking + match_skills
+    # Create a JobRole object with the job title and the combined list of skills
     job = JobRole(job_title, total_skill)
 
-    #jobMap = GeographicalMap(industry_name)
+    # Generate a chart that shows the demand for skills in the industry using the job data (job_df)
     skillsDemandChart = skill_in_demand(job_df)
+    # Show the courses link from coursera API
     urlCourses = course_url_crawler.search_courses(skillsLacking)
-
+    # Retrieve detailed job data (e.g., job descriptions, requirements, etc.) from the job data (job_df)
     job_detail_data = get_job_detail_url(job_df)
 
     return render_template("expanded_job_roles.html" ,
@@ -236,13 +261,18 @@ def expanded_job_roles(job_title):
 def Resume():
     return render_template('resume.html')
 
+# Upload resume
 @app.route('/upload', methods=['POST'])
 def upload_resume():
+    # Check if the 'resume' key is in the request files
     if 'resume' not in request.files:
+        # If no file is selected, redirect to the same page 
         return redirect(request.url)
     
+    # Retrieve the uploaded file from the form
     file = request.files['resume']
     
+    # If the user hasn't selected a file (filename is empty), redirect back to the form
     if file.filename == '':
         return redirect(request.url)
     
@@ -264,9 +294,10 @@ def add_skills():
 
 @app.route('/update_skills', methods=['POST'])
 def update_skills():
+    # Update the session with the list of skills submitted by the user from the form
     session['userSkills'] = request.form.getlist('skills')
     
-    # Remove all resumes once skills are submitted
+    # Remove all resume files once skills are submitted
     for filename in os.listdir(UPLOAD_FOLDER):
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         if os.path.isfile(file_path):

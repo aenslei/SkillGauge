@@ -17,22 +17,29 @@ import warnings
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
     def clean_salary_value(val):
-        if pd.isna(val):  # If the value is NaN, return it as is
+        try:
+            if pd.isna(val):  # If the value is NaN, return it as is
+                return val
+            if isinstance(val, str):
+                # Check if it's a range (e.g., "65-9960"), and take the average of the range
+                if '-' in val:
+                    try:
+                        parts = [float(p) for p in val.split('-') if p.isdigit()]
+                        return sum(parts) / len(parts) if parts else None
+                    except:
+                        return None
+                else:
+                    # Try to extract just the numeric part
+                    val = re.sub(r'\D', '', val)  # Remove non-numeric characters
+                    return float(val) if val else None
             return val
-        if isinstance(val, str):
-            # Check if it's a range (e.g., "65-9960"), and take the average of the range
-            if '-' in val:
-                try:
-                    parts = [float(p) for p in val.split('-') if p.isdigit()]
-                    return sum(parts) / len(parts) if parts else None
-                except:
-                    return None
-            else:
-                # Try to extract just the numeric part
-                val = re.sub(r'\D', '', val)  # Remove non-numeric characters
-                return float(val) if val else None
-        return val
-
+        except ValueError as ve:
+            print(f"ValueError encountered: {ve} for value: {val}")
+            return None  # Return None in case of error
+        except Exception as e:
+            print(f"Unexpected error: {e} for value: {val}")
+            return None  # Return None for any other error
+        
     # Apply the cleaning function to the column
     return salary_column.apply(clean_salary_value)
 
@@ -42,9 +49,16 @@ def load_data(file_path):
     print("First few rows of Min and Max Salary columns:")
     print(data[['Min Salary (K)', 'Max Salary (K)']].head())
 
+    # Convert 'Min Salary (K)' and 'Max Salary (K)' columns to numeric
+    # 'errors="coerce"' will convert invalid parsing (e.g., non-numeric values) to NaN
     data['Min Salary (K)'] = pd.to_numeric(data['Min Salary (K)'], errors='coerce')
     data['Max Salary (K)'] = pd.to_numeric(data['Max Salary (K)'], errors='coerce')
+
+    # Convert 'Job Posting Date' to datetime format
+    # 'errors="coerce"' will convert invalid parsing to NaT (not-a-time)
     data['Job Posting Date'] = pd.to_datetime(data['Job Posting Date'], errors='coerce')
+
+    # Create 'Year-Quarter' field by converting 'Job Posting Date' to year-quarter format
     data['Year-Quarter'] = data['Job Posting Date'].dt.to_period('Q').astype(str)
 
     # Calculate Average Salary
@@ -55,7 +69,6 @@ def load_data(file_path):
 def analyse_industry_distribution(data):
     # Group the data by 'Broader Category' to get job distribution
     industry_distribution = data['Broader Category'].value_counts()
-    industry_distribution_dict = industry_distribution.to_dict()
     total_jobs = len(data)
     
     return industry_distribution, total_jobs
@@ -171,7 +184,7 @@ def create_salary_variation_chart(data, industry_name_orig):
 #  ------------ Start of Salary Trend Line Graph  -------------------
 
 def create_salary_trend_chart(data, industry_name_orig):
-      # -- ANALYSIS --
+    # -- ANALYSIS --
     # Filter data for the selected industry
     industry_data = data[data['Broader Category'] == industry_name_orig]
 
@@ -372,6 +385,8 @@ def create_salary_growth_chart(data, industry_name_orig):
     html_code = fig.to_html(full_html=False)
     return html_code
 
+#  ------------ Start of Skills comparison donut chart-------------------
+
 def skills_comparison(userSkills, job_type, industry, top_searches=10):
     # Load the JSON data
     with open(f'analysis/job_role_skill_{industry}.json', 'r') as f:
@@ -395,6 +410,7 @@ def skills_comparison(userSkills, job_type, industry, top_searches=10):
     matched_percentage = (len(matched_skills) / len(top_n_skills_lower_case)) * 100 if top_n_skills_lower_case else 0
     missing_percentage = (len(missing_skills) / len(top_n_skills_lower_case)) * 100 if top_n_skills_lower_case else 0
 
+    # Join the skills list into a multiline string, with each skill on a new line
     matched_skills_multiline = '<br>'.join(matched_skills)
     missing_skills_multiline = '<br>'.join(missing_skills)
 
@@ -420,11 +436,14 @@ def skills_comparison(userSkills, job_type, industry, top_searches=10):
     # Return the HTML representation of the chart along with matched and missing skills
     return fig.to_html(), missing_skills, matched_skills
 
+#  ------------ Start of word cloud chart-------------------
+
 def generate_wordcloud(industry):
     # Load data from JSON file
     with open('analysis/industry_Jobs.json', 'r') as f:
         data = json.load(f)
     
+    # Replace underscores with spaces in the industry name
     industryName = industry.replace("_", " ")
 
     # Check if the industry exists in the data
@@ -456,6 +475,8 @@ def generate_wordcloud(industry):
     )
     
     return pio.to_html(fig, full_html=False)
+
+#  ------------ Start of skill in demand pie chart-------------------
 
 def skill_in_demand(job_role_df):
     # Convert date and eval skills
