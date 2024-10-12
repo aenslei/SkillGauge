@@ -1,8 +1,11 @@
+# Author: Ryan Wong
+# Automates the github actions for webscraper and processor script
+
 name: Selenium Web Scraper Automation
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs every 30 minutes
+    - cron: '0 0 * * *'  # Runs everyday
   workflow_dispatch:  # Allow manual triggering
 
 jobs:

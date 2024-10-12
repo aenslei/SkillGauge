@@ -1,3 +1,7 @@
+'''
+Author: Ryan Wong
+Uses the coursera API to get courses links based on which course the user is lacking 
+'''
 import requests
 
 def search_courses(search_terms):
