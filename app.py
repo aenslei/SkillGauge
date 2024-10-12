@@ -153,6 +153,7 @@ def industry_details():
                            salary_chart=salary_chart,
                            salary_trend_chart = salary_trend_chart)    
 
+#show the job roles page with suitable jobs
 @app.route('/job_roles')
 def Job_roles():
 
@@ -212,6 +213,7 @@ def Job_roles():
 
     return render_template('job_roles.html', job_role=job_role_list)
 
+# Show the individual job page
 @app.route("/job_roles/<job_title>")
 def expanded_job_roles(job_title):
     # Retrieve the user's skills from the session if available, else use an empty list
@@ -256,9 +258,15 @@ def expanded_job_roles(job_title):
                             skillsDemand_Chart = skillsDemandChart,
                            job_detail_data = job_detail_data)
 
+# Resume upload page
 @app.route('/resume')
 def Resume():
     return render_template('resume.html')
+
+'''
+Author: Ryan Wong
+Handles the file input and editing of skills of the resume extractor
+'''
 
 # Upload resume
 @app.route('/upload', methods=['POST'])
@@ -285,12 +293,14 @@ def upload_resume():
 
     return render_template('edit_resume.html', skills=skills_found)
 
+# Edit resume skills page
 @app.route('/add_skills', methods=['POST'])
 def add_skills():
     # Get the list of skills from the form
     skills = request.form.getlist('skills')
     return render_template('edit_resume.html', skills=skills)
 
+# Update and submit skills 
 @app.route('/update_skills', methods=['POST'])
 def update_skills():
     # Update the session with the list of skills submitted by the user from the form

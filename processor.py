@@ -157,7 +157,13 @@ def SaveDataToNewCSV(outputfile, new_data):
 
     # Write the updated DataFrame back to the file, overwriting the previous one
     existing_df.to_csv(outputfile, mode='w', index=False)
-    
+
+'''
+Author: Ryan Wong
+Separate the Salary column from the scraped data into 4 different columns for the historical dataset
+'''
+
+
 def ReformatSalary(input_csv_file):
     # Read the input CSV file into a DataFrame
     df = pd.read_csv(input_csv_file, index_col=False, on_bad_lines='skip')
@@ -195,6 +201,11 @@ def ReformatSalary(input_csv_file):
 
     else:
         print("The 'Job Salary Range' column does not exist in the provided CSV file.")
+
+'''
+Author: Ryan Wong
+Clean the work type by ensuring uniformity
+'''
 
 def ProcessWorkType(input_csv_file):
     # Read the input CSV file into a DataFrame
@@ -425,6 +436,11 @@ def PruneExtraCols(csv_file):
         if len(output_df.columns) > 18:
             output_df = output_df.iloc[:, :18]
             output_df.to_csv(csv_file, index=False)
+
+'''
+Author: Ryan Wong
+Clean the unneccasary words in the job titles
+'''
 
 def CleanJobTitle(input_csv_file):
     df = pd.read_csv(input_csv_file, on_bad_lines='skip')

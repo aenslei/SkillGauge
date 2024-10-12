@@ -1,3 +1,9 @@
+'''
+Author: Sabihah Amirudeen
+this file contains the cleaning functions of 1st phase of the data cleaning process
+Here is where the Skills are separated into induvidual words by comma. This column will be furhter cleaned in Cleaning2.py
+'''
+
 import re
 import pandas as pd
 
@@ -11,18 +17,17 @@ data['Benefits'] = data['Benefits'].str.replace(r'[{}"\']', '', regex=True)
 
 # Define a function to split the text by capitalized words and list them vertically
 def split_by_capital_words(text):
-    # Use regular expression to split the string at every capitalized word
+    
     return '\n'.join(re.findall(r'[A-Z][a-zA-Z\s]+', text))
 
 # Define a function to split the text by words or phrases, keeping them together
 def split_phrases_with_commas(text):
     if pd.isna(text):
-        return text  # Handle missing values
+        return text
     
     # Use regex to split by a space following a lowercase word and a capitalized word
     return ', '.join(re.findall(r'[\w\s]+(?:\s[\w\s]+)?', text))
 
-# Apply the updated function to the "skills" column
 data['skills'] = data['skills'].apply(split_phrases_with_commas)
 
 # Remove any unwanted characters (e.g., currency symbols, commas, etc.)

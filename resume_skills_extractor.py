@@ -1,3 +1,8 @@
+'''
+Author: Devin 
+Extracts the skills from the resume that the user upload
+'''
+
 import os
 import json
 import re
