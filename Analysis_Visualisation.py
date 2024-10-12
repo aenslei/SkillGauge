@@ -1,7 +1,12 @@
+'''
+This file contains the visualisation and analysis codes
+
+'''
+
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
-from geopy.geocoders import Nominatim
+from geopy.geocoders import Nominatim           
 import numpy as np
 import plotly.graph_objects as go
 import re
@@ -14,6 +19,7 @@ from wordcloud import WordCloud
 from scipy import stats
 import warnings
 
+#  Cleaning salary column
 def clean_salary_column(salary_column):
     # Handle strings with hyphens (ranges) or other non-numeric values
     def clean_salary_value(val):
@@ -28,7 +34,7 @@ def clean_salary_column(salary_column):
                 except:
                     return None
             else:
-                # Try to extract just the numeric part
+                # Extracting just the numeric part
                 val = re.sub(r'\D', '', val)  # Remove non-numeric characters
                 return float(val) if val else None
         return val
@@ -37,17 +43,13 @@ def clean_salary_column(salary_column):
     return salary_column.apply(clean_salary_value)
 
 def load_data(file_path):
-    data = pd.read_csv(file_path)
-    print("Columns in dataset:", data.columns)
-    print("First few rows of Min and Max Salary columns:")
-    print(data[['Min Salary (K)', 'Max Salary (K)']].head())
-
-    data['Min Salary (K)'] = pd.to_numeric(data['Min Salary (K)'], errors='coerce')
+    data = pd.read_csv(file_path) #load file 
+    data['Min Salary (K)'] = pd.to_numeric(data['Min Salary (K)'], errors='coerce') # coerce to convert the specifed columns into the same data type
     data['Max Salary (K)'] = pd.to_numeric(data['Max Salary (K)'], errors='coerce')
     data['Job Posting Date'] = pd.to_datetime(data['Job Posting Date'], errors='coerce')
     data['Year-Quarter'] = data['Job Posting Date'].dt.to_period('Q').astype(str)
 
-    # Calculate Average Salary
+    # Calculate Average Salary for each jon title
     data['Average Salary (K)'] = (data['Min Salary (K)'] + data['Max Salary (K)']) / 2
 
     return data
@@ -55,11 +57,18 @@ def load_data(file_path):
 def analyse_industry_distribution(data):
     # Group the data by 'Broader Category' to get job distribution
     industry_distribution = data['Broader Category'].value_counts()
-    industry_distribution_dict = industry_distribution.to_dict()
+    # industry_distribution_dict = industry_distribution.to_dict()
     total_jobs = len(data)
     
     return industry_distribution, total_jobs
 
+# ----------------------Start of Bubble Chart ------------------------------
+'''
+    Author: Sabihah Amirudeen
+    This is a bubble chart showing the various job titles'distributions as well as to find the counts of the job titles.
+    Bigger the bubble size, higher the count of the job title.
+    Data columns such as Broader Catergory, Job title were being used
+'''
 def create_job_title_bubble_chart(data, industry_name_orig, json_file="analysis/job_title_bubble_chart.json"):
 
     # -- ANALYSIS -- 
@@ -102,7 +111,7 @@ def create_job_title_bubble_chart(data, industry_name_orig, json_file="analysis/
     fig.update_layout(showlegend=False, 
                       xaxis=dict(showticklabels=False, range=[-10, 110]),  # Spread x axis range
                       yaxis=dict(showticklabels=False, range=[-10, 110]),  # Spread y axis range
-                      height=700,  # Adjust the height to give more room for the bubbles
+                      height=700,  # Adjusting the height to give more room for the bubbles
                       margin=dict(l=20, r=20, t=40, b=80),
                       clickmode='event+select')  # Enable click events
 
@@ -119,6 +128,12 @@ def create_job_title_bubble_chart(data, industry_name_orig, json_file="analysis/
     return html_code
 
 #  ------------ Start of Salary Variation Boxplot  -------------------
+''' 
+Author: Sabihah Amirudeen
+Salary variation chart is a box plot that show the median, mean salaries of jobs using 
+data columns such as Broader Catergory, Job title, Average Salary (K).
+
+'''
 
 def create_salary_variation_chart(data, industry_name_orig):
 
@@ -169,6 +184,11 @@ def create_salary_variation_chart(data, industry_name_orig):
     return html_code
 
 #  ------------ Start of Salary Trend Line Graph  -------------------
+'''
+Author: Sabihah Amirudeen
+Salary trend graph is a line chart that shows the avergae salary of the all the instrances of a unique job title over the quarter years
+Data columns used are Broader Category, Job Title, Year-Quarter and Average Salary (K)
+'''
 
 def create_salary_trend_chart(data, industry_name_orig):
       # -- ANALYSIS --
@@ -269,6 +289,11 @@ def create_salary_trend_chart(data, industry_name_orig):
     return html_code
 
 #  ------------ Start of Salary Growth Line Graph  -------------------
+'''
+Author: Sabihah Amirudeen
+Salary Growth Graph shows the prediction trend of the job title's salary for the next 5 years.
+Data columns used are Braoder Category, Job title, Job Minimum Experience and Average Salary (K).
+'''
 
 def create_salary_growth_chart(data, industry_name_orig):
 
@@ -371,6 +396,9 @@ def create_salary_growth_chart(data, industry_name_orig):
     # Convert the figure to HTML and return
     html_code = fig.to_html(full_html=False)
     return html_code
+# ---------------------------------------------------------------------------
+
+
 
 def skills_comparison(userSkills, job_type, industry, top_searches=10):
     # Load the JSON data

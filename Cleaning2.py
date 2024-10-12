@@ -1,3 +1,12 @@
+'''
+Author: Sabihah Amirudeen
+this file contains the cleaning functions of 2nd phase of the data cleaning process
+Here is where the Skills there are separated into induvidual words by comma is furhter cleaned.
+Additionally, any incorrect mapping of the industries to the job titles are cleaned here along with other cleanign functions that make the
+dataset free of errors and suitable to proceed on to the Analysis phase.
+
+'''
+
 import re
 import pandas as pd
 import os
@@ -87,7 +96,7 @@ print("Cluster names and broader categories added and saved successfully!")
 
 
 
-# Manual mapping of Anomalous Job Role mapped incorrectly by Text Classification Model
+# ------- Manual mapping of Anomalous Job Role mapped incorrectly by Text Classification Model -----------
 
 csv_file_path = 'Datasets/sg_job_data_cleaned.csv' #Load the CSV file
 data = pd.read_csv(csv_file_path)
@@ -239,7 +248,7 @@ else:
 
 
 
-#  Apply Cluster Mapping again after manual changes to mapping ---------------------------------
+# ---------------- Apply Cluster Mapping again after manual changes to mapping ---------------------------------
     cluster_mapping = {
     0: "Human Resources & Customer Support",
     1: "Supply Chain & Operations",
@@ -310,11 +319,11 @@ broader_categories_mapping = {
 
 
 
-# Extracting Min Max Salary, Average Salary and Average Salary Range--
+#------------ Extracting Min Max Salary, Average Salary and Average Salary Range-------------
 data['Min Salary (K)'] = pd.to_numeric(data['Min Salary (K)'], errors='coerce') # Convert salary columns to numeric (handling invalid data)
 data['Max Salary (K)'] = pd.to_numeric(data['Max Salary (K)'], errors='coerce') # ""
 
-# Check for missing values in salary columns
+# ---------- Check for missing values in salary columns --------------------------
 print("Missing values in Min Salary (K):", data['Min Salary (K)'].isnull().sum())
 print("Missing values in Max Salary (K):", data['Max Salary (K)'].isnull().sum())
 
@@ -326,7 +335,7 @@ data['Average Salary (K)'] = (data['Min Salary (K)'] + data['Max Salary (K)']) /
 
 
 
-# Extracting Year in Quarters -----------------------------------------------------
+# -------------------------- Extracting Year in Quarters ---------------------------
 data['Job Posting Date'] = pd.to_datetime(data['Job Posting Date'], errors='coerce') # Convert 'Job Posting Date' to datetime
 if data['Job Posting Date'].isnull().any():
         print("Invalid or missing 'Job Posting Date' entries found.") # Check for invalid or missing dates after conversion
@@ -335,7 +344,7 @@ data['Year-Quarter'] = data['Job Posting Date'].dt.to_period('Q').astype(str)  #
 
 
 
-# Extracting Min Max Job Experience   ---------------------------------------------
+#-------------------------- Extracting Min Max Job Experience   -------------------
 # Split the 'Experience' column into two new columns: 'Job Minimum Experience' and 'Job Maximum Experience'
 data[['Job Minimum Experience', 'Job Maximum Experience']] = data['Experience'].str.extract(r'(\d+)\s+to\s+(\d+)')
 data['Job Minimum Experience'] = data['Job Minimum Experience'].astype(int) # Convert the extracted values to integers
@@ -351,17 +360,11 @@ data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
 # Save the updated dataset with new columns
 data.to_csv('Datasets/sg_job_data_cleaned.csv', index=False)
 
-
-# # Apply the cluster mapping
-# data['Cluster Name'] = data['Predicted Industry'].map(cluster_mapping)
-
-# # Apply the broader category mapping
-# data['Broader Category'] = data['Cluster Name'].map(broader_categories_mapping)
 # ----------------------------------------------------------------------------------------
 
 
 
-#  Joining of Abbreviated Skills --------------------------------------------------------
+# ------------------------ Joining of Abbreviated Skills --------------------------------
 
 # Load abbreviations from the text file
 with open('Datasets/unique_abbreviations.txt', 'r') as f:
