@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Processor Script
         run: |
-          python Processor.py
+          python processor.py
 
       - name: Configure git
         run: |

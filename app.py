@@ -1,7 +1,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for,session
 from Analysis_Visualisation import load_data, analyse_industry_distribution, create_job_title_bubble_chart,create_salary_variation_chart, skills_comparison,generate_wordcloud,create_salary_growth_chart,create_salary_trend_chart,skill_in_demand
-import Resume_Skills_Extractor
+import resume_skills_extractor
 import os
 import pandas as pd
 import Course_Url_Coursera 
