@@ -35,7 +35,7 @@ jobs:
 
       - name: Run Selenium Script
         run: |
-          python Webscraper.py 
+          python webscraper.py 
 
       - name: Run Processor Script
         run: |
