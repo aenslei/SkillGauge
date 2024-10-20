@@ -20031,3 +20031,100 @@ Preferred qualifications, capabilities, and skills
 
 To apply for this position, please use the following URL:
 https://ars2.equest.com/?response_id=583a0f3563774faf2cb77907e50c24f1","['build trust', 'Emerging Markets', 'Subject Matter Expert', 'Interest Rate Derivatives', 'Collaborative', 'Process Improvement', 'Engaging with stakeholders', 'Data Structures', 'Software Engineering', 'Agile', 'Application Development', 'Achieving Results', 'Cultural Diversity', 'Python', 'Foreign Exchange', 'Providing expert advice', 'Debugging', 'Stakeholder Management', 'Team Work', 'Software Development']","Jpmorgan Chase Bank, N.A.",Information Technology,144.0,2024Q4,3.0,0.0,https://www.mycareersfuture.gov.sg/job/banking-finance/software-engineer-iii-currencies-emerging-markets-jpmorgan-chase-bank-na-af1414aeb618b21898621d2e66990d57?source=MCF&event=Search
+,MCF-2024-1538219,18.0,72.0,90.0,Contract,2024-10-17,,Solution Engineer,"As a Solution Engineer, you will be required to:
+
+Work directly with engineering team, product team and various key stakeholders.
+Support development of proof-of-concepts for platform in concert with product team and various stakeholders.
+Take ownership of end-to-end solutions provided by teams across the organisation.
+Provide system troubleshooting and problem solving across platform and application domains, expect to participate in on-call escalations to troubleshoot customer facing issues.
+Assist in the migration activities for GCC platforms.
+
+REQUIREMENT
+
+As a Solution Engineer, you need to bring to the team:
+Degree in Computer Science, Computer or Electronics Engineering, Information Technology or related disciplines.
+User-centric mindset. Be able to represent users’ viewpoints on GCC in order to drive changes & innovations to meet their needs.
+Passion for automation, standardization and best practices.
+Solid hands-on experience in designing, building, deploying and securing of highly available web application in cloud platform such as AWS, Microsoft Azure or Google Cloud Platform.
+Experience with DevOps tools such as Gitlab or Azure DevOps
+Experience with back-end technologies such as Node.js, Python, or Go
+Good understanding of network components such as load balancers, firewalls, VPNs, and DNS.
+Good understanding of DevOps principles and practices, knowledge in DevSecOps will be an added advantage.
+Self-motivated with good communication skills.
+Experience in an Agile development environment focusing on rapid, quality delivery.
+High attention to detail, accuracy, and meticulousness in handling figures and processes in a high-agility environment.
+Experience with managing cloud infrastructure and services on AWS, Microsoft Azure, or Google Cloud Platform, preferred.","['Microsoft Azure', 'Troubleshooting', 'Azure', 'Hardware', 'Google Cloud Platform', 'Problem Solving', 'Information Technology', 'Product Management', 'Good Communication Skills', 'Attention to Detail', 'Python', 'Consulting', 'Electronics', 'Agile Development']",Jobster Private Ltd.,Information Technology,81.0,2024Q4,2.0,0.0,https://www.mycareersfuture.gov.sg/job/information-technology/solution-engineer-jobster-659cadba28a8db7487dcdcd857c0d795?source=MCF&event=Search
+,MCF-2024-1522575,30.0,90.0,120.0,Full-Time,2024-10-15,,Full Stack Developer,"Full Stack Developer
+
+We are seeking a Senior Full Stack Developer to join the team. You will have the opportunity to write beautiful code, lead the development of impactful applications, and deliver working software continuously. If you’re excited about collaborating with industry experts and motivated peers, we invite you to join us in this newly created role with numerous opportunities for groundbreaking contributions.
+
+What You Will Be Working On:
+Software Development: Design, develop, test, deploy, maintain, and enhance software applications that meet government and citizen needs.
+Quality Improvement: Implement Scrum practices such as code review and unit testing to improve software quality.
+Collaboration: Work closely with Product Owners (PO) and Business Analysts (BA) on user story refinement, as well as assist QA teams with test automation and bug fixes.
+DevOps Support: Assist in build and release automation for seamless deployments.
+Documentation: Prepare interface specifications and architecture documents to ensure smooth project delivery.
+Software Craftsmanship: Commit to the principles of the Software Craftsmanship Manifesto, striving for excellence in every aspect of your work.
+Preferred Qualifications:
+Technical Leadership: 7 years and above experience and ability to identify and resolve technical challenges, guiding the team towards innovative solutions.
+Mentorship: Provide coaching and development opportunities to junior engineers, fostering growth within the team.
+Cross-functional Communication: Collaborate effectively with business users, technical teams, and management to gather requirements, coordinate efforts, and provide accurate task estimates.
+Business Acumen: Understand business domain concepts and manage requirements from multiple stakeholders with clarity and precision.
+Project Management: Demonstrate strong prioritization, communication, and software engineering skills with a proven track record of delivering high-quality applications.
+What We Are Looking For:
+Educational Background: Degree in Computer Science, Computer/Electronics Engineering, Information Technology, or related disciplines.
+Technical Skills:
+Proficient in cloud-native technology and familiar with Clean Code, Design Patterns, and Unit Testing.
+Experience in multi-paradigm programming languages (e.g., Java Spring Framework, Angular, Apache Spark, Data Engineering, ETL).
+Knowledge of AWS cloud services (RDS, Glue, Lambda, MSK) is highly advantageous.
+Agile & UX Experience: Experience working in Agile and UX development environments is an added advantage.
+Soft Skills: Strong presentation, communication, and listening skills, combined with a self-driven and motivated mindset.
+Willingness to Learn: An eagerness to continually develop your skills and stay up to date with industry trends.
+Why Join Us?
+Be part of a team that directly contributes to services for users.
+Work in an Agile environment with cutting-edge technologies and methodologies.
+Collaborate with a team of passionate, highly skilled professionals in a mission-driven environment.","['Apache Spark', 'Amazon RDS', 'Design Patterns', 'AWS', 'Scrum', 'Unit Testing', 'Spring Framework', 'Software Engineering', 'Agile', 'ETL', 'Information Technology', 'Data Engineering', 'Project Management', 'Angular', 'Java', 'Technical Leadership', 'AWS Lambda', 'UX', 'Software Development']",Sedha Consulting Pte. Ltd.,Information Technology,105.0,2024Q4,7.0,0.0,https://www.mycareersfuture.gov.sg/job/information-technology/full-stack-developer-sedha-consulting-83aa5b9b7b8ea5b39bee82782ba6a043?source=MCF&event=Search
+,MCF-2024-1507382,24.0,90.0,114.0,Full-Time,2024-10-11,,Senior Blockchain Engineer Consensus,"ParallelChain Lab is the maintainer of HotStuff-rs, an open-source Rust Programming Language library for Byzantine Fault Tolerant State Machine Replication licensed under Apache 2.0. We are seeking experienced blockchain engineers to lead the HotStuff-rs project.
+
+What You Will Do:
+Lead the team at ParallelChain Lab that is working on consensus
+Implement ideation, development, and delivery of highly-desired new features for HotStuff-rs (e.g. pluggable cryptographic hash function and digital signatures)
+Raise issues on GitHub to report bugs and suggest possible enhancements to the library, as well as contribute to the discussion around issues raised by other developers
+Read cutting-edge papers in systems research, algorithms, and cryptography, extracting insights about how HotStuff-rs could further evolve and improve
+Write technical documentation and tutorials about HotStuff-rs
+Work with other teams in ParallelChain Lab to together integrate the library into the novel solutions they are working on
+The Must-Have Qualifications:
+Bachelor’s degree in Computer Science, or equivalent knowledge
+Experience writing Rust software, and/or extensive experience in another systems programming language (e.g. C++), or functional programming language (e.g. Haskell, OCaml)
+Strong competency in discrete mathematics, algorithm design and analysis, networking, and applied cryptography
+Proven competence in skills related to open-source software engineering, including testing, GitHub, and CI/CD
+Bonus Points If You Possess:
+Project management experience
+Experience in computer science research (e.g. publications in conferences/journals)
+Some knowledge of consensus algorithms (e.g. Paxos, Raft, PBFT, or HotStuff itself)","['Technical Documentation', 'OCaml', 'Mathematics', 'Software Engineering', 'Cryptography', 'JavaScript', 'Replication', 'Haskell', 'Networking', 'Writing', 'Algorithm Design', 'Publications', 'Java', 'Github', 'Apache', 'Software Development', 'Rust', 'C++']",Parallelchain Lab Private Limited,Information Technology,102.0,2024Q4,3.0,0.0,https://www.mycareersfuture.gov.sg/job/information-technology/senior-blockchain-engineer-consensus-parallelchain-lab-fbb6e8c2de66425c93565b739ab3000f?source=MCF&event=Search
+,MCF-2024-1528971,30.0,60.0,90.0,Permanent,2024-10-16,,It Manager,"Responsibilities:
+Maintains and reviews IT governance and management frameworks on an on-going basis, monitoring effectiveness of the frameworks and recommending improvement opportunities
+Keeps abreast with current and emerging regulatory provisions and reviews against existing IT/OT frameworks and strategic direction periodically to ensure alignment
+Manages governance/ compliance communication and education of IT policies & standards to reinforce compliance and risk aware culture.
+Establishes and maintains IT/OT policies & standards to communicate management’s directives and guide the development of procedures and guidelines
+Coordinates internal and external audit assessments on IT policies, and processes, ensuring compliance with IT audit standards and IT risks to build strong governance.
+Ensures that comprehensive IT/OT risk management processes are established to identify, analyse, mitigate, manage, monitor and communicate IT risk, aligning them to company enterprise risk management framework
+Leads and documents execution/ reporting of group IT risk assessments and controls and other compliance programs
+Develops IT risk metrics and tolerance limits to assist senior management on the identified risks that would have negative impact on the IT governance in the company
+Ensures that processes are established for timely reporting and escalating of IT risk events and responses to appropriate parties
+Reviews audit and risk reports and supports efforts to address identified IT risks and ensure overall regulatory compliance and certification of IT/OT systems
+Requirements:
+Bachelor’s degree in Computer Science, IT, Security Management or equivalent
+Minimum 5 years’ experience in IT, Cybersecurity, IT policy development and governance, or related roles
+Professional certifications such as ITIL, CRISC, CISSP, CISA, CISM or equivalent will have an added advantage
+In-depth knowledge of IT governance frameworks (e.g. COBIT, ITIL), standards (e.g. ISO/IEC 27001, ISO 37001), Business Continuity Management, and regulatory requirements (e.g. PDPA)
+Good technical understanding of IT/OT applications, tools, and networks
+Our Address and Working Hours:
+Seatrium Pioneer Yard
+50 Gul Road
+Singapore 629351
+(Island-wide transport available)
+Mon - Thu: 8am - 5:15pm, Fri: 8am to 4:30pm
+Interested candidates are invited to send us an updated resume with your current and expected salary and earliest availability.
+We regret that only shortlisted candidates will be notified.
+Please note that your personal data disclosed to Seatrium Limited and our group of companies, shall be used for the purposes of evaluation, and processing in accordance with our recruitment processes and policies. By providing your personal data, you have consented to the aforesaid purpose under the provisions of the Personal Data Protection Act 2012.","['COBIT', 'Regulatory Compliance', 'Tolerance', 'Enterprise Risk Management', 'IT Governance', 'ISO', 'Risk Management', 'Security Management', 'IT Audit', 'Business Continuity Management', 'CISA', 'ITIL', 'Regulatory Requirements', 'Audit', 'CISSP']",Seatrium (Sg) Pte. Ltd.,Information Technology,75.0,2024Q4,5.0,0.0,https://www.mycareersfuture.gov.sg/job/information-technology/manager-seatrium-2d52a835b6f6e77ed514f98a10f3a6b5?source=MCF&event=Search
