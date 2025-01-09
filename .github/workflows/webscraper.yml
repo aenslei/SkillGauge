@@ -3,10 +3,7 @@
 
 name: Selenium Web Scraper Automation
 
-on:
-  schedule:
-    - cron: '0 0 * * *'  # Runs everyday
-  workflow_dispatch:  # Allow manual triggering
+
 
 jobs:
   run-scraper:
